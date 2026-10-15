@@ -5,7 +5,6 @@ import {
   ArrowRight,
   Palette,
   Heart,
-  Compass,
   Sun,
   Layers,
   MapPin,

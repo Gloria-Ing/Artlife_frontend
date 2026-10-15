@@ -17,7 +17,6 @@ import {
   Feather,
   Globe2,
   Share2,
-  CheckCircle2,
 } from 'lucide-react';
 
 interface ColorSwatch {

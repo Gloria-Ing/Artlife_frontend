@@ -2,16 +2,8 @@ import React from 'react';
 import type { NavTab } from './Navbar';
 import {
   Heart,
-  Sparkles,
   Sun,
-  Shield,
-  Smile,
-  CheckCircle2,
-  Users,
-  Compass,
   ArrowRight,
-  MapPin,
-  Calendar,
 } from 'lucide-react';
 
 interface TBRIMissionProps {
