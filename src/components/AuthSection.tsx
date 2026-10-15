@@ -178,11 +178,11 @@ export const AuthSection: React.FC<AuthSectionProps> = ({
       <div className="max-w-4xl mx-auto space-y-6">
         {/* Profile Card */}
         <div className="bg-slate-900/90 border border-slate-800 rounded-3xl p-6 md:p-8 backdrop-blur-md shadow-2xl relative overflow-hidden">
-          <div className="absolute top-0 right-0 w-80 h-80 bg-indigo-500/10 rounded-full blur-3xl pointer-events-none" />
+          <div className="absolute top-0 right-0 w-80 h-80 bg-olive-500/10 rounded-full blur-3xl pointer-events-none" />
 
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 pb-6 border-b border-slate-800">
             <div className="flex items-center space-x-4">
-              <div className="w-16 h-16 rounded-2xl bg-gradient-to-tr from-indigo-500 via-purple-500 to-pink-500 flex items-center justify-center text-white text-2xl font-bold shadow-lg shadow-indigo-500/25">
+              <div className="w-16 h-16 rounded-2xl bg-gradient-to-tr from-olive-600 via-sand to-terracotta-500 flex items-center justify-center text-white text-2xl font-bold shadow-lg shadow-olive-900/30">
                 {user.firstname?.[0]}
                 {user.lastname?.[0]}
               </div>
@@ -195,7 +195,7 @@ export const AuthSection: React.FC<AuthSectionProps> = ({
                     Active Session
                   </span>
                 </div>
-                <p className="text-sm text-indigo-400 font-mono mt-0.5">@{user.username}</p>
+                <p className="text-sm text-terracotta-400 font-mono mt-0.5">@{user.username}</p>
               </div>
             </div>
 
@@ -222,7 +222,7 @@ export const AuthSection: React.FC<AuthSectionProps> = ({
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mt-6">
             <div className="bg-slate-950/80 p-4 rounded-2xl border border-slate-800/80">
               <div className="flex items-center space-x-2 text-slate-500 text-xs mb-1">
-                <Hash className="w-3.5 h-3.5 text-indigo-400" />
+                <Hash className="w-3.5 h-3.5 text-terracotta-400" />
                 <span>Account ID</span>
               </div>
               <div className="text-base font-mono font-bold text-white">#{user.id}</div>
@@ -230,7 +230,7 @@ export const AuthSection: React.FC<AuthSectionProps> = ({
 
             <div className="bg-slate-950/80 p-4 rounded-2xl border border-slate-800/80">
               <div className="flex items-center space-x-2 text-slate-500 text-xs mb-1">
-                <Mail className="w-3.5 h-3.5 text-indigo-400" />
+                <Mail className="w-3.5 h-3.5 text-terracotta-400" />
                 <span>Email Address</span>
               </div>
               <div className="text-xs font-semibold text-white truncate" title={user.email}>
@@ -240,7 +240,7 @@ export const AuthSection: React.FC<AuthSectionProps> = ({
 
             <div className="bg-slate-950/80 p-4 rounded-2xl border border-slate-800/80">
               <div className="flex items-center space-x-2 text-slate-500 text-xs mb-1">
-                <Phone className="w-3.5 h-3.5 text-indigo-400" />
+                <Phone className="w-3.5 h-3.5 text-terracotta-400" />
                 <span>Phone Number</span>
               </div>
               <div className="text-xs font-mono font-semibold text-white">{user.phone}</div>
@@ -320,7 +320,7 @@ export const AuthSection: React.FC<AuthSectionProps> = ({
             }}
             className={`flex-1 py-2 text-xs font-semibold rounded-lg transition ${
               mode === 'login'
-                ? 'bg-indigo-600 text-white shadow-md'
+                ? 'bg-olive-600 text-bone-50 shadow-md'
                 : 'text-slate-400 hover:text-slate-200'
             }`}
           >
@@ -333,7 +333,7 @@ export const AuthSection: React.FC<AuthSectionProps> = ({
             }}
             className={`flex-1 py-2 text-xs font-semibold rounded-lg transition ${
               mode === 'register'
-                ? 'bg-indigo-600 text-white shadow-md'
+                ? 'bg-olive-600 text-bone-50 shadow-md'
                 : 'text-slate-400 hover:text-slate-200'
             }`}
           >
@@ -371,7 +371,7 @@ export const AuthSection: React.FC<AuthSectionProps> = ({
                   placeholder="e.g. johndoe or +1234567890"
                   value={loginIdentifier}
                   onChange={(e) => setLoginIdentifier(e.target.value)}
-                  className="w-full pl-9 pr-3 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500 transition"
+                  className="w-full pl-9 pr-3 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white placeholder-slate-500 focus:outline-none focus:border-olive-500 transition"
                 />
               </div>
               <p className="text-[11px] text-slate-500 mt-1">
@@ -391,7 +391,7 @@ export const AuthSection: React.FC<AuthSectionProps> = ({
                   placeholder="••••••••"
                   value={loginPassword}
                   onChange={(e) => setLoginPassword(e.target.value)}
-                  className="w-full pl-9 pr-10 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500 transition"
+                  className="w-full pl-9 pr-10 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white placeholder-slate-500 focus:outline-none focus:border-olive-500 transition"
                 />
                 <button
                   type="button"
@@ -406,7 +406,7 @@ export const AuthSection: React.FC<AuthSectionProps> = ({
             <button
               type="submit"
               disabled={loading}
-              className="w-full mt-2 py-2.5 bg-indigo-600 hover:bg-indigo-500 disabled:opacity-50 text-white font-medium rounded-xl text-xs transition shadow-lg shadow-indigo-600/25 flex items-center justify-center space-x-2"
+              className="w-full mt-2 py-2.5 bg-terracotta-600 hover:bg-terracotta-500 disabled:opacity-50 text-white font-medium rounded-xl text-xs transition shadow-lg shadow-terracotta-700/25 flex items-center justify-center space-x-2"
             >
               {loading && <RefreshCw className="w-3.5 h-3.5 animate-spin" />}
               <span>{loading ? 'Authenticating...' : 'Sign In to Artlife'}</span>
@@ -420,7 +420,7 @@ export const AuthSection: React.FC<AuthSectionProps> = ({
               <button
                 type="button"
                 onClick={autofillDemoAccount}
-                className="text-[11px] text-indigo-400 hover:underline flex items-center gap-1"
+                className="text-[11px] text-terracotta-400 hover:underline flex items-center gap-1"
               >
                 <Sparkles className="w-3 h-3" /> Autofill Demo Data
               </button>
@@ -435,7 +435,7 @@ export const AuthSection: React.FC<AuthSectionProps> = ({
                   placeholder="John"
                   value={regFirstName}
                   onChange={(e) => setRegFirstName(e.target.value)}
-                  className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500"
+                  className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white placeholder-slate-500 focus:outline-none focus:border-olive-500"
                 />
               </div>
               <div>
@@ -446,7 +446,7 @@ export const AuthSection: React.FC<AuthSectionProps> = ({
                   placeholder="Doe"
                   value={regLastName}
                   onChange={(e) => setRegLastName(e.target.value)}
-                  className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500"
+                  className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white placeholder-slate-500 focus:outline-none focus:border-olive-500"
                 />
               </div>
             </div>
@@ -463,7 +463,7 @@ export const AuthSection: React.FC<AuthSectionProps> = ({
                   placeholder="johndoe"
                   value={regUsername}
                   onChange={(e) => setRegUsername(e.target.value)}
-                  className="w-full pl-9 pr-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500"
+                  className="w-full pl-9 pr-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white placeholder-slate-500 focus:outline-none focus:border-olive-500"
                 />
               </div>
             </div>
@@ -479,7 +479,7 @@ export const AuthSection: React.FC<AuthSectionProps> = ({
                     placeholder="+1234567890"
                     value={regPhone}
                     onChange={(e) => setRegPhone(e.target.value)}
-                    className="w-full pl-9 pr-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500 font-mono"
+                    className="w-full pl-9 pr-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white placeholder-slate-500 focus:outline-none focus:border-olive-500 font-mono"
                   />
                 </div>
               </div>
@@ -493,7 +493,7 @@ export const AuthSection: React.FC<AuthSectionProps> = ({
                     placeholder="john@example.com"
                     value={regEmail}
                     onChange={(e) => setRegEmail(e.target.value)}
-                    className="w-full pl-9 pr-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500"
+                    className="w-full pl-9 pr-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white placeholder-slate-500 focus:outline-none focus:border-olive-500"
                   />
                 </div>
               </div>
@@ -511,7 +511,7 @@ export const AuthSection: React.FC<AuthSectionProps> = ({
                   placeholder="SecretPassword123!"
                   value={regPassword}
                   onChange={(e) => setRegPassword(e.target.value)}
-                  className="w-full pl-9 pr-9 py-2 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500"
+                  className="w-full pl-9 pr-9 py-2 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white placeholder-slate-500 focus:outline-none focus:border-olive-500"
                 />
                 <button
                   type="button"
@@ -530,7 +530,7 @@ export const AuthSection: React.FC<AuthSectionProps> = ({
                   type="checkbox"
                   checked={useCustomId}
                   onChange={(e) => setUseCustomId(e.target.checked)}
-                  className="rounded border-slate-700 bg-slate-950 text-indigo-600 focus:ring-0"
+                  className="rounded border-slate-700 bg-slate-950 text-terracotta-600 focus:ring-0"
                 />
                 <span>Specify Custom ID (otherwise auto-incremented by PostgreSQL)</span>
               </label>
@@ -540,7 +540,7 @@ export const AuthSection: React.FC<AuthSectionProps> = ({
                   placeholder="Custom ID integer (e.g. 5001)"
                   value={regCustomId}
                   onChange={(e) => setRegCustomId(e.target.value)}
-                  className="mt-2 w-full px-3 py-1.5 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white font-mono placeholder-slate-600 focus:outline-none focus:border-indigo-500"
+                  className="mt-2 w-full px-3 py-1.5 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white font-mono placeholder-slate-600 focus:outline-none focus:border-olive-500"
                 />
               )}
             </div>
@@ -548,7 +548,7 @@ export const AuthSection: React.FC<AuthSectionProps> = ({
             <button
               type="submit"
               disabled={loading}
-              className="w-full mt-3 py-2.5 bg-gradient-to-r from-indigo-600 to-indigo-500 hover:from-indigo-500 hover:to-indigo-400 disabled:opacity-50 text-white font-medium rounded-xl text-xs transition shadow-lg shadow-indigo-600/25 flex items-center justify-center space-x-2"
+              className="w-full mt-3 py-2.5 bg-gradient-to-r from-terracotta-600 to-terracotta-500 hover:from-terracotta-500 hover:to-terracotta-400 disabled:opacity-50 text-white font-medium rounded-xl text-xs transition shadow-lg shadow-terracotta-700/25 flex items-center justify-center space-x-2"
             >
               {loading && <RefreshCw className="w-3.5 h-3.5 animate-spin" />}
               <span>{loading ? 'Creating Account...' : 'Register Account'}</span>

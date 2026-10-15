@@ -107,7 +107,7 @@ export const AccountsDirectory: React.FC<AccountsDirectoryProps> = ({
         <div>
           <h1 className="text-xl font-bold text-white flex items-center gap-2">
             Accounts Directory
-            <span className="text-xs px-2.5 py-0.5 rounded-full bg-slate-800 text-indigo-400 border border-slate-700 font-mono">
+            <span className="text-xs px-2.5 py-0.5 rounded-full bg-slate-800 text-terracotta-400 border border-slate-700 font-mono">
               {filteredAccounts.length} visible / {accounts.length} fetched
             </span>
           </h1>
@@ -139,7 +139,7 @@ export const AccountsDirectory: React.FC<AccountsDirectoryProps> = ({
 
           <button
             onClick={onNavigateToRegister}
-            className="flex items-center space-x-1.5 px-3.5 py-2 rounded-xl bg-gradient-to-r from-indigo-600 to-indigo-500 hover:from-indigo-500 hover:to-indigo-400 text-white text-xs font-medium transition shadow-lg shadow-indigo-600/20"
+            className="flex items-center space-x-1.5 px-3.5 py-2 rounded-xl bg-gradient-to-r from-olive-600 to-terracotta-600 hover:from-olive-500 hover:to-terracotta-500 text-white text-xs font-medium transition shadow-lg shadow-olive-900/40"
           >
             <UserPlus className="w-3.5 h-3.5" />
             <span>Create New User</span>
@@ -156,7 +156,7 @@ export const AccountsDirectory: React.FC<AccountsDirectoryProps> = ({
             placeholder="Search by name, username, email, phone, ID..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full pl-9 pr-4 py-2 bg-slate-950/80 border border-slate-800 rounded-lg text-xs text-slate-200 placeholder-slate-500 focus:outline-none focus:border-indigo-500 transition"
+            className="w-full pl-9 pr-4 py-2 bg-slate-950/80 border border-slate-800 rounded-lg text-xs text-slate-200 placeholder-slate-500 focus:outline-none focus:border-olive-500 transition"
           />
         </div>
 
@@ -223,7 +223,7 @@ export const AccountsDirectory: React.FC<AccountsDirectoryProps> = ({
       <div className="bg-slate-900/70 border border-slate-800 rounded-2xl overflow-hidden shadow-xl shadow-black/30">
         {loading ? (
           <div className="py-20 flex flex-col items-center justify-center space-y-3">
-            <RefreshCw className="w-8 h-8 text-indigo-500 animate-spin" />
+            <RefreshCw className="w-8 h-8 text-terracotta-400 animate-spin" />
             <p className="text-sm text-slate-400">Loading registered accounts from backend...</p>
           </div>
         ) : filteredAccounts.length === 0 ? (
@@ -240,14 +240,14 @@ export const AccountsDirectory: React.FC<AccountsDirectoryProps> = ({
             {searchTerm ? (
               <button
                 onClick={() => setSearchTerm('')}
-                className="text-xs text-indigo-400 hover:underline"
+                className="text-xs text-terracotta-400 hover:underline"
               >
                 Clear filter
               </button>
             ) : (
               <button
                 onClick={onNavigateToRegister}
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-indigo-600 text-white text-xs font-medium hover:bg-indigo-500"
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-terracotta-600 text-bone-50 text-xs font-medium hover:bg-indigo-500"
               >
                 <UserPlus className="w-3.5 h-3.5" />
                 Register New Account
@@ -283,14 +283,14 @@ export const AccountsDirectory: React.FC<AccountsDirectoryProps> = ({
 
                       <td className="py-3.5 px-4">
                         <div className="flex items-center space-x-3">
-                          <div className="w-9 h-9 rounded-full bg-gradient-to-tr from-indigo-600 to-violet-600 flex items-center justify-center text-white font-bold text-xs shadow">
+                          <div className="w-9 h-9 rounded-full bg-gradient-to-tr from-olive-600 to-terracotta-600 flex items-center justify-center text-white font-bold text-xs shadow">
                             {initials || 'U'}
                           </div>
                           <div>
                             <div className="font-semibold text-slate-200">
                               {account.firstname} {account.lastname}
                             </div>
-                            <div className="text-[11px] text-indigo-400 font-mono">
+                            <div className="text-[11px] text-terracotta-400 font-mono">
                               @{account.username}
                             </div>
                           </div>
@@ -328,7 +328,7 @@ export const AccountsDirectory: React.FC<AccountsDirectoryProps> = ({
                           </button>
                           <button
                             onClick={() => onSelectUserForLogin(account.username)}
-                            className="px-2.5 py-1.5 rounded-lg bg-indigo-600/10 hover:bg-indigo-600/20 text-indigo-300 border border-indigo-500/20 text-[11px] font-medium transition"
+                            className="px-2.5 py-1.5 rounded-lg bg-olive-600/20 hover:bg-olive-600/30 text-olive-300 border border-olive-500/30 text-[11px] font-medium transition"
                             title="Prefill login with this username"
                           >
                             Sign In As
@@ -350,7 +350,7 @@ export const AccountsDirectory: React.FC<AccountsDirectoryProps> = ({
           <div className="bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-lg p-6 space-y-5 shadow-2xl relative">
             <div className="flex items-start justify-between">
               <div className="flex items-center space-x-3">
-                <div className="w-12 h-12 rounded-xl bg-gradient-to-tr from-indigo-600 to-purple-600 flex items-center justify-center text-white font-bold text-lg">
+                <div className="w-12 h-12 rounded-xl bg-gradient-to-tr from-olive-600 to-terracotta-600 flex items-center justify-center text-white font-bold text-lg">
                   {selectedAccount.firstname?.[0]}
                   {selectedAccount.lastname?.[0]}
                 </div>
@@ -358,7 +358,7 @@ export const AccountsDirectory: React.FC<AccountsDirectoryProps> = ({
                   <h3 className="text-base font-bold text-white">
                     {selectedAccount.firstname} {selectedAccount.lastname}
                   </h3>
-                  <p className="text-xs text-indigo-400 font-mono">@{selectedAccount.username}</p>
+                  <p className="text-xs text-terracotta-400 font-mono">@{selectedAccount.username}</p>
                 </div>
               </div>
               <button
@@ -441,7 +441,7 @@ export const AccountsDirectory: React.FC<AccountsDirectoryProps> = ({
                   onSelectUserForLogin(selectedAccount.username);
                   setSelectedAccount(null);
                 }}
-                className="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs font-medium"
+                className="px-4 py-2 bg-terracotta-600 hover:bg-terracotta-500 text-white rounded-xl text-xs font-medium"
               >
                 Sign In with @{selectedAccount.username}
               </button>

@@ -1,183 +1,222 @@
-import React from 'react';
-import { useAuth } from '../context/AuthContext';
+import React, { useState } from 'react';
 import {
-  Users,
-  Shield,
-  Terminal,
-  ExternalLink,
-  LogOut,
-  UserCheck,
-  Server,
-  RefreshCw,
+  Menu,
+  X,
+  Palette,
+  Home,
+  User,
+  Heart,
+  Mail,
+  ArrowRight,
 } from 'lucide-react';
 
+export type NavTab = 'home' | 'profile' | 'gallery' | 'tbri' | 'contact';
+
 interface NavbarProps {
-  activeTab: 'directory' | 'auth' | 'explorer';
-  setActiveTab: (tab: 'directory' | 'auth' | 'explorer') => void;
+  activeTab: NavTab;
+  setActiveTab: (tab: NavTab) => void;
 }
 
 export const Navbar: React.FC<NavbarProps> = ({ activeTab, setActiveTab }) => {
-  const { user, isAuthenticated, logout, health, healthLatency, checkHealth, baseUrl, setBaseUrl } =
-    useAuth();
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+  const handleTabClick = (tab: NavTab) => {
+    setActiveTab(tab);
+    setMobileMenuOpen(false);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
 
   return (
-    <header className="sticky top-0 z-50 bg-slate-900/90 backdrop-blur-md border-b border-slate-800">
+    <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-sand-200/80 shadow-sm transition-all duration-300">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16">
-          {/* Brand */}
-          <div className="flex items-center space-x-3">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-600 to-violet-500 flex items-center justify-center shadow-lg shadow-indigo-500/20">
-              <Shield className="w-5 h-5 text-white" />
+        <div className="flex items-center justify-between h-20">
+          {/* Brand Logo & Artist Title */}
+          <div
+            onClick={() => handleTabClick('home')}
+            className="flex items-center space-x-3.5 cursor-pointer group"
+          >
+            <div className="relative w-12 h-12 rounded-full p-0.5 bg-gradient-to-tr from-olive via-sand to-terracotta shadow-md group-hover:scale-105 transition-transform duration-300">
+              <img
+                src="/artlife-logo.png"
+                alt="Artlife Fusion Emblem"
+                className="w-full h-full object-contain rounded-full bg-[#464A37]"
+              />
             </div>
             <div>
               <div className="flex items-center space-x-2">
-                <span className="text-lg font-bold bg-clip-text text-transparent bg-gradient-to-r from-white via-slate-100 to-slate-400">
-                  Artlife
+                <span className="text-xl font-serif font-bold tracking-tight text-midnight-900 group-hover:text-olive transition-colors">
+                  Artlife Fusion
                 </span>
-                <span className="text-xs px-2 py-0.5 rounded-full bg-indigo-500/10 text-indigo-400 font-mono border border-indigo-500/20">
-                  v1.0 API
+                <span className="text-[10px] uppercase font-semibold px-2 py-0.5 rounded-full bg-olive-50 text-olive-700 border border-olive-200 tracking-wider">
+                  Rwanda
                 </span>
               </div>
-              <p className="text-[11px] text-slate-400 hidden sm:block">User & Authentication Platform</p>
+              <p className="text-xs text-brown-600 font-serif italic">
+                Cedrick Gisimba • Visual Artist
+              </p>
             </div>
           </div>
 
-          {/* Navigation Tabs */}
-          <nav className="flex items-center space-x-1 sm:space-x-2">
+          {/* Desktop Navigation Links */}
+          <nav className="hidden md:flex items-center space-x-1 lg:space-x-2">
             <button
-              onClick={() => setActiveTab('directory')}
-              className={`flex items-center space-x-2 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
-                activeTab === 'directory'
-                  ? 'bg-indigo-600/20 text-indigo-300 border border-indigo-500/30'
-                  : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/60'
+              onClick={() => handleTabClick('home')}
+              className={`flex items-center space-x-1.5 px-3.5 py-2 rounded-xl text-sm font-medium transition-all ${
+                activeTab === 'home'
+                  ? 'bg-olive text-white shadow-sm font-semibold'
+                  : 'text-midnight-900/80 hover:text-olive hover:bg-bone-100'
               }`}
             >
-              <Users className="w-4 h-4" />
-              <span>Accounts</span>
+              <Home className="w-4 h-4" />
+              <span>Home</span>
             </button>
 
             <button
-              onClick={() => setActiveTab('auth')}
-              className={`flex items-center space-x-2 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
-                activeTab === 'auth'
-                  ? 'bg-indigo-600/20 text-indigo-300 border border-indigo-500/30'
-                  : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/60'
+              onClick={() => handleTabClick('profile')}
+              className={`flex items-center space-x-1.5 px-3.5 py-2 rounded-xl text-sm font-medium transition-all ${
+                activeTab === 'profile'
+                  ? 'bg-olive text-white shadow-sm font-semibold'
+                  : 'text-midnight-900/80 hover:text-olive hover:bg-bone-100'
               }`}
             >
-              <UserCheck className="w-4 h-4" />
-              <span>{isAuthenticated ? 'My Profile' : 'Auth & Login'}</span>
+              <User className="w-4 h-4" />
+              <span>My Profile</span>
             </button>
 
             <button
-              onClick={() => setActiveTab('explorer')}
-              className={`flex items-center space-x-2 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
-                activeTab === 'explorer'
-                  ? 'bg-indigo-600/20 text-indigo-300 border border-indigo-500/30'
-                  : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/60'
+              onClick={() => handleTabClick('gallery')}
+              className={`flex items-center space-x-1.5 px-3.5 py-2 rounded-xl text-sm font-medium transition-all ${
+                activeTab === 'gallery'
+                  ? 'bg-olive text-white shadow-sm font-semibold'
+                  : 'text-midnight-900/80 hover:text-olive hover:bg-bone-100'
               }`}
             >
-              <Terminal className="w-4 h-4" />
-              <span>API Explorer</span>
+              <Palette className="w-4 h-4" />
+              <span>Gallery</span>
+            </button>
+
+            <button
+              onClick={() => handleTabClick('tbri')}
+              className={`flex items-center space-x-1.5 px-3.5 py-2 rounded-xl text-sm font-medium transition-all ${
+                activeTab === 'tbri'
+                  ? 'bg-olive text-white shadow-sm font-semibold'
+                  : 'text-midnight-900/80 hover:text-olive hover:bg-bone-100'
+              }`}
+            >
+              <Heart className="w-4 h-4 text-terracotta" />
+              <span>TBRI & Mission</span>
+            </button>
+
+            <button
+              onClick={() => handleTabClick('contact')}
+              className={`flex items-center space-x-1.5 px-3.5 py-2 rounded-xl text-sm font-medium transition-all ${
+                activeTab === 'contact'
+                  ? 'bg-olive text-white shadow-sm font-semibold'
+                  : 'text-midnight-900/80 hover:text-olive hover:bg-bone-100'
+              }`}
+            >
+              <Mail className="w-4 h-4" />
+              <span>Contact Us</span>
             </button>
           </nav>
 
-          {/* Health & User actions */}
-          <div className="flex items-center space-x-3">
-            {/* Backend health status badge */}
-            <div className="hidden md:flex items-center space-x-2 bg-slate-800/80 border border-slate-700/60 rounded-full px-3 py-1 text-xs">
-              <span
-                className={`w-2 h-2 rounded-full ${
-                  health?.status === 'healthy' ? 'bg-emerald-400 animate-pulse' : 'bg-rose-400'
-                }`}
-              />
-              <span className="text-slate-300 font-medium">
-                {health?.status === 'healthy' ? (
-                  <>
-                    API Live <span className="text-slate-500">({health.database})</span>
-                  </>
-                ) : (
-                  'Checking...'
-                )}
-              </span>
-              {healthLatency !== null && (
-                <span className="text-slate-400 text-[10px] font-mono border-l border-slate-700 pl-2">
-                  {healthLatency}ms
-                </span>
-              )}
-              <button
-                onClick={() => checkHealth()}
-                title="Ping backend"
-                className="text-slate-400 hover:text-indigo-400 transition-colors"
-              >
-                <RefreshCw className="w-3 h-3" />
-              </button>
-            </div>
-
-            {/* Direct / Proxy Selector */}
-            <div className="hidden lg:flex items-center space-x-1.5 text-xs text-slate-400 bg-slate-800/40 px-2 py-1 rounded-md border border-slate-800">
-              <Server className="w-3.5 h-3.5 text-slate-400" />
-              <select
-                value={baseUrl}
-                onChange={(e) => setBaseUrl(e.target.value)}
-                className="bg-transparent text-slate-300 text-xs focus:outline-none cursor-pointer"
-              >
-                <option value="https://gogo.mababa.app" className="bg-slate-900 text-slate-200">
-                  Direct: gogo.mababa.app
-                </option>
-                <option value="/api" className="bg-slate-900 text-slate-200">
-                  Vite Proxy (/api)
-                </option>
-              </select>
-            </div>
-
-            {/* External docs link */}
-            <a
-              href="https://gogo.mababa.app/docs"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="p-2 text-slate-400 hover:text-slate-200 hover:bg-slate-800 rounded-lg transition-colors hidden sm:flex items-center gap-1 text-xs"
-              title="Open Backend Swagger Docs"
+          {/* Desktop Right CTA Action */}
+          <div className="hidden md:flex items-center space-x-3">
+            <button
+              onClick={() => handleTabClick('contact')}
+              className="inline-flex items-center space-x-2 px-4 py-2 rounded-xl bg-terracotta hover:bg-terracotta-600 text-white text-xs font-semibold shadow-md shadow-terracotta/20 transition-all active:scale-95"
             >
-              <span>Docs</span>
-              <ExternalLink className="w-3.5 h-3.5" />
-            </a>
+              <span>Get in Touch</span>
+              <ArrowRight className="w-3.5 h-3.5" />
+            </button>
+          </div>
 
-            {/* User Account / Logout */}
-            {isAuthenticated && user ? (
-              <div className="flex items-center space-x-2 pl-2 border-l border-slate-800">
-                <div
-                  onClick={() => setActiveTab('auth')}
-                  className="cursor-pointer flex items-center space-x-2 hover:opacity-80 transition"
-                >
-                  <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-indigo-500 to-purple-600 flex items-center justify-center text-white text-xs font-semibold shadow-inner">
-                    {user.firstname?.[0] || 'U'}
-                    {user.lastname?.[0] || ''}
-                  </div>
-                  <div className="hidden xl:block text-left">
-                    <p className="text-xs font-medium text-slate-200 leading-tight">
-                      {user.firstname} {user.lastname}
-                    </p>
-                    <p className="text-[10px] text-slate-400 font-mono">@{user.username}</p>
-                  </div>
-                </div>
-                <button
-                  onClick={logout}
-                  title="Sign out"
-                  className="p-1.5 text-slate-400 hover:text-rose-400 hover:bg-rose-500/10 rounded-lg transition-colors"
-                >
-                  <LogOut className="w-4 h-4" />
-                </button>
-              </div>
-            ) : (
-              <button
-                onClick={() => setActiveTab('auth')}
-                className="px-3 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-medium transition shadow-md shadow-indigo-600/20"
-              >
-                Sign In
-              </button>
-            )}
+          {/* Mobile Hamburger Toggle */}
+          <div className="flex md:hidden items-center space-x-2">
+            <button
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              className="p-2.5 rounded-xl text-midnight-900 hover:bg-bone-100 border border-sand-300 transition"
+              aria-label="Toggle navigation menu"
+            >
+              {mobileMenuOpen ? <X className="w-5 h-5 text-terracotta" /> : <Menu className="w-5 h-5 text-olive" />}
+            </button>
           </div>
         </div>
+
+        {/* Mobile Navigation Drawer */}
+        {mobileMenuOpen && (
+          <div className="md:hidden py-4 border-t border-sand-200 space-y-1.5 animate-fadeIn bg-white">
+            <button
+              onClick={() => handleTabClick('home')}
+              className={`w-full flex items-center space-x-3 px-4 py-2.5 rounded-xl text-sm font-medium transition ${
+                activeTab === 'home'
+                  ? 'bg-olive text-white font-semibold'
+                  : 'text-midnight-900 hover:bg-bone-100'
+              }`}
+            >
+              <Home className="w-4 h-4" />
+              <span>Home</span>
+            </button>
+
+            <button
+              onClick={() => handleTabClick('profile')}
+              className={`w-full flex items-center space-x-3 px-4 py-2.5 rounded-xl text-sm font-medium transition ${
+                activeTab === 'profile'
+                  ? 'bg-olive text-white font-semibold'
+                  : 'text-midnight-900 hover:bg-bone-100'
+              }`}
+            >
+              <User className="w-4 h-4" />
+              <span>My Profile & Story</span>
+            </button>
+
+            <button
+              onClick={() => handleTabClick('gallery')}
+              className={`w-full flex items-center space-x-3 px-4 py-2.5 rounded-xl text-sm font-medium transition ${
+                activeTab === 'gallery'
+                  ? 'bg-olive text-white font-semibold'
+                  : 'text-midnight-900 hover:bg-bone-100'
+              }`}
+            >
+              <Palette className="w-4 h-4" />
+              <span>Artwork Gallery</span>
+            </button>
+
+            <button
+              onClick={() => handleTabClick('tbri')}
+              className={`w-full flex items-center space-x-3 px-4 py-2.5 rounded-xl text-sm font-medium transition ${
+                activeTab === 'tbri'
+                  ? 'bg-olive text-white font-semibold'
+                  : 'text-midnight-900 hover:bg-bone-100'
+              }`}
+            >
+              <Heart className="w-4 h-4 text-terracotta" />
+              <span>TBRI & Children Mission</span>
+            </button>
+
+            <button
+              onClick={() => handleTabClick('contact')}
+              className={`w-full flex items-center space-x-3 px-4 py-2.5 rounded-xl text-sm font-medium transition ${
+                activeTab === 'contact'
+                  ? 'bg-olive text-white font-semibold'
+                  : 'text-midnight-900 hover:bg-bone-100'
+              }`}
+            >
+              <Mail className="w-4 h-4" />
+              <span>Contact & Studio</span>
+            </button>
+
+            <div className="pt-2 px-4">
+              <button
+                onClick={() => handleTabClick('contact')}
+                className="w-full flex items-center justify-center space-x-2 py-2.5 rounded-xl bg-terracotta hover:bg-terracotta-600 text-white text-xs font-semibold shadow-md transition"
+              >
+                <span>Studio Inquiries & Commissions</span>
+                <ArrowRight className="w-3.5 h-3.5" />
+              </button>
+            </div>
+          </div>
+        )}
       </div>
     </header>
   );
