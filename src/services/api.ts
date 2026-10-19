@@ -74,7 +74,7 @@ export function parseApiError(error: unknown): string {
       return 'Unauthorized: Invalid credentials or session expired.';
     }
     if (axiosErr.response?.status === 409) {
-      return 'Conflict: Username, email, phone, or custom ID already exists.';
+      return 'Conflict: Email, phone, or custom ID already exists.';
     }
     return axiosErr.message || 'An unknown network error occurred';
   }

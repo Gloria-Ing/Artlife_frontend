@@ -5,6 +5,7 @@ import { MyProfile } from './components/MyProfile';
 import { Gallery } from './components/Gallery';
 import { TBRIMission } from './components/TBRIMission';
 import { ContactUs } from './components/ContactUs';
+import { AuthSection } from './components/AuthSection';
 import { Palette, Heart, Mail, Home as HomeIcon, User, MapPin } from 'lucide-react';
 
 export default function App() {
@@ -27,6 +28,7 @@ export default function App() {
         {activeTab === 'gallery' && <Gallery onNavigate={handleNavigate} />}
         {activeTab === 'tbri' && <TBRIMission onNavigate={handleNavigate} />}
         {activeTab === 'contact' && <ContactUs />}
+        {activeTab === 'account' && <AuthSection />}
       </main>
 
       {/* Elegant Fine-Art Footer */}
@@ -86,6 +88,14 @@ export default function App() {
               <span>TBRI Mission</span>
             </button>
             <span className="text-sand-400">•</span>
+            <button
+              onClick={() => handleNavigate('account')}
+              className="text-brown-700 hover:text-olive transition flex items-center gap-1"
+            >
+              <User className="w-3.5 h-3.5" />
+              <span>Account</span>
+            </button>
+            <span className="text-sand-400">â€¢</span>
             <button
               onClick={() => handleNavigate('contact')}
               className="text-brown-700 hover:text-olive transition flex items-center gap-1"

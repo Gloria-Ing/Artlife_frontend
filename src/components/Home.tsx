@@ -12,6 +12,7 @@ import {
   Quote,
   CheckCircle2,
   Calendar,
+  UserPlus,
 } from 'lucide-react';
 
 interface HomeProps {
@@ -95,6 +96,14 @@ export const Home: React.FC<HomeProps> = ({ onNavigate }) => {
               >
                 <Palette className="w-4 h-4 text-terracotta" />
                 <span>View Artworks</span>
+              </button>
+
+              <button
+                onClick={() => onNavigate('account')}
+                className="inline-flex items-center space-x-2 px-5 py-3 rounded-xl bg-midnight-900 hover:bg-midnight-800 text-white text-sm font-semibold shadow-md shadow-midnight-900/20 transition-all active:scale-95"
+              >
+                <UserPlus className="w-4 h-4" />
+                <span>Create Account</span>
               </button>
 
               <button

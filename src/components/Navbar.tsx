@@ -8,9 +8,10 @@ import {
   Heart,
   Mail,
   ArrowRight,
+  LogIn,
 } from 'lucide-react';
 
-export type NavTab = 'home' | 'profile' | 'gallery' | 'tbri' | 'contact';
+export type NavTab = 'home' | 'profile' | 'gallery' | 'tbri' | 'contact' | 'account';
 
 interface NavbarProps {
   activeTab: NavTab;
@@ -108,6 +109,18 @@ export const Navbar: React.FC<NavbarProps> = ({ activeTab, setActiveTab }) => {
             </button>
 
             <button
+              onClick={() => handleTabClick('account')}
+              className={`flex items-center space-x-1.5 px-3.5 py-2 rounded-xl text-sm font-medium transition-all ${
+                activeTab === 'account'
+                  ? 'bg-olive text-white shadow-sm font-semibold'
+                  : 'text-midnight-900/80 hover:text-olive hover:bg-bone-100'
+              }`}
+            >
+              <LogIn className="w-4 h-4" />
+              <span>Account</span>
+            </button>
+
+            <button
               onClick={() => handleTabClick('contact')}
               className={`flex items-center space-x-1.5 px-3.5 py-2 rounded-xl text-sm font-medium transition-all ${
                 activeTab === 'contact'
@@ -192,6 +205,18 @@ export const Navbar: React.FC<NavbarProps> = ({ activeTab, setActiveTab }) => {
             >
               <Heart className="w-4 h-4 text-terracotta" />
               <span>TBRI & Children Mission</span>
+            </button>
+
+            <button
+              onClick={() => handleTabClick('account')}
+              className={`w-full flex items-center space-x-3 px-4 py-2.5 rounded-xl text-sm font-medium transition ${
+                activeTab === 'account'
+                  ? 'bg-olive text-white font-semibold'
+                  : 'text-midnight-900 hover:bg-bone-100'
+              }`}
+            >
+              <LogIn className="w-4 h-4" />
+              <span>Account Login</span>
             </button>
 
             <button

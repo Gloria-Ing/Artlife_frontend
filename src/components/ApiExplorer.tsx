@@ -63,13 +63,12 @@ const ENDPOINTS: EndpointConfig[] = [
     name: 'Register Account',
     method: 'POST',
     path: '/register',
-    description: 'Create a new user account with firstname, lastname, username, phone, email, and password.',
+    description: 'Create a new user account with firstname, lastname, phone, email, and password.',
     requiresAuth: false,
     defaultBody: JSON.stringify(
       {
         firstname: 'Test',
         lastname: 'Explorer',
-        username: `tester_${Math.floor(1000 + Math.random() * 9000)}`,
         phone: `+1202555${Math.floor(1000 + Math.random() * 9000)}`,
         email: `tester_${Math.floor(1000 + Math.random() * 9000)}@example.com`,
         password: 'Password123!',
@@ -83,11 +82,11 @@ const ENDPOINTS: EndpointConfig[] = [
     name: 'Login User',
     method: 'POST',
     path: '/login',
-    description: 'Authenticate a user using their username OR phone number alongside their password.',
+    description: 'Authenticate a user using their email address and password.',
     requiresAuth: false,
     defaultBody: JSON.stringify(
       {
-        username_or_phone: 'johndoe',
+        email: 'john.doe@example.com',
         password: 'SecretPassword123!',
       },
       null,

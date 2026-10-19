@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import {
   Lock,
-  User,
   Mail,
   Phone,
   Eye,
@@ -45,7 +44,6 @@ export const AuthSection: React.FC<AuthSectionProps> = ({
   // Register form state
   const [regFirstName, setRegFirstName] = useState('');
   const [regLastName, setRegLastName] = useState('');
-  const [regUsername, setRegUsername] = useState('');
   const [regPhone, setRegPhone] = useState('');
   const [regEmail, setRegEmail] = useState('');
   const [regPassword, setRegPassword] = useState('');
@@ -80,15 +78,14 @@ export const AuthSection: React.FC<AuthSectionProps> = ({
     setSuccessMessage(null);
 
     if (!loginIdentifier.trim() || !loginPassword.trim()) {
-      setErrorMessage('Please enter your username/phone and password.');
+      setErrorMessage('Please enter your email and password.');
       return;
     }
 
     try {
       setLoading(true);
       await login({
-        username_or_phone: loginIdentifier.trim(),
-        username: loginIdentifier.trim(),
+        email: loginIdentifier.trim(),
         password: loginPassword,
       });
       setSuccessMessage('Successfully signed in!');
@@ -106,12 +103,8 @@ export const AuthSection: React.FC<AuthSectionProps> = ({
     setSuccessMessage(null);
 
     // Frontend validation hints
-    if (regUsername.trim().length < 3) {
-      setErrorMessage('Username must be at least 3 characters.');
-      return;
-    }
-    if (regPassword.length < 6) {
-      setErrorMessage('Password must be at least 6 characters.');
+    if (regPassword.length < 8) {
+      setErrorMessage('Password must be at least 8 characters.');
       return;
     }
     if (regPhone.trim().length < 5) {
@@ -124,14 +117,13 @@ export const AuthSection: React.FC<AuthSectionProps> = ({
       const newAcc = await register({
         firstname: regFirstName.trim(),
         lastname: regLastName.trim(),
-        username: regUsername.trim(),
         phone: regPhone.trim(),
         email: regEmail.trim(),
         password: regPassword,
         id: useCustomId && regCustomId ? Number(regCustomId) : null,
       });
 
-      setSuccessMessage(`Account #${newAcc.id} (@${newAcc.username}) created successfully! Logging you in...`);
+      setSuccessMessage(`Account #${newAcc.id} created successfully! Logging you in...`);
       if (onAccountCreated) {
         onAccountCreated();
       }
@@ -139,13 +131,12 @@ export const AuthSection: React.FC<AuthSectionProps> = ({
       // Automatically sign in with newly created credentials
       try {
         await login({
-          username: regUsername.trim(),
-          username_or_phone: regUsername.trim(),
+          email: regEmail.trim(),
           password: regPassword,
         });
       } catch {
         // Switch to login tab if auto-login fails
-        setLoginIdentifier(regUsername.trim());
+        setLoginIdentifier(regEmail.trim());
         setMode('login');
       }
     } catch (err: unknown) {
@@ -165,7 +156,6 @@ export const AuthSection: React.FC<AuthSectionProps> = ({
     const rand = Math.floor(1000 + Math.random() * 9000);
     setRegFirstName('Alex');
     setRegLastName('Dev');
-    setRegUsername(`alex_${rand}`);
     setRegPhone(`+1555000${rand}`);
     setRegEmail(`alex_${rand}@example.com`);
     setRegPassword('SecretPass123!');
@@ -195,7 +185,7 @@ export const AuthSection: React.FC<AuthSectionProps> = ({
                     Active Session
                   </span>
                 </div>
-                <p className="text-sm text-terracotta-400 font-mono mt-0.5">@{user.username}</p>
+                <p className="text-sm text-terracotta-400 font-mono mt-0.5">{user.email}</p>
               </div>
             </div>
 
@@ -361,21 +351,21 @@ export const AuthSection: React.FC<AuthSectionProps> = ({
           <form onSubmit={handleLoginSubmit} className="space-y-4">
             <div>
               <label className="block text-xs font-medium text-slate-300 mb-1.5">
-                Username or Phone Number
+                Email Address
               </label>
               <div className="relative">
-                <User className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" />
+                <Mail className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" />
                 <input
-                  type="text"
+                  type="email"
                   required
-                  placeholder="e.g. johndoe or +1234567890"
+                  placeholder="john.doe@example.com"
                   value={loginIdentifier}
                   onChange={(e) => setLoginIdentifier(e.target.value)}
                   className="w-full pl-9 pr-3 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white placeholder-slate-500 focus:outline-none focus:border-olive-500 transition"
                 />
               </div>
               <p className="text-[11px] text-slate-500 mt-1">
-                Supports either your registered username or phone.
+                Sign in with the email address used during registration.
               </p>
             </div>
 
@@ -451,23 +441,6 @@ export const AuthSection: React.FC<AuthSectionProps> = ({
               </div>
             </div>
 
-            <div>
-              <label className="block text-[11px] font-medium text-slate-300 mb-1">
-                Username <span className="text-slate-500 font-normal">(min 3 chars)</span>
-              </label>
-              <div className="relative">
-                <User className="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" />
-                <input
-                  type="text"
-                  required
-                  placeholder="johndoe"
-                  value={regUsername}
-                  onChange={(e) => setRegUsername(e.target.value)}
-                  className="w-full pl-9 pr-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white placeholder-slate-500 focus:outline-none focus:border-olive-500"
-                />
-              </div>
-            </div>
-
             <div className="grid grid-cols-2 gap-3">
               <div>
                 <label className="block text-[11px] font-medium text-slate-300 mb-1">Phone</label>
@@ -501,7 +474,7 @@ export const AuthSection: React.FC<AuthSectionProps> = ({
 
             <div>
               <label className="block text-[11px] font-medium text-slate-300 mb-1">
-                Password <span className="text-slate-500 font-normal">(min 6 chars)</span>
+                Password <span className="text-slate-500 font-normal">(min 8 chars)</span>
               </label>
               <div className="relative">
                 <Lock className="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" />
@@ -551,7 +524,7 @@ export const AuthSection: React.FC<AuthSectionProps> = ({
               className="w-full mt-3 py-2.5 bg-gradient-to-r from-terracotta-600 to-terracotta-500 hover:from-terracotta-500 hover:to-terracotta-400 disabled:opacity-50 text-white font-medium rounded-xl text-xs transition shadow-lg shadow-terracotta-700/25 flex items-center justify-center space-x-2"
             >
               {loading && <RefreshCw className="w-3.5 h-3.5 animate-spin" />}
-              <span>{loading ? 'Creating Account...' : 'Register Account'}</span>
+              <span>{loading ? 'Creating Account...' : 'Register Account & Sign In'}</span>
             </button>
           </form>
         )}

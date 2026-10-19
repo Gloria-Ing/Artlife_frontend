@@ -19,7 +19,7 @@ import {
 } from 'lucide-react';
 
 interface AccountsDirectoryProps {
-  onSelectUserForLogin: (username: string) => void;
+  onSelectUserForLogin: (email: string) => void;
   onNavigateToRegister: () => void;
   onAccountsLoaded?: (count: number) => void;
 }
@@ -67,7 +67,6 @@ export const AccountsDirectory: React.FC<AccountsDirectoryProps> = ({
   const filteredAccounts = accounts.filter((acc) => {
     const term = searchTerm.toLowerCase();
     return (
-      acc.username?.toLowerCase().includes(term) ||
       acc.firstname?.toLowerCase().includes(term) ||
       acc.lastname?.toLowerCase().includes(term) ||
       acc.email?.toLowerCase().includes(term) ||
@@ -153,7 +152,7 @@ export const AccountsDirectory: React.FC<AccountsDirectoryProps> = ({
           <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" />
           <input
             type="text"
-            placeholder="Search by name, username, email, phone, ID..."
+            placeholder="Search by name, email, phone, ID..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className="w-full pl-9 pr-4 py-2 bg-slate-950/80 border border-slate-800 rounded-lg text-xs text-slate-200 placeholder-slate-500 focus:outline-none focus:border-olive-500 transition"
@@ -291,7 +290,7 @@ export const AccountsDirectory: React.FC<AccountsDirectoryProps> = ({
                               {account.firstname} {account.lastname}
                             </div>
                             <div className="text-[11px] text-terracotta-400 font-mono">
-                              @{account.username}
+                              {account.role || 'user'}
                             </div>
                           </div>
                         </div>
@@ -327,9 +326,9 @@ export const AccountsDirectory: React.FC<AccountsDirectoryProps> = ({
                             <Eye className="w-3.5 h-3.5" />
                           </button>
                           <button
-                            onClick={() => onSelectUserForLogin(account.username)}
+                            onClick={() => onSelectUserForLogin(account.email)}
                             className="px-2.5 py-1.5 rounded-lg bg-olive-600/20 hover:bg-olive-600/30 text-olive-300 border border-olive-500/30 text-[11px] font-medium transition"
-                            title="Prefill login with this username"
+                            title="Prefill login with this email"
                           >
                             Sign In As
                           </button>
@@ -358,7 +357,7 @@ export const AccountsDirectory: React.FC<AccountsDirectoryProps> = ({
                   <h3 className="text-base font-bold text-white">
                     {selectedAccount.firstname} {selectedAccount.lastname}
                   </h3>
-                  <p className="text-xs text-terracotta-400 font-mono">@{selectedAccount.username}</p>
+                  <p className="text-xs text-terracotta-400 font-mono">{selectedAccount.email}</p>
                 </div>
               </div>
               <button
@@ -438,12 +437,12 @@ export const AccountsDirectory: React.FC<AccountsDirectoryProps> = ({
             <div className="flex justify-end space-x-2 pt-2 border-t border-slate-800">
               <button
                 onClick={() => {
-                  onSelectUserForLogin(selectedAccount.username);
+                  onSelectUserForLogin(selectedAccount.email);
                   setSelectedAccount(null);
                 }}
                 className="px-4 py-2 bg-terracotta-600 hover:bg-terracotta-500 text-white rounded-xl text-xs font-medium"
               >
-                Sign In with @{selectedAccount.username}
+                Sign In with {selectedAccount.email}
               </button>
               <button
                 onClick={() => setSelectedAccount(null)}

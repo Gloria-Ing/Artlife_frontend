@@ -2,9 +2,10 @@ export interface AccountResponse {
   id: number;
   firstname: string;
   lastname: string;
-  username: string;
+  username?: string | null;
   phone: string;
   email: string;
+  role: 'user' | 'admin' | string;
   created_at: string | null;
   updated_at: string | null;
 }
@@ -13,16 +14,13 @@ export interface AccountCreate {
   id?: number | null;
   firstname: string;
   lastname: string;
-  username: string;
   phone: string;
   email: string;
   password: string;
 }
 
 export interface LoginRequest {
-  username_or_phone?: string | null;
-  username?: string | null;
-  phone?: string | null;
+  email: string;
   password: string;
 }
 
