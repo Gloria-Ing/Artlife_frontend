@@ -1,25 +1,44 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import type { NavTab } from './Navbar';
+import type { GalleryCategory, GalleryProductCreate, GalleryStatus } from '../types/api';
+import { apiService, parseApiError } from '../services/api';
+import { useAuth } from '../context/AuthContext';
 import {
   Palette,
   ArrowRight,
   Maximize2,
   X,
   Info,
+  Plus,
+  Save,
+  AlertCircle,
+  CheckCircle2,
 } from 'lucide-react';
 
 interface Artwork {
-  id: string;
+  id: string | number;
   title: string;
   series: string;
-  category: 'children' | 'abstract' | 'figurative' | 'heritage';
+  category: GalleryCategory;
   year: string;
   medium: string;
   dimensions: string;
-  status: 'Available' | 'Private Collection' | 'Exhibition Feature';
+  status: GalleryStatus;
   story: string;
   colors: string[];
 }
+
+const EMPTY_PRODUCT: GalleryProductCreate = {
+  title: '',
+  series: '',
+  category: 'children',
+  year: new Date().getFullYear().toString(),
+  medium: '',
+  dimensions: '',
+  status: 'Available',
+  story: '',
+  colors: ['#111111', '#6C705B', '#A56A4F', '#D8C8B4'],
+};
 
 const ARTWORKS: Artwork[] = [
   {
@@ -101,13 +120,112 @@ interface GalleryProps {
 }
 
 export const Gallery: React.FC<GalleryProps> = ({ onNavigate }) => {
+  const { isAuthenticated, user } = useAuth();
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [activeModalArtwork, setActiveModalArtwork] = useState<Artwork | null>(null);
+  const [managedArtworks, setManagedArtworks] = useState<Artwork[]>([]);
+  const [newProduct, setNewProduct] = useState<GalleryProductCreate>(EMPTY_PRODUCT);
+  const [colorText, setColorText] = useState(EMPTY_PRODUCT.colors.join(', '));
+  const [createLoading, setCreateLoading] = useState(false);
+  const [createError, setCreateError] = useState<string | null>(null);
+  const [createSuccess, setCreateSuccess] = useState<string | null>(null);
+
+  const isAdmin = isAuthenticated && user?.role === 'admin';
+  const artworks = [...managedArtworks, ...ARTWORKS];
+
+  useEffect(() => {
+    let mounted = true;
+
+    apiService
+      .getGalleryProducts()
+      .then((products) => {
+        if (!mounted) return;
+        setManagedArtworks(
+          products.map((product) => ({
+            id: product.id,
+            title: product.title,
+            series: product.series,
+            category: product.category,
+            year: product.year,
+            medium: product.medium,
+            dimensions: product.dimensions,
+            status: product.status,
+            story: product.story,
+            colors: product.colors,
+          }))
+        );
+      })
+      .catch(() => {
+        // Keep the static gallery visible if the backend endpoint is not deployed yet.
+      });
+
+    return () => {
+      mounted = false;
+    };
+  }, []);
 
   const filteredArtworks =
     selectedCategory === 'all'
-      ? ARTWORKS
-      : ARTWORKS.filter((art) => art.category === selectedCategory);
+      ? artworks
+      : artworks.filter((art) => art.category === selectedCategory);
+
+  const handleProductFieldChange = <K extends keyof GalleryProductCreate>(
+    field: K,
+    value: GalleryProductCreate[K]
+  ) => {
+    setNewProduct((current) => ({ ...current, [field]: value }));
+  };
+
+  const resetProductForm = () => {
+    setNewProduct(EMPTY_PRODUCT);
+    setColorText(EMPTY_PRODUCT.colors.join(', '));
+  };
+
+  const handleCreateProduct = async (event: React.FormEvent) => {
+    event.preventDefault();
+    setCreateError(null);
+    setCreateSuccess(null);
+
+    const colors = colorText
+      .split(',')
+      .map((color) => color.trim())
+      .filter(Boolean);
+
+    if (colors.length === 0) {
+      setCreateError('Please add at least one palette color.');
+      return;
+    }
+
+    try {
+      setCreateLoading(true);
+      const created = await apiService.createGalleryProduct({
+        ...newProduct,
+        colors,
+      });
+
+      setManagedArtworks((current) => [
+        {
+          id: created.id,
+          title: created.title,
+          series: created.series,
+          category: created.category,
+          year: created.year,
+          medium: created.medium,
+          dimensions: created.dimensions,
+          status: created.status,
+          story: created.story,
+          colors: created.colors,
+        },
+        ...current,
+      ]);
+      setCreateSuccess(`${created.title} was added to the gallery.`);
+      resetProductForm();
+    } catch (err) {
+      setCreateError(parseApiError(err));
+    } finally {
+      setCreateLoading(false);
+    }
+  };
 
   return (
     <div className="space-y-12 pb-16 animate-fadeIn">
@@ -131,6 +249,164 @@ export const Gallery: React.FC<GalleryProps> = ({ onNavigate }) => {
       </section>
 
       {/* ================= CATEGORY FILTER TABS ================= */}
+      {isAdmin && (
+        <section className="bg-white rounded-3xl border border-sand-300 p-6 sm:p-8 shadow-lg space-y-5">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div>
+              <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-olive-100 text-olive-800 border border-olive-300 text-xs font-semibold">
+                <Plus className="w-3.5 h-3.5 text-terracotta" />
+                Admin Gallery Manager
+              </span>
+              <h2 className="text-2xl font-serif font-bold text-midnight-900 mt-3">
+                Add New Gallery Product
+              </h2>
+            </div>
+          </div>
+
+          {createError && (
+            <div className="flex items-start gap-2.5 p-3 rounded-xl bg-terracotta-50 border border-terracotta-200 text-terracotta-800 text-xs">
+              <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" />
+              <span>{createError}</span>
+            </div>
+          )}
+
+          {createSuccess && (
+            <div className="flex items-start gap-2.5 p-3 rounded-xl bg-olive-50 border border-olive-200 text-olive-800 text-xs">
+              <CheckCircle2 className="w-4 h-4 shrink-0 mt-0.5" />
+              <span>{createSuccess}</span>
+            </div>
+          )}
+
+          <form onSubmit={handleCreateProduct} className="grid grid-cols-1 lg:grid-cols-12 gap-4">
+            <div className="lg:col-span-4">
+              <label className="block text-[11px] font-semibold text-brown-700 mb-1">Title</label>
+              <input
+                type="text"
+                required
+                value={newProduct.title}
+                onChange={(event) => handleProductFieldChange('title', event.target.value)}
+                className="w-full px-3 py-2 bg-bone-50 border border-sand-300 rounded-xl text-xs text-midnight-900 placeholder-brown-400 focus:outline-none focus:border-olive focus:ring-2 focus:ring-olive/10"
+                placeholder="Artwork title"
+              />
+            </div>
+
+            <div className="lg:col-span-4">
+              <label className="block text-[11px] font-semibold text-brown-700 mb-1">Series</label>
+              <input
+                type="text"
+                required
+                value={newProduct.series}
+                onChange={(event) => handleProductFieldChange('series', event.target.value)}
+                className="w-full px-3 py-2 bg-bone-50 border border-sand-300 rounded-xl text-xs text-midnight-900 placeholder-brown-400 focus:outline-none focus:border-olive focus:ring-2 focus:ring-olive/10"
+                placeholder="Collection or series"
+              />
+            </div>
+
+            <div className="lg:col-span-2">
+              <label className="block text-[11px] font-semibold text-brown-700 mb-1">Year</label>
+              <input
+                type="text"
+                required
+                value={newProduct.year}
+                onChange={(event) => handleProductFieldChange('year', event.target.value)}
+                className="w-full px-3 py-2 bg-bone-50 border border-sand-300 rounded-xl text-xs text-midnight-900 placeholder-brown-400 focus:outline-none focus:border-olive focus:ring-2 focus:ring-olive/10"
+                placeholder="2026"
+              />
+            </div>
+
+            <div className="lg:col-span-2">
+              <label className="block text-[11px] font-semibold text-brown-700 mb-1">Category</label>
+              <select
+                value={newProduct.category}
+                onChange={(event) =>
+                  handleProductFieldChange('category', event.target.value as GalleryCategory)
+                }
+                className="w-full px-3 py-2 bg-bone-50 border border-sand-300 rounded-xl text-xs text-midnight-900 focus:outline-none focus:border-olive focus:ring-2 focus:ring-olive/10"
+              >
+                <option value="children">Children</option>
+                <option value="abstract">Abstract</option>
+                <option value="figurative">Figurative</option>
+                <option value="heritage">Heritage</option>
+              </select>
+            </div>
+
+            <div className="lg:col-span-4">
+              <label className="block text-[11px] font-semibold text-brown-700 mb-1">Medium</label>
+              <input
+                type="text"
+                required
+                value={newProduct.medium}
+                onChange={(event) => handleProductFieldChange('medium', event.target.value)}
+                className="w-full px-3 py-2 bg-bone-50 border border-sand-300 rounded-xl text-xs text-midnight-900 placeholder-brown-400 focus:outline-none focus:border-olive focus:ring-2 focus:ring-olive/10"
+                placeholder="Acrylic on canvas"
+              />
+            </div>
+
+            <div className="lg:col-span-3">
+              <label className="block text-[11px] font-semibold text-brown-700 mb-1">Dimensions</label>
+              <input
+                type="text"
+                required
+                value={newProduct.dimensions}
+                onChange={(event) => handleProductFieldChange('dimensions', event.target.value)}
+                className="w-full px-3 py-2 bg-bone-50 border border-sand-300 rounded-xl text-xs text-midnight-900 placeholder-brown-400 focus:outline-none focus:border-olive focus:ring-2 focus:ring-olive/10"
+                placeholder="100 x 80 cm"
+              />
+            </div>
+
+            <div className="lg:col-span-3">
+              <label className="block text-[11px] font-semibold text-brown-700 mb-1">Status</label>
+              <select
+                value={newProduct.status}
+                onChange={(event) =>
+                  handleProductFieldChange('status', event.target.value as GalleryStatus)
+                }
+                className="w-full px-3 py-2 bg-bone-50 border border-sand-300 rounded-xl text-xs text-midnight-900 focus:outline-none focus:border-olive focus:ring-2 focus:ring-olive/10"
+              >
+                <option value="Available">Available</option>
+                <option value="Private Collection">Private Collection</option>
+                <option value="Exhibition Feature">Exhibition Feature</option>
+              </select>
+            </div>
+
+            <div className="lg:col-span-2">
+              <label className="block text-[11px] font-semibold text-brown-700 mb-1">Palette</label>
+              <input
+                type="text"
+                required
+                value={colorText}
+                onChange={(event) => setColorText(event.target.value)}
+                className="w-full px-3 py-2 bg-bone-50 border border-sand-300 rounded-xl text-xs text-midnight-900 placeholder-brown-400 focus:outline-none focus:border-olive focus:ring-2 focus:ring-olive/10"
+                placeholder="#111111, #6C705B"
+              />
+            </div>
+
+            <div className="lg:col-span-12">
+              <label className="block text-[11px] font-semibold text-brown-700 mb-1">Story</label>
+              <textarea
+                required
+                rows={3}
+                value={newProduct.story}
+                onChange={(event) => handleProductFieldChange('story', event.target.value)}
+                className="w-full px-3 py-2 bg-bone-50 border border-sand-300 rounded-xl text-xs text-midnight-900 placeholder-brown-400 focus:outline-none focus:border-olive focus:ring-2 focus:ring-olive/10 resize-y"
+                placeholder="Short artwork story or product description"
+              />
+            </div>
+
+            <div className="lg:col-span-12 flex justify-end">
+              <button
+                type="submit"
+                disabled={createLoading}
+                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-terracotta hover:bg-terracotta-600 disabled:opacity-60 text-white text-xs font-semibold shadow-md shadow-terracotta/20 transition"
+              >
+                {createLoading ? <Save className="w-3.5 h-3.5 animate-pulse" /> : <Plus className="w-3.5 h-3.5" />}
+                <span>{createLoading ? 'Adding Product...' : 'Add Gallery Product'}</span>
+              </button>
+            </div>
+          </form>
+        </section>
+      )}
+
       <div className="flex items-center justify-start sm:justify-center gap-2 overflow-x-auto no-scrollbar pb-2">
         <button
           onClick={() => setSelectedCategory('all')}
@@ -140,7 +416,7 @@ export const Gallery: React.FC<GalleryProps> = ({ onNavigate }) => {
               : 'bg-white text-brown-700 hover:bg-bone-100 border border-sand-300'
           }`}
         >
-          All Collections ({ARTWORKS.length})
+          All Collections ({artworks.length})
         </button>
 
         <button

@@ -54,3 +54,25 @@ export interface ApiError {
   detail?: string | ValidationErrorItem[];
   message?: string;
 }
+
+export type GalleryCategory = 'children' | 'abstract' | 'figurative' | 'heritage';
+
+export type GalleryStatus = 'Available' | 'Private Collection' | 'Exhibition Feature';
+
+export interface GalleryProductCreate {
+  title: string;
+  series: string;
+  category: GalleryCategory;
+  year: string;
+  medium: string;
+  dimensions: string;
+  status: GalleryStatus;
+  story: string;
+  colors: string[];
+}
+
+export interface GalleryProductResponse extends GalleryProductCreate {
+  id: string | number;
+  created_at?: string | null;
+  updated_at?: string | null;
+}

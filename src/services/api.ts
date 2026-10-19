@@ -3,6 +3,8 @@ import type {
   AccountCreate,
   AccountResponse,
   HealthResponse,
+  GalleryProductCreate,
+  GalleryProductResponse,
   LoginRequest,
   LoginResponse,
   RootResponse,
@@ -127,6 +129,16 @@ export const apiService = {
     const response = await apiClient.get<AccountResponse[]>('/accounts', {
       params: { skip, limit },
     });
+    return response.data;
+  },
+
+  async getGalleryProducts(): Promise<GalleryProductResponse[]> {
+    const response = await apiClient.get<GalleryProductResponse[]>('/gallery/products');
+    return response.data;
+  },
+
+  async createGalleryProduct(data: GalleryProductCreate): Promise<GalleryProductResponse> {
+    const response = await apiClient.post<GalleryProductResponse>('/gallery/products', data);
     return response.data;
   },
 
