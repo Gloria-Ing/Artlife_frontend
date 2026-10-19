@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import type { NavTab } from './Navbar';
 import type { GalleryCategory, GalleryProductCreate, GalleryStatus } from '../types/api';
-import { apiService, parseApiError } from '../services/api';
+import { apiService, getStoredBaseUrl, parseApiError } from '../services/api';
 import { useAuth } from '../context/AuthContext';
 import {
   Palette,
@@ -34,7 +34,7 @@ const EMPTY_PRODUCT: GalleryProductCreate = {
   title: '',
   series: '',
   price: '',
-  image_url: '',
+  image_file: null,
   category: 'children',
   year: new Date().getFullYear().toString(),
   medium: '',
@@ -138,6 +138,14 @@ export const Gallery: React.FC<GalleryProps> = ({ onNavigate }) => {
   const isAdmin = isAuthenticated && user?.role === 'admin';
   const artworks = managedArtworks.length > 0 ? managedArtworks : ARTWORKS;
 
+  const resolveImageUrl = (imageUrl: string | null | undefined) => {
+    if (!imageUrl) return imageUrl;
+    if (/^(https?:|data:|blob:)/i.test(imageUrl)) return imageUrl;
+
+    const baseUrl = getStoredBaseUrl().replace(/\/$/, '');
+    return `${baseUrl}${imageUrl.startsWith('/') ? imageUrl : `/${imageUrl}`}`;
+  };
+
   useEffect(() => {
     let mounted = true;
 
@@ -151,7 +159,7 @@ export const Gallery: React.FC<GalleryProps> = ({ onNavigate }) => {
             title: product.title,
             series: product.series,
             price: product.price,
-            image_url: product.image_url,
+            image_url: resolveImageUrl(product.image_url),
             category: product.category,
             year: product.year,
             medium: product.medium,
@@ -203,6 +211,11 @@ export const Gallery: React.FC<GalleryProps> = ({ onNavigate }) => {
       return;
     }
 
+    if (!newProduct.image_file) {
+      setCreateError('Please choose an image from your computer.');
+      return;
+    }
+
     try {
       setCreateLoading(true);
       const created = await apiService.createGalleryProduct({
@@ -216,7 +229,7 @@ export const Gallery: React.FC<GalleryProps> = ({ onNavigate }) => {
           title: created.title,
           series: created.series,
           price: created.price,
-          image_url: created.image_url,
+          image_url: resolveImageUrl(created.image_url),
           category: created.category,
           year: created.year,
           medium: created.medium,
@@ -365,14 +378,15 @@ export const Gallery: React.FC<GalleryProps> = ({ onNavigate }) => {
             </div>
 
             <div className="lg:col-span-6">
-              <label className="block text-[11px] font-semibold text-brown-700 mb-1">Image URL</label>
+              <label className="block text-[11px] font-semibold text-brown-700 mb-1">Image</label>
               <input
-                type="url"
+                type="file"
+                accept="image/jpeg,image/png,image/webp,image/gif"
                 required
-                value={newProduct.image_url}
-                onChange={(event) => handleProductFieldChange('image_url', event.target.value)}
-                className="w-full px-3 py-2 bg-bone-50 border border-sand-300 rounded-xl text-xs text-midnight-900 placeholder-brown-400 focus:outline-none focus:border-olive focus:ring-2 focus:ring-olive/10"
-                placeholder="https://example.com/artwork.jpg"
+                onChange={(event) =>
+                  handleProductFieldChange('image_file', event.target.files?.[0] ?? null)
+                }
+                className="w-full px-3 py-2 bg-bone-50 border border-sand-300 rounded-xl text-xs text-midnight-900 file:mr-3 file:border-0 file:rounded-lg file:bg-olive file:px-3 file:py-1.5 file:text-xs file:font-semibold file:text-white focus:outline-none focus:border-olive focus:ring-2 focus:ring-olive/10"
               />
             </div>
 

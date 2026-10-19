@@ -63,7 +63,7 @@ export interface GalleryProductCreate {
   title: string;
   series: string;
   price: string;
-  image_url: string;
+  image_file: File | null;
   category: GalleryCategory;
   year: string;
   medium: string;
