@@ -156,13 +156,6 @@ export const Navbar: React.FC<NavbarProps> = ({ activeTab, setActiveTab }) => {
                 </span>
               </button>
             )}
-            <button
-              onClick={() => handleTabClick('contact')}
-              className="inline-flex items-center space-x-2 px-4 py-2 rounded-xl bg-terracotta hover:bg-terracotta-600 text-white text-xs font-semibold shadow-md shadow-terracotta/20 transition-all active:scale-95"
-            >
-              <span>Get in Touch</span>
-              <ArrowRight className="w-3.5 h-3.5" />
-            </button>
           </div>
 
           {/* Mobile Hamburger Toggle */}
