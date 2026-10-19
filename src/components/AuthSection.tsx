@@ -8,12 +8,8 @@ import {
   EyeOff,
   LogOut,
   RefreshCw,
-  Key,
-  Copy,
-  Check,
   CheckCircle2,
   AlertCircle,
-  Hash,
   Sparkles,
 } from 'lucide-react';
 
@@ -30,14 +26,13 @@ export const AuthSection: React.FC<AuthSectionProps> = ({
   onAccountCreated,
   onAuthenticated,
 }) => {
-  const { user, token, isAuthenticated, login, register, logout, refreshUser } = useAuth();
+  const { isAuthenticated, login, register, logout } = useAuth();
 
   const [mode, setMode] = useState<'login' | 'register'>(initialMode);
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
-  const [copiedToken, setCopiedToken] = useState(false);
 
   // Login form state
   const [loginIdentifier, setLoginIdentifier] = useState(prefilledUsername || '');
@@ -58,21 +53,6 @@ export const AuthSection: React.FC<AuthSectionProps> = ({
       setMode('login');
     }
   }, [prefilledUsername]);
-
-  // Decode JWT payload safely
-  const decodeJwtPayload = (jwtToken: string | null) => {
-    if (!jwtToken) return null;
-    try {
-      const parts = jwtToken.split('.');
-      if (parts.length >= 2) {
-        const payload = JSON.parse(atob(parts[1]));
-        return payload;
-      }
-    } catch {
-      return null;
-    }
-    return null;
-  };
 
   const handleLoginSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -150,12 +130,6 @@ export const AuthSection: React.FC<AuthSectionProps> = ({
     }
   };
 
-  const copyToClipboard = (text: string) => {
-    navigator.clipboard.writeText(text);
-    setCopiedToken(true);
-    setTimeout(() => setCopiedToken(false), 2000);
-  };
-
   const autofillDemoAccount = () => {
     const rand = Math.floor(1000 + Math.random() * 9000);
     setRegFirstName('Alex');
@@ -165,136 +139,24 @@ export const AuthSection: React.FC<AuthSectionProps> = ({
     setRegPassword('SecretPass123!');
   };
 
-  // 1. Authenticated User Profile View
-  if (isAuthenticated && user) {
-    const jwtPayload = decodeJwtPayload(token);
+  if (isAuthenticated) {
     return (
-      <div className="max-w-4xl mx-auto space-y-6 animate-fadeIn">
-        {/* Profile Card */}
-        <div className="bg-white border border-sand-300 rounded-3xl p-6 md:p-8 shadow-lg relative overflow-hidden">
-
-          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 pb-6 border-b border-sand-300">
-            <div className="flex items-center space-x-4">
-              <div className="w-16 h-16 rounded-2xl bg-gradient-to-tr from-olive via-sand to-terracotta flex items-center justify-center text-white text-2xl font-bold shadow-lg shadow-olive/20">
-                {user.firstname?.[0]}
-                {user.lastname?.[0]}
-              </div>
-              <div>
-                <div className="flex items-center space-x-3">
-                  <h2 className="text-2xl font-serif font-bold text-midnight-900">
-                    {user.firstname} {user.lastname}
-                  </h2>
-                  <span className="px-2.5 py-0.5 rounded-full bg-olive-100 text-olive-800 border border-olive-300 text-xs font-medium">
-                    Active Session
-                  </span>
-                </div>
-                <p className="text-sm text-terracotta font-mono mt-0.5">{user.email}</p>
-              </div>
-            </div>
-
-            <div className="flex items-center space-x-2 w-full sm:w-auto justify-end">
-              <button
-                onClick={() => refreshUser()}
-                className="flex items-center space-x-1.5 px-3.5 py-2 rounded-xl bg-bone-100 hover:bg-bone-200 text-midnight-900 text-xs font-medium transition border border-sand-300"
-                title="Verify live profile with GET /me"
-              >
-                <RefreshCw className="w-3.5 h-3.5" />
-                <span>Verify /me</span>
-              </button>
-              <button
-                onClick={logout}
-                className="flex items-center space-x-1.5 px-3.5 py-2 rounded-xl bg-terracotta-50 hover:bg-terracotta-100 text-terracotta border border-terracotta-200 text-xs font-medium transition"
-              >
-                <LogOut className="w-3.5 h-3.5" />
-                <span>Log Out</span>
-              </button>
-            </div>
+      <div className="max-w-md mx-auto animate-fadeIn">
+        <div className="bg-white border border-sand-300 rounded-3xl p-6 sm:p-8 shadow-lg text-center space-y-5">
+          <div className="w-14 h-14 rounded-full bg-olive-100 text-olive flex items-center justify-center mx-auto border border-olive-200">
+            <LogOut className="w-6 h-6" />
           </div>
-
-          {/* User Details Grid */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mt-6">
-            <div className="bg-bone-50 p-4 rounded-2xl border border-sand-300">
-              <div className="flex items-center space-x-2 text-brown-600 text-xs mb-1">
-                <Hash className="w-3.5 h-3.5 text-terracotta" />
-                <span>Account ID</span>
-              </div>
-              <div className="text-base font-mono font-bold text-midnight-900">#{user.id}</div>
-            </div>
-
-            <div className="bg-bone-50 p-4 rounded-2xl border border-sand-300">
-              <div className="flex items-center space-x-2 text-brown-600 text-xs mb-1">
-                <Mail className="w-3.5 h-3.5 text-terracotta" />
-                <span>Email Address</span>
-              </div>
-              <div className="text-xs font-semibold text-midnight-900 truncate" title={user.email}>
-                {user.email}
-              </div>
-            </div>
-
-            <div className="bg-bone-50 p-4 rounded-2xl border border-sand-300">
-              <div className="flex items-center space-x-2 text-brown-600 text-xs mb-1">
-                <Phone className="w-3.5 h-3.5 text-terracotta" />
-                <span>Phone Number</span>
-              </div>
-              <div className="text-xs font-mono font-semibold text-midnight-900">{user.phone}</div>
-            </div>
-
-            <div className="bg-bone-50 p-4 rounded-2xl border border-sand-300">
-              <div className="flex items-center space-x-2 text-brown-600 text-xs mb-1">
-                <CheckCircle2 className="w-3.5 h-3.5 text-olive" />
-                <span>Created At</span>
-              </div>
-              <div className="text-xs text-brown-700">
-                {user.created_at ? new Date(user.created_at).toLocaleDateString() : 'N/A'}
-              </div>
-            </div>
+          <div>
+            <h2 className="text-2xl font-serif font-bold text-midnight-900">Account</h2>
+            <p className="text-sm text-brown-600 mt-1">You are currently signed in.</p>
           </div>
-
-          {/* JWT Token Card */}
-          <div className="mt-6 bg-bone-100 border border-sand-300 rounded-2xl p-5 space-y-3">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-2">
-                <Key className="w-4 h-4 text-terracotta" />
-                <span className="text-xs font-semibold text-midnight-900">
-                  JWT Bearer Access Token
-                </span>
-                <span className="text-[10px] px-2 py-0.5 rounded bg-olive-100 text-olive-800 border border-olive-200 font-mono">
-                  Bearer
-                </span>
-              </div>
-              <button
-                onClick={() => token && copyToClipboard(token)}
-                className="flex items-center space-x-1.5 px-2.5 py-1 rounded-lg bg-white hover:bg-bone-50 text-brown-700 border border-sand-300 text-xs transition"
-              >
-                {copiedToken ? (
-                  <>
-                    <Check className="w-3.5 h-3.5 text-olive" />
-                    <span className="text-olive">Copied!</span>
-                  </>
-                ) : (
-                  <>
-                    <Copy className="w-3.5 h-3.5" />
-                    <span>Copy Token</span>
-                  </>
-                )}
-              </button>
-            </div>
-
-            <div className="bg-white p-3 rounded-xl border border-sand-300 text-[11px] font-mono text-brown-700 break-all select-all">
-              {token}
-            </div>
-
-            {jwtPayload && (
-              <div className="text-[11px] text-brown-700 bg-white p-3 rounded-xl border border-sand-300">
-                <span className="text-brown-600 font-semibold block mb-1">
-                  Decoded Token Payload Claims:
-                </span>
-                <pre className="text-olive font-mono text-[10px] overflow-x-auto">
-                  {JSON.stringify(jwtPayload, null, 2)}
-                </pre>
-              </div>
-            )}
-          </div>
+          <button
+            onClick={logout}
+            className="w-full inline-flex items-center justify-center space-x-2 py-2.5 rounded-xl bg-terracotta hover:bg-terracotta-600 text-white text-xs font-semibold shadow-md shadow-terracotta/20 transition"
+          >
+            <LogOut className="w-3.5 h-3.5" />
+            <span>Log Out</span>
+          </button>
         </div>
       </div>
     );

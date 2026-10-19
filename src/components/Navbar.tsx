@@ -9,11 +9,9 @@ import {
   Mail,
   ArrowRight,
   LogIn,
-  Database,
 } from 'lucide-react';
-import { useAuth } from '../context/AuthContext';
 
-export type NavTab = 'home' | 'profile' | 'gallery' | 'tbri' | 'contact' | 'account' | 'system';
+export type NavTab = 'home' | 'profile' | 'gallery' | 'tbri' | 'contact' | 'account';
 
 interface NavbarProps {
   activeTab: NavTab;
@@ -22,7 +20,6 @@ interface NavbarProps {
 
 export const Navbar: React.FC<NavbarProps> = ({ activeTab, setActiveTab }) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const { isAuthenticated } = useAuth();
 
   const handleTabClick = (tab: NavTab) => {
     setActiveTab(tab);
@@ -123,20 +120,6 @@ export const Navbar: React.FC<NavbarProps> = ({ activeTab, setActiveTab }) => {
               <span>Account</span>
             </button>
 
-            {isAuthenticated && (
-              <button
-                onClick={() => handleTabClick('system')}
-                className={`flex items-center space-x-1.5 px-3.5 py-2 rounded-xl text-sm font-medium transition-all ${
-                  activeTab === 'system'
-                    ? 'bg-olive text-white shadow-sm font-semibold'
-                    : 'text-midnight-900/80 hover:text-olive hover:bg-bone-100'
-                }`}
-              >
-                <Database className="w-4 h-4" />
-                <span>System</span>
-              </button>
-            )}
-
             <button
               onClick={() => handleTabClick('contact')}
               className={`flex items-center space-x-1.5 px-3.5 py-2 rounded-xl text-sm font-medium transition-all ${
@@ -235,20 +218,6 @@ export const Navbar: React.FC<NavbarProps> = ({ activeTab, setActiveTab }) => {
               <LogIn className="w-4 h-4" />
               <span>Account Login</span>
             </button>
-
-            {isAuthenticated && (
-              <button
-                onClick={() => handleTabClick('system')}
-                className={`w-full flex items-center space-x-3 px-4 py-2.5 rounded-xl text-sm font-medium transition ${
-                  activeTab === 'system'
-                    ? 'bg-olive text-white font-semibold'
-                    : 'text-midnight-900 hover:bg-bone-100'
-                }`}
-              >
-                <Database className="w-4 h-4" />
-                <span>System</span>
-              </button>
-            )}
 
             <button
               onClick={() => handleTabClick('contact')}
