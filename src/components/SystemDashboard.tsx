@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
 import { ApiExplorer } from './ApiExplorer';
 import { AccountsDirectory } from './AccountsDirectory';
-import { useAuth } from '../context/AuthContext';
-import { Database, ShieldCheck, Terminal, User, Users } from 'lucide-react';
+import { Database, ShieldCheck, Terminal, Users } from 'lucide-react';
 
 interface SystemDashboardProps {
   onLoginAsAccount: (email: string) => void;
@@ -13,10 +12,7 @@ export const SystemDashboard: React.FC<SystemDashboardProps> = ({
   onLoginAsAccount,
   onCreateAccount,
 }) => {
-  const { user } = useAuth();
   const [view, setView] = useState<'accounts' | 'api'>('accounts');
-  const userName = user ? `${user.firstname} ${user.lastname}`.trim() || user.email : 'Signed-in user';
-  const userRole = user?.role || 'user';
 
   return (
     <div className="space-y-6 animate-fadeIn">
@@ -35,24 +31,7 @@ export const SystemDashboard: React.FC<SystemDashboardProps> = ({
             </p>
           </div>
 
-          <div className="space-y-3 min-w-full sm:min-w-80 lg:min-w-96">
-            <div className="rounded-2xl bg-bone-50 border border-sand-300 p-4">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-olive-100 text-olive flex items-center justify-center border border-olive-200">
-                  <User className="w-5 h-5" />
-                </div>
-                <div className="min-w-0">
-                  <p className="text-[11px] uppercase tracking-widest text-brown-600 font-semibold">
-                    Logged in as
-                  </p>
-                  <p className="text-sm font-bold text-midnight-900 truncate">{userName}</p>
-                </div>
-                <span className="ml-auto px-2.5 py-1 rounded-full bg-terracotta-50 text-terracotta border border-terracotta-200 text-[11px] uppercase tracking-wider font-bold">
-                  {userRole}
-                </span>
-              </div>
-            </div>
-
+          <div className="min-w-full sm:min-w-80 lg:min-w-96">
             <div className="grid grid-cols-2 gap-3">
               <button
                 onClick={() => setView('accounts')}

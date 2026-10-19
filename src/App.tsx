@@ -35,7 +35,12 @@ export default function App() {
         {activeTab === 'gallery' && <Gallery onNavigate={handleNavigate} />}
         {activeTab === 'tbri' && <TBRIMission onNavigate={handleNavigate} />}
         {activeTab === 'contact' && <ContactUs />}
-        {activeTab === 'account' && <AuthSection prefilledUsername={loginPrefillEmail} />}
+        {activeTab === 'account' && (
+          <AuthSection
+            prefilledUsername={loginPrefillEmail}
+            onAuthenticated={() => handleNavigate('home')}
+          />
+        )}
         {activeTab === 'system' &&
           (isAuthenticated ? (
             <SystemDashboard
@@ -43,7 +48,7 @@ export default function App() {
               onCreateAccount={() => handleNavigate('account')}
             />
           ) : (
-            <AuthSection />
+            <AuthSection onAuthenticated={() => handleNavigate('home')} />
           ))}
       </main>
 

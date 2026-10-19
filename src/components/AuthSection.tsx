@@ -21,12 +21,14 @@ interface AuthSectionProps {
   prefilledUsername?: string;
   initialMode?: 'login' | 'register';
   onAccountCreated?: () => void;
+  onAuthenticated?: () => void;
 }
 
 export const AuthSection: React.FC<AuthSectionProps> = ({
   prefilledUsername,
   initialMode = 'login',
   onAccountCreated,
+  onAuthenticated,
 }) => {
   const { user, token, isAuthenticated, login, register, logout, refreshUser } = useAuth();
 
@@ -90,6 +92,7 @@ export const AuthSection: React.FC<AuthSectionProps> = ({
       });
       setSuccessMessage('Successfully signed in!');
       setLoginPassword('');
+      onAuthenticated?.();
     } catch (err: unknown) {
       setErrorMessage(err instanceof Error ? err.message : 'Login failed');
     } finally {
@@ -134,6 +137,7 @@ export const AuthSection: React.FC<AuthSectionProps> = ({
           email: regEmail.trim(),
           password: regPassword,
         });
+        onAuthenticated?.();
       } catch {
         // Switch to login tab if auto-login fails
         setLoginIdentifier(regEmail.trim());
