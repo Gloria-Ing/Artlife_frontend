@@ -19,6 +19,8 @@ interface Artwork {
   id: string | number;
   title: string;
   series: string;
+  price?: string | number | null;
+  image_url?: string | null;
   category: GalleryCategory;
   year: string;
   medium: string;
@@ -31,6 +33,8 @@ interface Artwork {
 const EMPTY_PRODUCT: GalleryProductCreate = {
   title: '',
   series: '',
+  price: '',
+  image_url: '',
   category: 'children',
   year: new Date().getFullYear().toString(),
   medium: '',
@@ -126,12 +130,13 @@ export const Gallery: React.FC<GalleryProps> = ({ onNavigate }) => {
   const [managedArtworks, setManagedArtworks] = useState<Artwork[]>([]);
   const [newProduct, setNewProduct] = useState<GalleryProductCreate>(EMPTY_PRODUCT);
   const [colorText, setColorText] = useState(EMPTY_PRODUCT.colors.join(', '));
+  const [isProductFormOpen, setIsProductFormOpen] = useState(false);
   const [createLoading, setCreateLoading] = useState(false);
   const [createError, setCreateError] = useState<string | null>(null);
   const [createSuccess, setCreateSuccess] = useState<string | null>(null);
 
   const isAdmin = isAuthenticated && user?.role === 'admin';
-  const artworks = [...managedArtworks, ...ARTWORKS];
+  const artworks = managedArtworks.length > 0 ? managedArtworks : ARTWORKS;
 
   useEffect(() => {
     let mounted = true;
@@ -145,6 +150,8 @@ export const Gallery: React.FC<GalleryProps> = ({ onNavigate }) => {
             id: product.id,
             title: product.title,
             series: product.series,
+            price: product.price,
+            image_url: product.image_url,
             category: product.category,
             year: product.year,
             medium: product.medium,
@@ -208,6 +215,8 @@ export const Gallery: React.FC<GalleryProps> = ({ onNavigate }) => {
           id: created.id,
           title: created.title,
           series: created.series,
+          price: created.price,
+          image_url: created.image_url,
           category: created.category,
           year: created.year,
           medium: created.medium,
@@ -220,11 +229,29 @@ export const Gallery: React.FC<GalleryProps> = ({ onNavigate }) => {
       ]);
       setCreateSuccess(`${created.title} was added to the gallery.`);
       resetProductForm();
+      setIsProductFormOpen(false);
     } catch (err) {
       setCreateError(parseApiError(err));
     } finally {
       setCreateLoading(false);
     }
+  };
+
+  const formatPrice = (price?: string | number | null) => {
+    if (price === null || price === undefined || price === '') {
+      return null;
+    }
+
+    const amount = Number(price);
+    if (Number.isNaN(amount)) {
+      return String(price);
+    }
+
+    return new Intl.NumberFormat('en-US', {
+      style: 'currency',
+      currency: 'USD',
+      maximumFractionDigits: 2,
+    }).format(amount);
   };
 
   return (
@@ -258,9 +285,17 @@ export const Gallery: React.FC<GalleryProps> = ({ onNavigate }) => {
                 Admin Gallery Manager
               </span>
               <h2 className="text-2xl font-serif font-bold text-midnight-900 mt-3">
-                Add New Gallery Product
+                Gallery Products
               </h2>
             </div>
+            <button
+              type="button"
+              onClick={() => setIsProductFormOpen((open) => !open)}
+              className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-terracotta hover:bg-terracotta-600 text-white text-xs font-semibold shadow-md shadow-terracotta/20 transition"
+            >
+              <Plus className="w-3.5 h-3.5" />
+              <span>{isProductFormOpen ? 'Close Form' : 'Add New Product'}</span>
+            </button>
           </div>
 
           {createError && (
@@ -277,6 +312,7 @@ export const Gallery: React.FC<GalleryProps> = ({ onNavigate }) => {
             </div>
           )}
 
+          {isProductFormOpen && (
           <form onSubmit={handleCreateProduct} className="grid grid-cols-1 lg:grid-cols-12 gap-4">
             <div className="lg:col-span-4">
               <label className="block text-[11px] font-semibold text-brown-700 mb-1">Title</label>
@@ -303,6 +339,20 @@ export const Gallery: React.FC<GalleryProps> = ({ onNavigate }) => {
             </div>
 
             <div className="lg:col-span-2">
+              <label className="block text-[11px] font-semibold text-brown-700 mb-1">Price</label>
+              <input
+                type="number"
+                min="0.01"
+                step="0.01"
+                required
+                value={newProduct.price}
+                onChange={(event) => handleProductFieldChange('price', event.target.value)}
+                className="w-full px-3 py-2 bg-bone-50 border border-sand-300 rounded-xl text-xs text-midnight-900 placeholder-brown-400 focus:outline-none focus:border-olive focus:ring-2 focus:ring-olive/10"
+                placeholder="1250.00"
+              />
+            </div>
+
+            <div className="lg:col-span-2">
               <label className="block text-[11px] font-semibold text-brown-700 mb-1">Year</label>
               <input
                 type="text"
@@ -311,6 +361,18 @@ export const Gallery: React.FC<GalleryProps> = ({ onNavigate }) => {
                 onChange={(event) => handleProductFieldChange('year', event.target.value)}
                 className="w-full px-3 py-2 bg-bone-50 border border-sand-300 rounded-xl text-xs text-midnight-900 placeholder-brown-400 focus:outline-none focus:border-olive focus:ring-2 focus:ring-olive/10"
                 placeholder="2026"
+              />
+            </div>
+
+            <div className="lg:col-span-6">
+              <label className="block text-[11px] font-semibold text-brown-700 mb-1">Image URL</label>
+              <input
+                type="url"
+                required
+                value={newProduct.image_url}
+                onChange={(event) => handleProductFieldChange('image_url', event.target.value)}
+                className="w-full px-3 py-2 bg-bone-50 border border-sand-300 rounded-xl text-xs text-midnight-900 placeholder-brown-400 focus:outline-none focus:border-olive focus:ring-2 focus:ring-olive/10"
+                placeholder="https://example.com/artwork.jpg"
               />
             </div>
 
@@ -404,6 +466,7 @@ export const Gallery: React.FC<GalleryProps> = ({ onNavigate }) => {
               </button>
             </div>
           </form>
+          )}
         </section>
       )}
 
@@ -474,7 +537,16 @@ export const Gallery: React.FC<GalleryProps> = ({ onNavigate }) => {
             <div>
               {/* Artwork Visual Representation */}
               <div className="h-64 bg-gradient-to-br from-bone-100 via-sand-200 to-bone-300 relative flex items-center justify-center p-6 overflow-hidden">
-                <div className="absolute inset-0 opacity-15 bg-[radial-gradient(#6C705B_1px,transparent_1px)] [background-size:16px_16px]" />
+                {art.image_url ? (
+                  <img
+                    src={art.image_url}
+                    alt={art.title}
+                    className="absolute inset-0 h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                  />
+                ) : (
+                  <div className="absolute inset-0 opacity-15 bg-[radial-gradient(#6C705B_1px,transparent_1px)] [background-size:16px_16px]" />
+                )}
+                <div className="absolute inset-0 bg-gradient-to-t from-midnight-900/35 via-transparent to-white/10" />
 
                 {/* Status Badge */}
                 <div className="absolute top-3 left-3 z-10">
@@ -507,6 +579,9 @@ export const Gallery: React.FC<GalleryProps> = ({ onNavigate }) => {
                   </span>
                   <h3 className="text-lg font-serif font-bold text-midnight-900">{art.title}</h3>
                   <p className="text-xs text-brown-600 italic font-serif">{art.medium}</p>
+                  {formatPrice(art.price) && (
+                    <p className="text-sm font-bold text-olive">{formatPrice(art.price)}</p>
+                  )}
                 </div>
 
                 {/* Swatch dots */}
@@ -527,6 +602,9 @@ export const Gallery: React.FC<GalleryProps> = ({ onNavigate }) => {
                   <span className="font-mono text-olive font-bold">{art.year}</span>
                   <span className="font-mono text-[11px] text-brown-600">{art.dimensions}</span>
                 </div>
+                {formatPrice(art.price) && (
+                  <div className="text-sm font-bold text-midnight-900">{formatPrice(art.price)}</div>
+                )}
                 <p className="text-xs text-brown-700 leading-relaxed line-clamp-3">{art.story}</p>
               </div>
             </div>
@@ -574,7 +652,18 @@ export const Gallery: React.FC<GalleryProps> = ({ onNavigate }) => {
               <p className="text-xs text-brown-600 italic font-serif">
                 {activeModalArtwork.medium} • {activeModalArtwork.dimensions} ({activeModalArtwork.year})
               </p>
+              {formatPrice(activeModalArtwork.price) && (
+                <p className="text-lg font-bold text-olive">{formatPrice(activeModalArtwork.price)}</p>
+              )}
             </div>
+
+            {activeModalArtwork.image_url && (
+              <img
+                src={activeModalArtwork.image_url}
+                alt={activeModalArtwork.title}
+                className="h-64 w-full rounded-2xl object-cover border border-sand-300"
+              />
+            )}
 
             <div className="p-4 rounded-xl bg-bone-100 border border-sand-300 space-y-2">
               <span className="text-[11px] font-bold text-olive uppercase tracking-wider">

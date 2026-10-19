@@ -62,6 +62,8 @@ export type GalleryStatus = 'Available' | 'Private Collection' | 'Exhibition Fea
 export interface GalleryProductCreate {
   title: string;
   series: string;
+  price: string;
+  image_url: string;
   category: GalleryCategory;
   year: string;
   medium: string;
@@ -71,8 +73,19 @@ export interface GalleryProductCreate {
   colors: string[];
 }
 
-export interface GalleryProductResponse extends GalleryProductCreate {
+export interface GalleryProductResponse {
   id: string | number;
+  price: string | number | null;
+  image_url: string | null;
+  title: string;
+  series: string;
+  category: GalleryCategory;
+  year: string;
+  medium: string;
+  dimensions: string;
+  status: GalleryStatus;
+  story: string;
+  colors: string[];
   created_at?: string | null;
   updated_at?: string | null;
 }
