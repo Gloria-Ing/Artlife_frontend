@@ -6,35 +6,49 @@ import { Gallery } from './components/Gallery';
 import { TBRIMission } from './components/TBRIMission';
 import { ContactUs } from './components/ContactUs';
 import { AuthSection } from './components/AuthSection';
-import { Palette, Heart, Mail, Home as HomeIcon, User, MapPin } from 'lucide-react';
+import { SystemDashboard } from './components/SystemDashboard';
+import { useAuth } from './context/AuthContext';
+import { Palette, Heart, Mail, Home as HomeIcon, User, MapPin, Database } from 'lucide-react';
 
 export default function App() {
   const [activeTab, setActiveTab] = useState<NavTab>('home');
+  const [loginPrefillEmail, setLoginPrefillEmail] = useState('');
+  const { isAuthenticated, user } = useAuth();
 
   const handleNavigate = (tab: NavTab) => {
     setActiveTab(tab);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
+  const handleLoginAsAccount = (email: string) => {
+    setLoginPrefillEmail(email);
+    handleNavigate('account');
+  };
+
   return (
     <div className="min-h-screen flex flex-col bg-white text-midnight-900 font-sans selection:bg-terracotta selection:text-white">
-      {/* Brand Navigation Bar */}
       <Navbar activeTab={activeTab} setActiveTab={handleNavigate} />
 
-      {/* Main Experience Container */}
       <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-10">
         {activeTab === 'home' && <Home onNavigate={handleNavigate} />}
         {activeTab === 'profile' && <MyProfile />}
         {activeTab === 'gallery' && <Gallery onNavigate={handleNavigate} />}
         {activeTab === 'tbri' && <TBRIMission onNavigate={handleNavigate} />}
         {activeTab === 'contact' && <ContactUs />}
-        {activeTab === 'account' && <AuthSection />}
+        {activeTab === 'account' && <AuthSection prefilledUsername={loginPrefillEmail} />}
+        {activeTab === 'system' &&
+          (isAuthenticated ? (
+            <SystemDashboard
+              onLoginAsAccount={handleLoginAsAccount}
+              onCreateAccount={() => handleNavigate('account')}
+            />
+          ) : (
+            <AuthSection />
+          ))}
       </main>
 
-      {/* Elegant Fine-Art Footer */}
       <footer className="border-t border-sand-300 bg-bone-100 py-12 text-xs text-brown-700">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row items-center justify-between gap-8">
-          {/* Brand Identity */}
           <div className="flex items-center space-x-3 text-center md:text-left">
             <div className="w-11 h-11 rounded-full p-0.5 bg-gradient-to-tr from-olive via-sand to-terracotta shadow-md shrink-0">
               <img
@@ -54,7 +68,6 @@ export default function App() {
             </div>
           </div>
 
-          {/* Navigation Links in Footer */}
           <div className="flex flex-wrap items-center justify-center gap-5 text-xs font-medium">
             <button
               onClick={() => handleNavigate('home')}
@@ -95,7 +108,19 @@ export default function App() {
               <User className="w-3.5 h-3.5" />
               <span>Account</span>
             </button>
-            <span className="text-sand-400">â€¢</span>
+            {isAuthenticated && (
+              <>
+                <span className="text-sand-400">•</span>
+                <button
+                  onClick={() => handleNavigate('system')}
+                  className="text-brown-700 hover:text-olive transition flex items-center gap-1"
+                >
+                  <Database className="w-3.5 h-3.5" />
+                  <span>{user?.role === 'admin' ? 'Admin System' : 'System'}</span>
+                </button>
+              </>
+            )}
+            <span className="text-sand-400">•</span>
             <button
               onClick={() => handleNavigate('contact')}
               className="text-brown-700 hover:text-olive transition flex items-center gap-1"
@@ -105,7 +130,6 @@ export default function App() {
             </button>
           </div>
 
-          {/* Copyright & Location */}
           <div className="text-center md:text-right text-[11px] text-brown-500 space-y-1">
             <p className="flex items-center justify-center md:justify-end gap-1">
               <MapPin className="w-3 h-3 text-terracotta" />
