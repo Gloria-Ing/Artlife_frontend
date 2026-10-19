@@ -13,7 +13,7 @@ import { Palette, Heart, Mail, Home as HomeIcon, User, MapPin, Database } from '
 export default function App() {
   const [activeTab, setActiveTab] = useState<NavTab>('home');
   const [loginPrefillEmail, setLoginPrefillEmail] = useState('');
-  const { isAuthenticated, user } = useAuth();
+  const { isAuthenticated } = useAuth();
 
   const handleNavigate = (tab: NavTab) => {
     setActiveTab(tab);
@@ -116,7 +116,7 @@ export default function App() {
                   className="text-brown-700 hover:text-olive transition flex items-center gap-1"
                 >
                   <Database className="w-3.5 h-3.5" />
-                  <span>{user?.role === 'admin' ? 'Admin System' : 'System'}</span>
+                  <span>System</span>
                 </button>
               </>
             )}

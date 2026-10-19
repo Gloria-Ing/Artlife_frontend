@@ -23,6 +23,8 @@ interface NavbarProps {
 export const Navbar: React.FC<NavbarProps> = ({ activeTab, setActiveTab }) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { isAuthenticated, user } = useAuth();
+  const userName = user ? `${user.firstname} ${user.lastname}`.trim() || user.email : '';
+  const userRole = user?.role || 'user';
 
   const handleTabClick = (tab: NavTab) => {
     setActiveTab(tab);
@@ -133,7 +135,7 @@ export const Navbar: React.FC<NavbarProps> = ({ activeTab, setActiveTab }) => {
                 }`}
               >
                 <Database className="w-4 h-4" />
-                <span>{user?.role === 'admin' ? 'Admin System' : 'System'}</span>
+                <span>System</span>
               </button>
             )}
 
@@ -152,6 +154,23 @@ export const Navbar: React.FC<NavbarProps> = ({ activeTab, setActiveTab }) => {
 
           {/* Desktop Right CTA Action */}
           <div className="hidden md:flex items-center space-x-3">
+            {isAuthenticated && user && (
+              <button
+                onClick={() => handleTabClick('account')}
+                className="flex items-center gap-2 px-3 py-2 rounded-xl bg-bone-50 hover:bg-bone-100 border border-sand-300 text-left transition"
+                title={`${userName} - ${userRole}`}
+              >
+                <User className="w-4 h-4 text-olive" />
+                <span className="min-w-0">
+                  <span className="block max-w-28 truncate text-xs font-semibold text-midnight-900">
+                    {userName}
+                  </span>
+                  <span className="block text-[10px] uppercase tracking-wider text-terracotta font-bold">
+                    {userRole}
+                  </span>
+                </span>
+              </button>
+            )}
             <button
               onClick={() => handleTabClick('contact')}
               className="inline-flex items-center space-x-2 px-4 py-2 rounded-xl bg-terracotta hover:bg-terracotta-600 text-white text-xs font-semibold shadow-md shadow-terracotta/20 transition-all active:scale-95"
@@ -246,8 +265,22 @@ export const Navbar: React.FC<NavbarProps> = ({ activeTab, setActiveTab }) => {
                 }`}
               >
                 <Database className="w-4 h-4" />
-                <span>{user?.role === 'admin' ? 'Admin System' : 'System'}</span>
+                <span>System</span>
               </button>
+            )}
+
+            {isAuthenticated && user && (
+              <div className="mx-4 mt-3 rounded-2xl bg-bone-50 border border-sand-300 p-3">
+                <div className="flex items-center gap-2">
+                  <User className="w-4 h-4 text-olive" />
+                  <div className="min-w-0">
+                    <p className="text-sm font-semibold text-midnight-900 truncate">{userName}</p>
+                    <p className="text-[11px] uppercase tracking-wider text-terracotta font-bold">
+                      {userRole}
+                    </p>
+                  </div>
+                </div>
+              </div>
             )}
 
             <button
