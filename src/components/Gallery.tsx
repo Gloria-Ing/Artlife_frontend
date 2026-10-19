@@ -23,11 +23,9 @@ interface Artwork {
   image_url?: string | null;
   category: GalleryCategory;
   year: string;
-  medium: string;
   dimensions: string;
   status: GalleryStatus;
   story: string;
-  colors: string[];
 }
 
 const EMPTY_PRODUCT: GalleryProductCreate = {
@@ -37,11 +35,9 @@ const EMPTY_PRODUCT: GalleryProductCreate = {
   image_file: null,
   category: 'children',
   year: new Date().getFullYear().toString(),
-  medium: '',
   dimensions: '',
   status: 'Available',
   story: '',
-  colors: ['#111111', '#6C705B', '#A56A4F', '#D8C8B4'],
 };
 
 const ARTWORKS: Artwork[] = [
@@ -51,11 +47,9 @@ const ARTWORKS: Artwork[] = [
     series: 'Children of Rwanda',
     category: 'children',
     year: '2025',
-    medium: 'Acrylic & Palette Knife on Canvas',
     dimensions: '120 × 90 cm',
     status: 'Available',
     story: 'Capturing moments when children are simply being themselves—playing, laughing, and exploring without thinking about how they are being seen.',
-    colors: ['#111111', '#6C705B', '#A56A4F', '#D8C8B4'],
   },
   {
     id: 'art-2',
@@ -63,11 +57,9 @@ const ARTWORKS: Artwork[] = [
     series: 'Hope & Resilience',
     category: 'abstract',
     year: '2024',
-    medium: 'Acrylic Impasto & Palette Knife',
     dimensions: '100 × 100 cm',
     status: 'Exhibition Feature',
     story: 'Luminous colors as a symbol of hope. Using light to represent the possibility and potential within children even in difficult circumstances.',
-    colors: ['#6C705B', '#D8C8B4', '#F5F2EA', '#725742'],
   },
   {
     id: 'art-3',
@@ -75,11 +67,9 @@ const ARTWORKS: Artwork[] = [
     series: 'Origins & Heritage',
     category: 'heritage',
     year: '2023',
-    medium: 'Acrylic on Heavy Cotton Canvas',
     dimensions: '110 × 85 cm',
     status: 'Private Collection',
     story: 'A tribute to the very first painting Cedrick made of his father, which inspired the founding of his permanent Kigali studio.',
-    colors: ['#111111', '#725742', '#A56A4F', '#F5F2EA'],
   },
   {
     id: 'art-4',
@@ -87,11 +77,9 @@ const ARTWORKS: Artwork[] = [
     series: 'Children of Rwanda',
     category: 'children',
     year: '2025',
-    medium: 'Acrylic, Ink & Texture Paste',
     dimensions: '90 × 75 cm',
     status: 'Available',
     story: 'Dynamic palette knife strokes evoking the kinetic movement, laughter, and camaraderie of Kigali youth at play.',
-    colors: ['#A56A4F', '#6C705B', '#D8C8B4', '#111111'],
   },
   {
     id: 'art-5',
@@ -99,11 +87,9 @@ const ARTWORKS: Artwork[] = [
     series: 'Abstract Emotion',
     category: 'abstract',
     year: '2024',
-    medium: 'Acrylic Mixed Media on Canvas',
     dimensions: '140 × 110 cm',
     status: 'Available',
     story: '“Not everything we feel can be explained through a face... Sometimes a color, a texture, or a mark speaks where language fails.”',
-    colors: ['#6C705B', '#725742', '#A56A4F', '#D8C8B4'],
   },
   {
     id: 'art-6',
@@ -111,11 +97,9 @@ const ARTWORKS: Artwork[] = [
     series: 'TBRI Creative Spaces',
     category: 'figurative',
     year: '2024',
-    medium: 'Acrylic & Brushwork with Impasto',
     dimensions: '95 × 80 cm',
     status: 'Exhibition Feature',
     story: 'Inspired by the safe creative spaces fostered at the Gisimba After School programs, where children express dreams without hesitation.',
-    colors: ['#111111', '#A56A4F', '#6C705B', '#F5F2EA'],
   },
 ];
 
@@ -129,7 +113,6 @@ export const Gallery: React.FC<GalleryProps> = ({ onNavigate }) => {
   const [activeModalArtwork, setActiveModalArtwork] = useState<Artwork | null>(null);
   const [managedArtworks, setManagedArtworks] = useState<Artwork[]>([]);
   const [newProduct, setNewProduct] = useState<GalleryProductCreate>(EMPTY_PRODUCT);
-  const [colorText, setColorText] = useState(EMPTY_PRODUCT.colors.join(', '));
   const [isProductFormOpen, setIsProductFormOpen] = useState(false);
   const [createLoading, setCreateLoading] = useState(false);
   const [createError, setCreateError] = useState<string | null>(null);
@@ -162,11 +145,9 @@ export const Gallery: React.FC<GalleryProps> = ({ onNavigate }) => {
             image_url: resolveImageUrl(product.image_url),
             category: product.category,
             year: product.year,
-            medium: product.medium,
             dimensions: product.dimensions,
             status: product.status,
             story: product.story,
-            colors: product.colors,
           }))
         );
       })
@@ -193,23 +174,12 @@ export const Gallery: React.FC<GalleryProps> = ({ onNavigate }) => {
 
   const resetProductForm = () => {
     setNewProduct(EMPTY_PRODUCT);
-    setColorText(EMPTY_PRODUCT.colors.join(', '));
   };
 
   const handleCreateProduct = async (event: React.FormEvent) => {
     event.preventDefault();
     setCreateError(null);
     setCreateSuccess(null);
-
-    const colors = colorText
-      .split(',')
-      .map((color) => color.trim())
-      .filter(Boolean);
-
-    if (colors.length === 0) {
-      setCreateError('Please add at least one palette color.');
-      return;
-    }
 
     if (!newProduct.image_file) {
       setCreateError('Please choose an image from your computer.');
@@ -220,7 +190,6 @@ export const Gallery: React.FC<GalleryProps> = ({ onNavigate }) => {
       setCreateLoading(true);
       const created = await apiService.createGalleryProduct({
         ...newProduct,
-        colors,
       });
 
       setManagedArtworks((current) => [
@@ -232,11 +201,9 @@ export const Gallery: React.FC<GalleryProps> = ({ onNavigate }) => {
           image_url: resolveImageUrl(created.image_url),
           category: created.category,
           year: created.year,
-          medium: created.medium,
           dimensions: created.dimensions,
           status: created.status,
           story: created.story,
-          colors: created.colors,
         },
         ...current,
       ]);
@@ -406,19 +373,7 @@ export const Gallery: React.FC<GalleryProps> = ({ onNavigate }) => {
               </select>
             </div>
 
-            <div className="lg:col-span-4">
-              <label className="block text-[11px] font-semibold text-brown-700 mb-1">Medium</label>
-              <input
-                type="text"
-                required
-                value={newProduct.medium}
-                onChange={(event) => handleProductFieldChange('medium', event.target.value)}
-                className="w-full px-3 py-2 bg-bone-50 border border-sand-300 rounded-xl text-xs text-midnight-900 placeholder-brown-400 focus:outline-none focus:border-olive focus:ring-2 focus:ring-olive/10"
-                placeholder="Acrylic on canvas"
-              />
-            </div>
-
-            <div className="lg:col-span-3">
+            <div className="lg:col-span-5">
               <label className="block text-[11px] font-semibold text-brown-700 mb-1">Dimensions</label>
               <input
                 type="text"
@@ -430,7 +385,7 @@ export const Gallery: React.FC<GalleryProps> = ({ onNavigate }) => {
               />
             </div>
 
-            <div className="lg:col-span-3">
+            <div className="lg:col-span-5">
               <label className="block text-[11px] font-semibold text-brown-700 mb-1">Status</label>
               <select
                 value={newProduct.status}
@@ -443,18 +398,6 @@ export const Gallery: React.FC<GalleryProps> = ({ onNavigate }) => {
                 <option value="Private Collection">Private Collection</option>
                 <option value="Exhibition Feature">Exhibition Feature</option>
               </select>
-            </div>
-
-            <div className="lg:col-span-2">
-              <label className="block text-[11px] font-semibold text-brown-700 mb-1">Palette</label>
-              <input
-                type="text"
-                required
-                value={colorText}
-                onChange={(event) => setColorText(event.target.value)}
-                className="w-full px-3 py-2 bg-bone-50 border border-sand-300 rounded-xl text-xs text-midnight-900 placeholder-brown-400 focus:outline-none focus:border-olive focus:ring-2 focus:ring-olive/10"
-                placeholder="#111111, #6C705B"
-              />
             </div>
 
             <div className="lg:col-span-12">
@@ -592,22 +535,11 @@ export const Gallery: React.FC<GalleryProps> = ({ onNavigate }) => {
                     {art.series}
                   </span>
                   <h3 className="text-lg font-serif font-bold text-midnight-900">{art.title}</h3>
-                  <p className="text-xs text-brown-600 italic font-serif">{art.medium}</p>
                   {formatPrice(art.price) && (
                     <p className="text-sm font-bold text-olive">{formatPrice(art.price)}</p>
                   )}
                 </div>
 
-                {/* Swatch dots */}
-                <div className="absolute bottom-3 right-3 flex items-center space-x-1">
-                  {art.colors.map((c, i) => (
-                    <span
-                      key={i}
-                      className="w-3.5 h-3.5 rounded-full border border-white shadow-sm"
-                      style={{ backgroundColor: c }}
-                    />
-                  ))}
-                </div>
               </div>
 
               {/* Text Info */}
@@ -664,7 +596,7 @@ export const Gallery: React.FC<GalleryProps> = ({ onNavigate }) => {
                 {activeModalArtwork.title}
               </h2>
               <p className="text-xs text-brown-600 italic font-serif">
-                {activeModalArtwork.medium} • {activeModalArtwork.dimensions} ({activeModalArtwork.year})
+                {activeModalArtwork.dimensions} ({activeModalArtwork.year})
               </p>
               {formatPrice(activeModalArtwork.price) && (
                 <p className="text-lg font-bold text-olive">{formatPrice(activeModalArtwork.price)}</p>
@@ -688,20 +620,7 @@ export const Gallery: React.FC<GalleryProps> = ({ onNavigate }) => {
               </p>
             </div>
 
-            <div className="flex items-center justify-between text-xs text-brown-700">
-              <div className="flex items-center space-x-2">
-                <span className="font-semibold">Palette:</span>
-                <div className="flex items-center space-x-1.5">
-                  {activeModalArtwork.colors.map((c, i) => (
-                    <span
-                      key={i}
-                      className="w-4 h-4 rounded-full border border-sand-300 shadow-sm"
-                      style={{ backgroundColor: c }}
-                      title={c}
-                    />
-                  ))}
-                </div>
-              </div>
+            <div className="flex items-center justify-end text-xs text-brown-700">
               <span className="font-semibold text-olive">{activeModalArtwork.status}</span>
             </div>
 

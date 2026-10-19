@@ -66,11 +66,9 @@ export interface GalleryProductCreate {
   image_file: File | null;
   category: GalleryCategory;
   year: string;
-  medium: string;
   dimensions: string;
   status: GalleryStatus;
   story: string;
-  colors: string[];
 }
 
 export interface GalleryProductResponse {
@@ -81,11 +79,9 @@ export interface GalleryProductResponse {
   series: string;
   category: GalleryCategory;
   year: string;
-  medium: string;
   dimensions: string;
   status: GalleryStatus;
   story: string;
-  colors: string[];
   created_at?: string | null;
   updated_at?: string | null;
 }

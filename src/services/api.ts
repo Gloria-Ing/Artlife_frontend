@@ -144,11 +144,9 @@ export const apiService = {
     formData.append('price', data.price);
     formData.append('category', data.category);
     formData.append('year', data.year);
-    formData.append('medium', data.medium);
     formData.append('dimensions', data.dimensions);
     formData.append('status', data.status);
     formData.append('story', data.story);
-    formData.append('colors', data.colors.join(', '));
     if (data.image_file) {
       formData.append('image', data.image_file);
     }
