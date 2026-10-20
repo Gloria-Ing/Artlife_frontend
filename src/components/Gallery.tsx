@@ -13,6 +13,8 @@ import {
   Save,
   AlertCircle,
   CheckCircle2,
+  Pencil,
+  Trash2,
 } from 'lucide-react';
 
 interface Artwork {
@@ -51,12 +53,38 @@ export const Gallery: React.FC<GalleryProps> = ({ onNavigate }) => {
   const [managedArtworks, setManagedArtworks] = useState<Artwork[]>([]);
   const [newProduct, setNewProduct] = useState<GalleryProductCreate>(EMPTY_PRODUCT);
   const [isProductFormOpen, setIsProductFormOpen] = useState(false);
+  const [editingProductId, setEditingProductId] = useState<string | number | null>(null);
+  const [deletingProductId, setDeletingProductId] = useState<string | number | null>(null);
   const [createLoading, setCreateLoading] = useState(false);
   const [createError, setCreateError] = useState<string | null>(null);
   const [createSuccess, setCreateSuccess] = useState<string | null>(null);
 
   const isAdmin = isAuthenticated && user?.role === 'admin';
   const artworks = managedArtworks;
+
+  const mapGalleryProduct = (product: {
+    id: string | number;
+    title: string;
+    series: string;
+    price?: string | number | null;
+    image_url?: string | null;
+    category: GalleryCategory;
+    year: string;
+    dimensions: string;
+    status: GalleryStatus;
+    story: string;
+  }): Artwork => ({
+    id: product.id,
+    title: product.title,
+    series: product.series,
+    price: product.price,
+    image_url: resolveImageUrl(product.image_url),
+    category: product.category,
+    year: product.year,
+    dimensions: product.dimensions,
+    status: product.status,
+    story: product.story,
+  });
 
   const resolveImageUrl = (imageUrl: string | null | undefined) => {
     if (!imageUrl) return imageUrl;
@@ -74,18 +102,7 @@ export const Gallery: React.FC<GalleryProps> = ({ onNavigate }) => {
       .then((products) => {
         if (!mounted) return;
         setManagedArtworks(
-          products.map((product) => ({
-            id: product.id,
-            title: product.title,
-            series: product.series,
-            price: product.price,
-            image_url: resolveImageUrl(product.image_url),
-            category: product.category,
-            year: product.year,
-            dimensions: product.dimensions,
-            status: product.status,
-            story: product.story,
-          }))
+          products.map(mapGalleryProduct)
         );
       })
       .catch(() => {
@@ -112,6 +129,7 @@ export const Gallery: React.FC<GalleryProps> = ({ onNavigate }) => {
 
   const resetProductForm = () => {
     setNewProduct(EMPTY_PRODUCT);
+    setEditingProductId(null);
   };
 
   const handleCreateProduct = async (event: React.FormEvent) => {
@@ -119,39 +137,77 @@ export const Gallery: React.FC<GalleryProps> = ({ onNavigate }) => {
     setCreateError(null);
     setCreateSuccess(null);
 
-    if (!newProduct.image_file) {
+    if (!editingProductId && !newProduct.image_file) {
       setCreateError('Please choose an image from your computer.');
       return;
     }
 
     try {
       setCreateLoading(true);
-      const created = await apiService.createGalleryProduct({
-        ...newProduct,
-      });
+      const saved = editingProductId
+        ? await apiService.updateGalleryProduct(editingProductId, newProduct)
+        : await apiService.createGalleryProduct({
+            ...newProduct,
+          });
 
-      setManagedArtworks((current) => [
-        {
-          id: created.id,
-          title: created.title,
-          series: created.series,
-          price: created.price,
-          image_url: resolveImageUrl(created.image_url),
-          category: created.category,
-          year: created.year,
-          dimensions: created.dimensions,
-          status: created.status,
-          story: created.story,
-        },
-        ...current,
-      ]);
-      setCreateSuccess(`${created.title} was added to the gallery.`);
+      const savedArtwork = mapGalleryProduct(saved);
+      setManagedArtworks((current) =>
+        editingProductId
+          ? current.map((art) => (art.id === savedArtwork.id ? savedArtwork : art))
+          : [savedArtwork, ...current]
+      );
+      setCreateSuccess(
+        editingProductId
+          ? `${saved.title} was updated.`
+          : `${saved.title} was added to the gallery.`
+      );
       resetProductForm();
       setIsProductFormOpen(false);
     } catch (err) {
       setCreateError(parseApiError(err));
     } finally {
       setCreateLoading(false);
+    }
+  };
+
+  const handleEditProduct = (art: Artwork) => {
+    setCreateError(null);
+    setCreateSuccess(null);
+    setEditingProductId(art.id);
+    setNewProduct({
+      title: art.title,
+      series: art.series,
+      price: art.price === null || art.price === undefined ? '' : String(art.price),
+      image_file: null,
+      category: art.category,
+      year: art.year,
+      dimensions: art.dimensions || 'Any size',
+      status: art.status,
+      story: art.story,
+    });
+    setIsProductFormOpen(true);
+  };
+
+  const handleDeleteProduct = async (art: Artwork) => {
+    const confirmed = window.confirm(`Delete "${art.title}" from the gallery?`);
+    if (!confirmed) return;
+
+    setCreateError(null);
+    setCreateSuccess(null);
+
+    try {
+      setDeletingProductId(art.id);
+      await apiService.deleteGalleryProduct(art.id);
+      setManagedArtworks((current) => current.filter((item) => item.id !== art.id));
+      setCreateSuccess(`${art.title} was deleted.`);
+      if (editingProductId === art.id) {
+        resetProductForm();
+        setIsProductFormOpen(false);
+      }
+    } catch (err) {
+      setCreateError(parseApiError(err));
+    } finally {
+      setDeletingProductId(null);
     }
   };
 
@@ -206,7 +262,15 @@ export const Gallery: React.FC<GalleryProps> = ({ onNavigate }) => {
             </div>
             <button
               type="button"
-              onClick={() => setIsProductFormOpen((open) => !open)}
+              onClick={() => {
+                if (isProductFormOpen) {
+                  resetProductForm();
+                  setIsProductFormOpen(false);
+                } else {
+                  resetProductForm();
+                  setIsProductFormOpen(true);
+                }
+              }}
               className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-terracotta hover:bg-terracotta-600 text-white text-xs font-semibold shadow-md shadow-terracotta/20 transition"
             >
               <Plus className="w-3.5 h-3.5" />
@@ -230,6 +294,12 @@ export const Gallery: React.FC<GalleryProps> = ({ onNavigate }) => {
 
           {isProductFormOpen && (
           <form onSubmit={handleCreateProduct} className="grid grid-cols-1 lg:grid-cols-12 gap-4">
+            {editingProductId && (
+              <div className="lg:col-span-12 rounded-xl border border-olive-200 bg-olive-50 px-3 py-2 text-xs font-semibold text-olive-800">
+                Editing product. Choose a new image only if you want to replace the current one.
+              </div>
+            )}
+
             <div className="lg:col-span-4">
               <label className="block text-[11px] font-semibold text-brown-700 mb-1">Title</label>
               <input
@@ -281,11 +351,13 @@ export const Gallery: React.FC<GalleryProps> = ({ onNavigate }) => {
             </div>
 
             <div className="lg:col-span-7">
-              <label className="block text-[11px] font-semibold text-brown-700 mb-1">Image</label>
+              <label className="block text-[11px] font-semibold text-brown-700 mb-1">
+                {editingProductId ? 'Replace Image' : 'Image'}
+              </label>
               <input
                 type="file"
                 accept="image/jpeg,image/png,image/webp,image/gif"
-                required
+                required={!editingProductId}
                 onChange={(event) =>
                   handleProductFieldChange('image_file', event.target.files?.[0] ?? null)
                 }
@@ -336,14 +408,40 @@ export const Gallery: React.FC<GalleryProps> = ({ onNavigate }) => {
               />
             </div>
 
-            <div className="lg:col-span-12 flex justify-end">
+            <div className="lg:col-span-12 flex justify-end gap-3">
+              {editingProductId && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    resetProductForm();
+                    setIsProductFormOpen(false);
+                  }}
+                  className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl border border-sand-300 bg-white text-xs font-semibold text-brown-700 hover:bg-bone-100 transition"
+                >
+                  Cancel Edit
+                </button>
+              )}
               <button
                 type="submit"
                 disabled={createLoading}
                 className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-terracotta hover:bg-terracotta-600 disabled:opacity-60 text-white text-xs font-semibold shadow-md shadow-terracotta/20 transition"
               >
-                {createLoading ? <Save className="w-3.5 h-3.5 animate-pulse" /> : <Plus className="w-3.5 h-3.5" />}
-                <span>{createLoading ? 'Adding Product...' : 'Add Gallery Product'}</span>
+                {createLoading ? (
+                  <Save className="w-3.5 h-3.5 animate-pulse" />
+                ) : editingProductId ? (
+                  <Save className="w-3.5 h-3.5" />
+                ) : (
+                  <Plus className="w-3.5 h-3.5" />
+                )}
+                <span>
+                  {createLoading
+                    ? editingProductId
+                      ? 'Saving Product...'
+                      : 'Adding Product...'
+                    : editingProductId
+                    ? 'Save Product'
+                    : 'Add Gallery Product'}
+                </span>
               </button>
             </div>
           </form>
@@ -422,7 +520,7 @@ export const Gallery: React.FC<GalleryProps> = ({ onNavigate }) => {
                     <th className="px-4 py-3 font-bold">Year</th>
                     <th className="px-4 py-3 font-bold">Price</th>
                     <th className="px-4 py-3 font-bold">Status</th>
-                    <th className="px-4 py-3 font-bold">Action</th>
+                    <th className="px-4 py-3 font-bold">Actions</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-sand-200">
@@ -467,6 +565,22 @@ export const Gallery: React.FC<GalleryProps> = ({ onNavigate }) => {
                         </span>
                       </td>
                       <td className="px-4 py-3">
+                        <div className="flex flex-wrap items-center gap-2">
+                          <button
+                            onClick={() => handleEditProduct(art)}
+                            className="inline-flex items-center gap-1.5 rounded-lg border border-sand-300 bg-white px-3 py-2 font-semibold text-midnight-900 hover:bg-bone-100 transition"
+                          >
+                            <Pencil className="h-3.5 w-3.5" />
+                            <span>Edit</span>
+                          </button>
+                          <button
+                            onClick={() => handleDeleteProduct(art)}
+                            disabled={deletingProductId === art.id}
+                            className="inline-flex items-center gap-1.5 rounded-lg border border-terracotta-200 bg-terracotta-50 px-3 py-2 font-semibold text-terracotta hover:bg-terracotta-100 disabled:opacity-60 transition"
+                          >
+                            <Trash2 className="h-3.5 w-3.5" />
+                            <span>{deletingProductId === art.id ? 'Deleting...' : 'Delete'}</span>
+                          </button>
                         <button
                           onClick={() => setActiveModalArtwork(art)}
                           className="inline-flex items-center gap-1.5 rounded-lg border border-sand-300 bg-white px-3 py-2 font-semibold text-olive hover:bg-bone-100 transition"
@@ -474,6 +588,7 @@ export const Gallery: React.FC<GalleryProps> = ({ onNavigate }) => {
                           <Info className="h-3.5 w-3.5" />
                           <span>Details</span>
                         </button>
+                        </div>
                       </td>
                     </tr>
                   ))}

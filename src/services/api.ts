@@ -157,6 +157,38 @@ export const apiService = {
     return response.data;
   },
 
+  async updateGalleryProduct(
+    productId: string | number,
+    data: GalleryProductCreate
+  ): Promise<GalleryProductResponse> {
+    const formData = new FormData();
+    formData.append('title', data.title);
+    formData.append('series', data.series);
+    formData.append('price', data.price);
+    formData.append('category', data.category);
+    formData.append('year', data.year);
+    formData.append('dimensions', data.dimensions);
+    formData.append('status', data.status);
+    formData.append('story', data.story);
+    if (data.image_file) {
+      formData.append('image', data.image_file);
+    }
+
+    const response = await apiClient.put<GalleryProductResponse>(
+      `/gallery/products/${productId}`,
+      formData,
+      {
+        headers: { 'Content-Type': 'multipart/form-data' },
+      }
+    );
+    return response.data;
+  },
+
+  async deleteGalleryProduct(productId: string | number): Promise<{ message: string }> {
+    const response = await apiClient.delete<{ message: string }>(`/gallery/products/${productId}`);
+    return response.data;
+  },
+
   // Generic request runner for the interactive explorer
   async rawRequest(method: 'GET' | 'POST', endpoint: string, body?: unknown, params?: Record<string, unknown>) {
     const startTime = performance.now();
