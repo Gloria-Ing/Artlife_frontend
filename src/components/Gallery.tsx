@@ -40,69 +40,6 @@ const EMPTY_PRODUCT: GalleryProductCreate = {
   story: '',
 };
 
-const ARTWORKS: Artwork[] = [
-  {
-    id: 'art-1',
-    title: 'Gleam of Innocence',
-    series: 'Children of Rwanda',
-    category: 'children',
-    year: '2025',
-    dimensions: '120 × 90 cm',
-    status: 'Available',
-    story: 'Capturing moments when children are simply being themselves—playing, laughing, and exploring without thinking about how they are being seen.',
-  },
-  {
-    id: 'art-2',
-    title: 'Light Behind the Shadow',
-    series: 'Hope & Resilience',
-    category: 'abstract',
-    year: '2024',
-    dimensions: '100 × 100 cm',
-    status: 'Exhibition Feature',
-    story: 'Luminous colors as a symbol of hope. Using light to represent the possibility and potential within children even in difficult circumstances.',
-  },
-  {
-    id: 'art-3',
-    title: 'The Father’s Portrait',
-    series: 'Origins & Heritage',
-    category: 'heritage',
-    year: '2023',
-    dimensions: '110 × 85 cm',
-    status: 'Private Collection',
-    story: 'A tribute to the very first painting Cedrick made of his father, which inspired the founding of his permanent Kigali studio.',
-  },
-  {
-    id: 'art-4',
-    title: 'Echoes of Play',
-    series: 'Children of Rwanda',
-    category: 'children',
-    year: '2025',
-    dimensions: '90 × 75 cm',
-    status: 'Available',
-    story: 'Dynamic palette knife strokes evoking the kinetic movement, laughter, and camaraderie of Kigali youth at play.',
-  },
-  {
-    id: 'art-5',
-    title: 'Beyond What Words Can Say',
-    series: 'Abstract Emotion',
-    category: 'abstract',
-    year: '2024',
-    dimensions: '140 × 110 cm',
-    status: 'Available',
-    story: '“Not everything we feel can be explained through a face... Sometimes a color, a texture, or a mark speaks where language fails.”',
-  },
-  {
-    id: 'art-6',
-    title: 'Sanctuary of Imagination',
-    series: 'TBRI Creative Spaces',
-    category: 'figurative',
-    year: '2024',
-    dimensions: '95 × 80 cm',
-    status: 'Exhibition Feature',
-    story: 'Inspired by the safe creative spaces fostered at the Gisimba After School programs, where children express dreams without hesitation.',
-  },
-];
-
 interface GalleryProps {
   onNavigate: (tab: NavTab) => void;
 }
@@ -119,7 +56,7 @@ export const Gallery: React.FC<GalleryProps> = ({ onNavigate }) => {
   const [createSuccess, setCreateSuccess] = useState<string | null>(null);
 
   const isAdmin = isAuthenticated && user?.role === 'admin';
-  const artworks = managedArtworks.length > 0 ? managedArtworks : ARTWORKS;
+  const artworks = managedArtworks;
 
   const resolveImageUrl = (imageUrl: string | null | undefined) => {
     if (!imageUrl) return imageUrl;
@@ -152,7 +89,8 @@ export const Gallery: React.FC<GalleryProps> = ({ onNavigate }) => {
         );
       })
       .catch(() => {
-        // Keep the static gallery visible if the backend endpoint is not deployed yet.
+        if (!mounted) return;
+        setManagedArtworks([]);
       });
 
     return () => {
@@ -485,97 +423,99 @@ export const Gallery: React.FC<GalleryProps> = ({ onNavigate }) => {
       </div>
 
       {/* ================= ARTWORKS GRID ================= */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
-        {filteredArtworks.map((art) => (
-          <div
-            key={art.id}
-            className="bg-white rounded-2xl border border-sand-300 overflow-hidden shadow-sm hover:shadow-lg transition-all flex flex-col justify-between group"
-          >
-            <div>
-              {/* Artwork Visual Representation */}
-              <div className="h-64 bg-gradient-to-br from-bone-100 via-sand-200 to-bone-300 relative flex items-center justify-center p-6 overflow-hidden">
-                {art.image_url ? (
-                  <img
-                    src={art.image_url}
-                    alt={art.title}
-                    className="absolute inset-0 h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
-                  />
-                ) : (
-                  <div className="absolute inset-0 opacity-15 bg-[radial-gradient(#6C705B_1px,transparent_1px)] [background-size:16px_16px]" />
-                )}
-                <div className="absolute inset-0 bg-gradient-to-t from-midnight-900/35 via-transparent to-white/10" />
+      {filteredArtworks.length > 0 ? (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
+          {filteredArtworks.map((art) => (
+            <div
+              key={art.id}
+              className="bg-white rounded-2xl border border-sand-300 overflow-hidden shadow-sm hover:shadow-lg transition-all flex flex-col justify-between group"
+            >
+              <div>
+                {/* Artwork Visual Representation */}
+                <div className="h-64 bg-gradient-to-br from-bone-100 via-sand-200 to-bone-300 relative flex items-center justify-center p-6 overflow-hidden">
+                  {art.image_url ? (
+                    <img
+                      src={art.image_url}
+                      alt={art.title}
+                      className="absolute inset-0 h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                    />
+                  ) : (
+                    <div className="absolute inset-0 opacity-15 bg-[radial-gradient(#6C705B_1px,transparent_1px)] [background-size:16px_16px]" />
+                  )}
+                  {/* Status Badge */}
+                  <div className="absolute top-3 left-3 z-10">
+                    <span
+                      className={`text-[10px] font-semibold px-2.5 py-1 rounded-full uppercase tracking-wider ${
+                        art.status === 'Available'
+                          ? 'bg-olive-100 text-olive-800 border border-olive-300'
+                          : art.status === 'Exhibition Feature'
+                          ? 'bg-terracotta-100 text-terracotta border border-terracotta-300'
+                          : 'bg-sand-200 text-brown-800 border border-sand-300'
+                      }`}
+                    >
+                      {art.status}
+                    </span>
+                  </div>
 
-                {/* Status Badge */}
-                <div className="absolute top-3 left-3 z-10">
-                  <span
-                    className={`text-[10px] font-semibold px-2.5 py-1 rounded-full uppercase tracking-wider ${
-                      art.status === 'Available'
-                        ? 'bg-olive-100 text-olive-800 border border-olive-300'
-                        : art.status === 'Exhibition Feature'
-                        ? 'bg-terracotta-100 text-terracotta border border-terracotta-300'
-                        : 'bg-sand-200 text-brown-800 border border-sand-300'
-                    }`}
+                  {/* Inspect Button */}
+                  <button
+                    onClick={() => setActiveModalArtwork(art)}
+                    className="absolute top-3 right-3 p-2 rounded-xl bg-white/80 hover:bg-white text-midnight-900 shadow-sm transition"
+                    title="View Artwork Details"
                   >
-                    {art.status}
-                  </span>
+                    <Maximize2 className="w-4 h-4 text-brown-700" />
+                  </button>
                 </div>
 
-                {/* Inspect Button */}
+                {/* Text Info */}
+                <div className="p-6 space-y-3">
+                  <div className="space-y-1.5">
+                    <span className="text-[10px] uppercase font-bold text-terracotta tracking-wider">
+                      {art.series}
+                    </span>
+                    <h3 className="text-lg font-serif font-bold text-midnight-900">{art.title}</h3>
+                    {formatPrice(art.price) && (
+                      <p className="text-sm font-bold text-olive">{formatPrice(art.price)}</p>
+                    )}
+                  </div>
+
+                  <div className="flex items-center justify-between text-xs text-brown-600 font-medium">
+                    <span className="font-mono text-olive font-bold">{art.year}</span>
+                    <span className="font-mono text-[11px] text-brown-600">{art.dimensions}</span>
+                  </div>
+                  <p className="text-xs text-brown-700 leading-relaxed line-clamp-3">{art.story}</p>
+                </div>
+              </div>
+
+              {/* Bottom Action Footer */}
+              <div className="px-6 pb-6 pt-3 border-t border-sand-200 flex items-center justify-between text-xs">
                 <button
                   onClick={() => setActiveModalArtwork(art)}
-                  className="absolute top-3 right-3 p-2 rounded-xl bg-white/80 hover:bg-white text-midnight-900 shadow-sm transition"
-                  title="View Artwork Details"
+                  className="font-semibold text-olive hover:text-olive-700 transition flex items-center gap-1"
                 >
-                  <Maximize2 className="w-4 h-4 text-brown-700" />
+                  <Info className="w-3.5 h-3.5" />
+                  <span>Story & Details</span>
                 </button>
 
-                {/* Title Card Canvas */}
-                <div className="relative z-10 text-center space-y-2 p-5 bg-white/90 backdrop-blur-md rounded-2xl border border-sand-300 shadow-sm max-w-[85%] transform group-hover:scale-102 transition-transform">
-                  <span className="text-[10px] uppercase font-bold text-terracotta tracking-wider">
-                    {art.series}
-                  </span>
-                  <h3 className="text-lg font-serif font-bold text-midnight-900">{art.title}</h3>
-                  {formatPrice(art.price) && (
-                    <p className="text-sm font-bold text-olive">{formatPrice(art.price)}</p>
-                  )}
-                </div>
-
-              </div>
-
-              {/* Text Info */}
-              <div className="p-6 space-y-3">
-                <div className="flex items-center justify-between text-xs text-brown-600 font-medium">
-                  <span className="font-mono text-olive font-bold">{art.year}</span>
-                  <span className="font-mono text-[11px] text-brown-600">{art.dimensions}</span>
-                </div>
-                {formatPrice(art.price) && (
-                  <div className="text-sm font-bold text-midnight-900">{formatPrice(art.price)}</div>
-                )}
-                <p className="text-xs text-brown-700 leading-relaxed line-clamp-3">{art.story}</p>
+                <button
+                  onClick={() => onNavigate('contact')}
+                  className="font-semibold text-terracotta hover:text-terracotta-700 transition flex items-center gap-1"
+                >
+                  <span>Acquire / Inquire</span>
+                  <ArrowRight className="w-3.5 h-3.5" />
+                </button>
               </div>
             </div>
-
-            {/* Bottom Action Footer */}
-            <div className="px-6 pb-6 pt-3 border-t border-sand-200 flex items-center justify-between text-xs">
-              <button
-                onClick={() => setActiveModalArtwork(art)}
-                className="font-semibold text-olive hover:text-olive-700 transition flex items-center gap-1"
-              >
-                <Info className="w-3.5 h-3.5" />
-                <span>Story & Details</span>
-              </button>
-
-              <button
-                onClick={() => onNavigate('contact')}
-                className="font-semibold text-terracotta hover:text-terracotta-700 transition flex items-center gap-1"
-              >
-                <span>Acquire / Inquire</span>
-                <ArrowRight className="w-3.5 h-3.5" />
-              </button>
-            </div>
-          </div>
-        ))}
-      </div>
+          ))}
+        </div>
+      ) : (
+        <div className="rounded-2xl border border-dashed border-sand-300 bg-white p-8 text-center shadow-sm">
+          <p className="text-sm font-semibold text-midnight-900">No gallery products yet.</p>
+          <p className="mt-2 text-xs text-brown-700">
+            Products added by an admin will appear here.
+          </p>
+        </div>
+      )}
 
       {/* ================= ARTWORK DETAIL MODAL ================= */}
       {activeModalArtwork && (
