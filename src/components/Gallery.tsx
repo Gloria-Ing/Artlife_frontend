@@ -35,7 +35,7 @@ const EMPTY_PRODUCT: GalleryProductCreate = {
   image_file: null,
   category: 'children',
   year: new Date().getFullYear().toString(),
-  dimensions: '',
+  dimensions: 'Any size',
   status: 'Available',
   story: '',
 };
@@ -165,10 +165,10 @@ export const Gallery: React.FC<GalleryProps> = ({ onNavigate }) => {
       return String(price);
     }
 
-    return new Intl.NumberFormat('en-US', {
+    return new Intl.NumberFormat('en-RW', {
       style: 'currency',
-      currency: 'USD',
-      maximumFractionDigits: 2,
+      currency: 'RWF',
+      maximumFractionDigits: 0,
     }).format(amount);
   };
 
@@ -257,16 +257,16 @@ export const Gallery: React.FC<GalleryProps> = ({ onNavigate }) => {
             </div>
 
             <div className="lg:col-span-2">
-              <label className="block text-[11px] font-semibold text-brown-700 mb-1">Price</label>
+              <label className="block text-[11px] font-semibold text-brown-700 mb-1">Price (RWF)</label>
               <input
                 type="number"
-                min="0.01"
-                step="0.01"
+                min="1"
+                step="1"
                 required
                 value={newProduct.price}
                 onChange={(event) => handleProductFieldChange('price', event.target.value)}
                 className="w-full px-3 py-2 bg-bone-50 border border-sand-300 rounded-xl text-xs text-midnight-900 placeholder-brown-400 focus:outline-none focus:border-olive focus:ring-2 focus:ring-olive/10"
-                placeholder="1250.00"
+                placeholder="250000"
               />
             </div>
 
@@ -282,7 +282,7 @@ export const Gallery: React.FC<GalleryProps> = ({ onNavigate }) => {
               />
             </div>
 
-            <div className="lg:col-span-6">
+            <div className="lg:col-span-7">
               <label className="block text-[11px] font-semibold text-brown-700 mb-1">Image</label>
               <input
                 type="file"
@@ -295,7 +295,7 @@ export const Gallery: React.FC<GalleryProps> = ({ onNavigate }) => {
               />
             </div>
 
-            <div className="lg:col-span-2">
+            <div className="lg:col-span-3">
               <label className="block text-[11px] font-semibold text-brown-700 mb-1">Category</label>
               <select
                 value={newProduct.category}
@@ -311,19 +311,7 @@ export const Gallery: React.FC<GalleryProps> = ({ onNavigate }) => {
               </select>
             </div>
 
-            <div className="lg:col-span-5">
-              <label className="block text-[11px] font-semibold text-brown-700 mb-1">Dimensions</label>
-              <input
-                type="text"
-                required
-                value={newProduct.dimensions}
-                onChange={(event) => handleProductFieldChange('dimensions', event.target.value)}
-                className="w-full px-3 py-2 bg-bone-50 border border-sand-300 rounded-xl text-xs text-midnight-900 placeholder-brown-400 focus:outline-none focus:border-olive focus:ring-2 focus:ring-olive/10"
-                placeholder="100 x 80 cm"
-              />
-            </div>
-
-            <div className="lg:col-span-5">
+            <div className="lg:col-span-2">
               <label className="block text-[11px] font-semibold text-brown-700 mb-1">Status</label>
               <select
                 value={newProduct.status}
@@ -432,7 +420,7 @@ export const Gallery: React.FC<GalleryProps> = ({ onNavigate }) => {
             >
               <div>
                 {/* Artwork Visual Representation */}
-                <div className="h-64 bg-gradient-to-br from-bone-100 via-sand-200 to-bone-300 relative flex items-center justify-center p-6 overflow-hidden">
+                <div className="h-52 bg-gradient-to-br from-bone-100 via-sand-200 to-bone-300 relative flex items-center justify-center p-5 overflow-hidden">
                   {art.image_url ? (
                     <img
                       src={art.image_url}
@@ -460,35 +448,34 @@ export const Gallery: React.FC<GalleryProps> = ({ onNavigate }) => {
                   {/* Inspect Button */}
                   <button
                     onClick={() => setActiveModalArtwork(art)}
-                    className="absolute top-3 right-3 p-2 rounded-xl bg-white/80 hover:bg-white text-midnight-900 shadow-sm transition"
+                    className="absolute top-3 right-3 p-1.5 rounded-lg bg-white/80 hover:bg-white text-midnight-900 shadow-sm transition"
                     title="View Artwork Details"
                   >
-                    <Maximize2 className="w-4 h-4 text-brown-700" />
+                    <Maximize2 className="w-3.5 h-3.5 text-brown-700" />
                   </button>
                 </div>
 
                 {/* Text Info */}
-                <div className="p-6 space-y-3">
-                  <div className="space-y-1.5">
+                <div className="p-4 space-y-2.5">
+                  <div className="space-y-1">
                     <span className="text-[10px] uppercase font-bold text-terracotta tracking-wider">
                       {art.series}
                     </span>
-                    <h3 className="text-lg font-serif font-bold text-midnight-900">{art.title}</h3>
+                    <h3 className="text-base font-serif font-bold text-midnight-900">{art.title}</h3>
                     {formatPrice(art.price) && (
                       <p className="text-sm font-bold text-olive">{formatPrice(art.price)}</p>
                     )}
                   </div>
 
-                  <div className="flex items-center justify-between text-xs text-brown-600 font-medium">
+                  <div className="flex items-center justify-between text-[11px] text-brown-600 font-medium">
                     <span className="font-mono text-olive font-bold">{art.year}</span>
-                    <span className="font-mono text-[11px] text-brown-600">{art.dimensions}</span>
                   </div>
-                  <p className="text-xs text-brown-700 leading-relaxed line-clamp-3">{art.story}</p>
+                  <p className="text-xs text-brown-700 leading-relaxed line-clamp-2">{art.story}</p>
                 </div>
               </div>
 
               {/* Bottom Action Footer */}
-              <div className="px-6 pb-6 pt-3 border-t border-sand-200 flex items-center justify-between text-xs">
+              <div className="px-4 pb-4 pt-3 border-t border-sand-200 flex items-center justify-between gap-3 text-xs">
                 <button
                   onClick={() => setActiveModalArtwork(art)}
                   className="font-semibold text-olive hover:text-olive-700 transition flex items-center gap-1"
