@@ -165,11 +165,9 @@ export const Gallery: React.FC<GalleryProps> = ({ onNavigate }) => {
       return String(price);
     }
 
-    return new Intl.NumberFormat('en-RW', {
-      style: 'currency',
-      currency: 'RWF',
+    return `RWF ${new Intl.NumberFormat('en-US', {
       maximumFractionDigits: 0,
-    }).format(amount);
+    }).format(amount)}`;
   };
 
   return (
