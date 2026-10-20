@@ -1,5 +1,7 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import type { NavTab } from './Navbar';
+import type { GalleryProductResponse } from '../types/api';
+import { apiService, getStoredBaseUrl } from '../services/api';
 import {
   Sparkles,
   ArrowRight,
@@ -19,40 +21,51 @@ interface HomeProps {
   onNavigate: (tab: NavTab) => void;
 }
 
-const FEATURED_WORKS = [
-  {
-    title: 'Gleam of Innocence',
-    subtitle: 'Children of Rwanda Series',
-    year: '2025',
-    medium: 'Acrylic & Palette Knife on Canvas',
-    dimensions: '120 × 90 cm',
-    tag: 'Figurative & Abstract',
-    description: 'Capturing unmasked joy and raw emotions behind a child’s playful gaze, illuminated by warm terracotta and olive tones.',
-    palette: ['#111111', '#6C705B', '#A56A4F', '#D8C8B4'],
-  },
-  {
-    title: 'Luminous Sanctuary',
-    subtitle: 'Light & Hope Study',
-    year: '2024',
-    medium: 'Acrylic Impasto & Palette Knife',
-    dimensions: '100 × 100 cm',
-    tag: 'Abstract Expression',
-    description: 'Thick kinetic textures and golden strokes representing hope and resilience amidst life’s hardest seasons.',
-    palette: ['#6C705B', '#D8C8B4', '#F5F2EA', '#725742'],
-  },
-  {
-    title: 'The Father’s Presence',
-    subtitle: 'Studio Heritage',
-    year: '2023',
-    medium: 'Acrylic on Textured Canvas',
-    dimensions: '110 × 85 cm',
-    tag: 'Heritage & Portraiture',
-    description: 'An homage to Cedrick’s very first portrait that inspired his father to help establish his permanent Kigali studio practice.',
-    palette: ['#111111', '#725742', '#A56A4F', '#F5F2EA'],
-  },
-];
-
 export const Home: React.FC<HomeProps> = ({ onNavigate }) => {
+  const [featuredWorks, setFeaturedWorks] = useState<GalleryProductResponse[]>([]);
+
+  const resolveImageUrl = (imageUrl: string | null | undefined) => {
+    if (!imageUrl) return imageUrl;
+    if (/^(https?:|data:|blob:)/i.test(imageUrl)) return imageUrl;
+
+    const baseUrl = getStoredBaseUrl().replace(/\/$/, '');
+    return `${baseUrl}${imageUrl.startsWith('/') ? imageUrl : `/${imageUrl}`}`;
+  };
+
+  const formatPrice = (price?: string | number | null) => {
+    if (price === null || price === undefined || price === '') {
+      return null;
+    }
+
+    const amount = Number(price);
+    if (Number.isNaN(amount)) {
+      return String(price);
+    }
+
+    return `RWF ${new Intl.NumberFormat('en-US', {
+      maximumFractionDigits: 0,
+    }).format(amount)}`;
+  };
+
+  useEffect(() => {
+    let mounted = true;
+
+    apiService
+      .getGalleryProducts()
+      .then((products) => {
+        if (!mounted) return;
+        setFeaturedWorks(products);
+      })
+      .catch(() => {
+        if (!mounted) return;
+        setFeaturedWorks([]);
+      });
+
+    return () => {
+      mounted = false;
+    };
+  }, []);
+
   return (
     <div className="space-y-16 sm:space-y-24 pb-16 animate-fadeIn">
       {/* ================= HERO SECTION ================= */}
@@ -294,58 +307,67 @@ export const Home: React.FC<HomeProps> = ({ onNavigate }) => {
           </button>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {FEATURED_WORKS.map((work) => (
-            <div
-              key={work.title}
-              className="bg-white rounded-2xl border border-sand-300 overflow-hidden shadow-sm hover:shadow-lg transition-all group flex flex-col justify-between"
-            >
-              <div>
-                {/* Artwork Canvas Mockup */}
-                <div className="h-56 bg-gradient-to-br from-bone-100 via-sand-200 to-bone-300 relative flex items-center justify-center p-6 overflow-hidden">
-                  <div className="absolute inset-0 opacity-20 bg-[radial-gradient(#6C705B_1px,transparent_1px)] [background-size:16px_16px]" />
-                  <div className="relative z-10 text-center space-y-2 p-4 bg-white/80 backdrop-blur-sm rounded-xl border border-sand-300 shadow-sm max-w-[85%]">
-                    <span className="text-[10px] uppercase font-bold text-terracotta tracking-wider">
-                      {work.tag}
-                    </span>
-                    <h4 className="text-base font-serif font-bold text-midnight-900">{work.title}</h4>
-                    <p className="text-[11px] text-brown-600 italic font-serif">{work.medium}</p>
-                  </div>
-
-                  <div className="absolute bottom-3 right-3 flex items-center space-x-1">
-                    {work.palette.map((c, i) => (
-                      <span
-                        key={i}
-                        className="w-3.5 h-3.5 rounded-full border border-white shadow-sm"
-                        style={{ backgroundColor: c }}
+        {featuredWorks.length > 0 ? (
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {featuredWorks.map((work) => (
+              <div
+                key={work.id}
+                className="bg-white rounded-2xl border border-sand-300 overflow-hidden shadow-sm hover:shadow-lg transition-all group flex flex-col justify-between"
+              >
+                <div>
+                  <div className="h-52 bg-gradient-to-br from-bone-100 via-sand-200 to-bone-300 relative overflow-hidden">
+                    {work.image_url ? (
+                      <img
+                        src={resolveImageUrl(work.image_url) ?? undefined}
+                        alt={work.title}
+                        className="absolute inset-0 h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
                       />
-                    ))}
+                    ) : (
+                      <div className="absolute inset-0 opacity-20 bg-[radial-gradient(#6C705B_1px,transparent_1px)] [background-size:16px_16px]" />
+                    )}
+                    <span className="absolute top-3 left-3 text-[10px] font-semibold px-2.5 py-1 rounded-full uppercase tracking-wider bg-white/85 text-olive-800 border border-olive-200">
+                      {work.status}
+                    </span>
+                  </div>
+
+                  <div className="p-4 space-y-2.5">
+                    <div className="space-y-1">
+                      <span className="text-[10px] uppercase font-bold text-terracotta tracking-wider">
+                        {work.series}
+                      </span>
+                      <h4 className="text-base font-serif font-bold text-midnight-900">{work.title}</h4>
+                      {formatPrice(work.price) && (
+                        <p className="text-sm font-bold text-olive">{formatPrice(work.price)}</p>
+                      )}
+                    </div>
+                    <div className="flex items-center justify-between text-[11px] text-brown-600 font-medium">
+                      <span className="capitalize">{work.category}</span>
+                      <span className="font-mono text-olive font-bold">{work.year}</span>
+                    </div>
+                    <p className="text-xs text-brown-700 leading-relaxed line-clamp-2">{work.story}</p>
                   </div>
                 </div>
 
-                {/* Content */}
-                <div className="p-6 space-y-3">
-                  <div className="flex items-center justify-between text-xs text-brown-600 font-medium">
-                    <span>{work.subtitle}</span>
-                    <span className="font-mono text-[11px] text-olive font-bold">{work.year}</span>
-                  </div>
-                  <p className="text-xs text-brown-700 leading-relaxed">{work.description}</p>
+                <div className="px-4 pb-4 pt-3 border-t border-sand-200 flex items-center justify-end text-xs">
+                  <button
+                    onClick={() => onNavigate('contact')}
+                    className="font-semibold text-terracotta hover:text-terracotta-700 transition flex items-center gap-1"
+                  >
+                    <span>Acquire / Inquire</span>
+                    <ArrowRight className="w-3 h-3" />
+                  </button>
                 </div>
               </div>
-
-              <div className="px-6 pb-6 pt-2 border-t border-sand-200 flex items-center justify-between text-xs">
-                <span className="text-brown-600 font-mono text-[11px]">{work.dimensions}</span>
-                <button
-                  onClick={() => onNavigate('contact')}
-                  className="font-semibold text-terracotta hover:text-terracotta-700 transition flex items-center gap-1"
-                >
-                  <span>Acquire / Inquire</span>
-                  <ArrowRight className="w-3 h-3" />
-                </button>
-              </div>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        ) : (
+          <div className="rounded-2xl border border-dashed border-sand-300 bg-white p-8 text-center shadow-sm">
+            <p className="text-sm font-semibold text-midnight-900">No curated works yet.</p>
+            <p className="mt-2 text-xs text-brown-700">
+              Products added by an admin will appear here.
+            </p>
+          </div>
+        )}
       </section>
 
       {/* ================= TBRI & CHILDREN IMPACT SPOTLIGHT ================= */}
@@ -449,3 +471,4 @@ export const Home: React.FC<HomeProps> = ({ onNavigate }) => {
     </div>
   );
 };
+
