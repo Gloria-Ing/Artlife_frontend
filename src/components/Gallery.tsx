@@ -52,8 +52,10 @@ export const Gallery: React.FC<GalleryProps> = ({ onNavigate }) => {
   const [activeModalArtwork, setActiveModalArtwork] = useState<Artwork | null>(null);
   const [managedArtworks, setManagedArtworks] = useState<Artwork[]>([]);
   const [newProduct, setNewProduct] = useState<GalleryProductCreate>(EMPTY_PRODUCT);
+  const [editProduct, setEditProduct] = useState<GalleryProductCreate>(EMPTY_PRODUCT);
   const [isProductFormOpen, setIsProductFormOpen] = useState(false);
   const [editingProductId, setEditingProductId] = useState<string | number | null>(null);
+  const [editingProductTitle, setEditingProductTitle] = useState('');
   const [deletingProductId, setDeletingProductId] = useState<string | number | null>(null);
   const [createLoading, setCreateLoading] = useState(false);
   const [createError, setCreateError] = useState<string | null>(null);
@@ -127,9 +129,21 @@ export const Gallery: React.FC<GalleryProps> = ({ onNavigate }) => {
     setNewProduct((current) => ({ ...current, [field]: value }));
   };
 
+  const handleEditProductFieldChange = <K extends keyof GalleryProductCreate>(
+    field: K,
+    value: GalleryProductCreate[K]
+  ) => {
+    setEditProduct((current) => ({ ...current, [field]: value }));
+  };
+
   const resetProductForm = () => {
     setNewProduct(EMPTY_PRODUCT);
+  };
+
+  const closeEditModal = () => {
+    setEditProduct(EMPTY_PRODUCT);
     setEditingProductId(null);
+    setEditingProductTitle('');
   };
 
   const handleCreateProduct = async (event: React.FormEvent) => {
@@ -137,30 +151,20 @@ export const Gallery: React.FC<GalleryProps> = ({ onNavigate }) => {
     setCreateError(null);
     setCreateSuccess(null);
 
-    if (!editingProductId && !newProduct.image_file) {
+    if (!newProduct.image_file) {
       setCreateError('Please choose an image from your computer.');
       return;
     }
 
     try {
       setCreateLoading(true);
-      const saved = editingProductId
-        ? await apiService.updateGalleryProduct(editingProductId, newProduct)
-        : await apiService.createGalleryProduct({
-            ...newProduct,
-          });
+      const saved = await apiService.createGalleryProduct({
+        ...newProduct,
+      });
 
       const savedArtwork = mapGalleryProduct(saved);
-      setManagedArtworks((current) =>
-        editingProductId
-          ? current.map((art) => (art.id === savedArtwork.id ? savedArtwork : art))
-          : [savedArtwork, ...current]
-      );
-      setCreateSuccess(
-        editingProductId
-          ? `${saved.title} was updated.`
-          : `${saved.title} was added to the gallery.`
-      );
+      setManagedArtworks((current) => [savedArtwork, ...current]);
+      setCreateSuccess(`${saved.title} was added to the gallery.`);
       resetProductForm();
       setIsProductFormOpen(false);
     } catch (err) {
@@ -174,7 +178,8 @@ export const Gallery: React.FC<GalleryProps> = ({ onNavigate }) => {
     setCreateError(null);
     setCreateSuccess(null);
     setEditingProductId(art.id);
-    setNewProduct({
+    setEditingProductTitle(art.title);
+    setEditProduct({
       title: art.title,
       series: art.series,
       price: art.price === null || art.price === undefined ? '' : String(art.price),
@@ -185,7 +190,29 @@ export const Gallery: React.FC<GalleryProps> = ({ onNavigate }) => {
       status: art.status,
       story: art.story,
     });
-    setIsProductFormOpen(true);
+  };
+
+  const handleUpdateProduct = async (event: React.FormEvent) => {
+    event.preventDefault();
+    if (!editingProductId) return;
+
+    setCreateError(null);
+    setCreateSuccess(null);
+
+    try {
+      setCreateLoading(true);
+      const saved = await apiService.updateGalleryProduct(editingProductId, editProduct);
+      const savedArtwork = mapGalleryProduct(saved);
+      setManagedArtworks((current) =>
+        current.map((art) => (art.id === savedArtwork.id ? savedArtwork : art))
+      );
+      setCreateSuccess(`${saved.title} was updated.`);
+      closeEditModal();
+    } catch (err) {
+      setCreateError(parseApiError(err));
+    } finally {
+      setCreateLoading(false);
+    }
   };
 
   const handleDeleteProduct = async (art: Artwork) => {
@@ -201,8 +228,7 @@ export const Gallery: React.FC<GalleryProps> = ({ onNavigate }) => {
       setManagedArtworks((current) => current.filter((item) => item.id !== art.id));
       setCreateSuccess(`${art.title} was deleted.`);
       if (editingProductId === art.id) {
-        resetProductForm();
-        setIsProductFormOpen(false);
+        closeEditModal();
       }
     } catch (err) {
       setCreateError(parseApiError(err));
@@ -294,12 +320,6 @@ export const Gallery: React.FC<GalleryProps> = ({ onNavigate }) => {
 
           {isProductFormOpen && (
           <form onSubmit={handleCreateProduct} className="grid grid-cols-1 lg:grid-cols-12 gap-4">
-            {editingProductId && (
-              <div className="lg:col-span-12 rounded-xl border border-olive-200 bg-olive-50 px-3 py-2 text-xs font-semibold text-olive-800">
-                Editing product. Choose a new image only if you want to replace the current one.
-              </div>
-            )}
-
             <div className="lg:col-span-4">
               <label className="block text-[11px] font-semibold text-brown-700 mb-1">Title</label>
               <input
@@ -351,13 +371,11 @@ export const Gallery: React.FC<GalleryProps> = ({ onNavigate }) => {
             </div>
 
             <div className="lg:col-span-7">
-              <label className="block text-[11px] font-semibold text-brown-700 mb-1">
-                {editingProductId ? 'Replace Image' : 'Image'}
-              </label>
+              <label className="block text-[11px] font-semibold text-brown-700 mb-1">Image</label>
               <input
                 type="file"
                 accept="image/jpeg,image/png,image/webp,image/gif"
-                required={!editingProductId}
+                required
                 onChange={(event) =>
                   handleProductFieldChange('image_file', event.target.files?.[0] ?? null)
                 }
@@ -409,39 +427,13 @@ export const Gallery: React.FC<GalleryProps> = ({ onNavigate }) => {
             </div>
 
             <div className="lg:col-span-12 flex justify-end gap-3">
-              {editingProductId && (
-                <button
-                  type="button"
-                  onClick={() => {
-                    resetProductForm();
-                    setIsProductFormOpen(false);
-                  }}
-                  className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl border border-sand-300 bg-white text-xs font-semibold text-brown-700 hover:bg-bone-100 transition"
-                >
-                  Cancel Edit
-                </button>
-              )}
               <button
                 type="submit"
                 disabled={createLoading}
                 className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-terracotta hover:bg-terracotta-600 disabled:opacity-60 text-white text-xs font-semibold shadow-md shadow-terracotta/20 transition"
               >
-                {createLoading ? (
-                  <Save className="w-3.5 h-3.5 animate-pulse" />
-                ) : editingProductId ? (
-                  <Save className="w-3.5 h-3.5" />
-                ) : (
-                  <Plus className="w-3.5 h-3.5" />
-                )}
-                <span>
-                  {createLoading
-                    ? editingProductId
-                      ? 'Saving Product...'
-                      : 'Adding Product...'
-                    : editingProductId
-                    ? 'Save Product'
-                    : 'Add Gallery Product'}
-                </span>
+                {createLoading ? <Save className="w-3.5 h-3.5 animate-pulse" /> : <Plus className="w-3.5 h-3.5" />}
+                <span>{createLoading ? 'Adding Product...' : 'Add Gallery Product'}</span>
               </button>
             </div>
           </form>
@@ -687,6 +679,168 @@ export const Gallery: React.FC<GalleryProps> = ({ onNavigate }) => {
           <p className="mt-2 text-xs text-brown-700">
             Products added by an admin will appear here.
           </p>
+        </div>
+      )}
+
+      {/* ================= EDIT PRODUCT MODAL ================= */}
+      {editingProductId && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-midnight-900/60 backdrop-blur-sm animate-fadeIn">
+          <div className="bg-white rounded-3xl border border-sand-300 max-w-3xl w-full max-h-[90vh] overflow-y-auto p-6 sm:p-8 space-y-5 shadow-2xl relative">
+            <button
+              onClick={closeEditModal}
+              className="absolute top-4 right-4 p-2 rounded-full text-brown-600 hover:bg-bone-100 transition"
+            >
+              <X className="w-5 h-5" />
+            </button>
+
+            <div className="space-y-1 pr-10">
+              <span className="text-xs uppercase font-bold text-terracotta tracking-wider">
+                Edit Product
+              </span>
+              <h2 className="text-2xl font-serif font-bold text-midnight-900">
+                {editingProductTitle}
+              </h2>
+              <p className="text-xs text-brown-700">
+                Choose a new image only if you want to replace the current one.
+              </p>
+            </div>
+
+            <form onSubmit={handleUpdateProduct} className="grid grid-cols-1 sm:grid-cols-12 gap-4">
+              <div className="sm:col-span-6">
+                <label className="block text-[11px] font-semibold text-brown-700 mb-1">Title</label>
+                <input
+                  type="text"
+                  required
+                  value={editProduct.title}
+                  onChange={(event) => handleEditProductFieldChange('title', event.target.value)}
+                  className="w-full px-3 py-2 bg-bone-50 border border-sand-300 rounded-xl text-xs text-midnight-900 placeholder-brown-400 focus:outline-none focus:border-olive focus:ring-2 focus:ring-olive/10"
+                  placeholder="Artwork title"
+                />
+              </div>
+
+              <div className="sm:col-span-6">
+                <label className="block text-[11px] font-semibold text-brown-700 mb-1">Series</label>
+                <input
+                  type="text"
+                  required
+                  value={editProduct.series}
+                  onChange={(event) => handleEditProductFieldChange('series', event.target.value)}
+                  className="w-full px-3 py-2 bg-bone-50 border border-sand-300 rounded-xl text-xs text-midnight-900 placeholder-brown-400 focus:outline-none focus:border-olive focus:ring-2 focus:ring-olive/10"
+                  placeholder="Collection or series"
+                />
+              </div>
+
+              <div className="sm:col-span-4">
+                <label className="block text-[11px] font-semibold text-brown-700 mb-1">Price (RWF)</label>
+                <input
+                  type="number"
+                  min="1"
+                  step="1"
+                  required
+                  value={editProduct.price}
+                  onChange={(event) => handleEditProductFieldChange('price', event.target.value)}
+                  className="w-full px-3 py-2 bg-bone-50 border border-sand-300 rounded-xl text-xs text-midnight-900 placeholder-brown-400 focus:outline-none focus:border-olive focus:ring-2 focus:ring-olive/10"
+                  placeholder="250000"
+                />
+              </div>
+
+              <div className="sm:col-span-4">
+                <label className="block text-[11px] font-semibold text-brown-700 mb-1">Year</label>
+                <input
+                  type="text"
+                  required
+                  value={editProduct.year}
+                  onChange={(event) => handleEditProductFieldChange('year', event.target.value)}
+                  className="w-full px-3 py-2 bg-bone-50 border border-sand-300 rounded-xl text-xs text-midnight-900 placeholder-brown-400 focus:outline-none focus:border-olive focus:ring-2 focus:ring-olive/10"
+                  placeholder="2026"
+                />
+              </div>
+
+              <div className="sm:col-span-4">
+                <label className="block text-[11px] font-semibold text-brown-700 mb-1">Status</label>
+                <select
+                  value={editProduct.status}
+                  onChange={(event) =>
+                    handleEditProductFieldChange('status', event.target.value as GalleryStatus)
+                  }
+                  className="w-full px-3 py-2 bg-bone-50 border border-sand-300 rounded-xl text-xs text-midnight-900 focus:outline-none focus:border-olive focus:ring-2 focus:ring-olive/10"
+                >
+                  <option value="Available">Available</option>
+                  <option value="Private Collection">Private Collection</option>
+                  <option value="Exhibition Feature">Exhibition Feature</option>
+                </select>
+              </div>
+
+              <div className="sm:col-span-5">
+                <label className="block text-[11px] font-semibold text-brown-700 mb-1">Replace Image</label>
+                <input
+                  type="file"
+                  accept="image/jpeg,image/png,image/webp,image/gif"
+                  onChange={(event) =>
+                    handleEditProductFieldChange('image_file', event.target.files?.[0] ?? null)
+                  }
+                  className="w-full px-3 py-2 bg-bone-50 border border-sand-300 rounded-xl text-xs text-midnight-900 file:mr-3 file:border-0 file:rounded-lg file:bg-olive file:px-3 file:py-1.5 file:text-xs file:font-semibold file:text-white focus:outline-none focus:border-olive focus:ring-2 focus:ring-olive/10"
+                />
+              </div>
+
+              <div className="sm:col-span-3">
+                <label className="block text-[11px] font-semibold text-brown-700 mb-1">Category</label>
+                <select
+                  value={editProduct.category}
+                  onChange={(event) =>
+                    handleEditProductFieldChange('category', event.target.value as GalleryCategory)
+                  }
+                  className="w-full px-3 py-2 bg-bone-50 border border-sand-300 rounded-xl text-xs text-midnight-900 focus:outline-none focus:border-olive focus:ring-2 focus:ring-olive/10"
+                >
+                  <option value="children">Children</option>
+                  <option value="abstract">Abstract</option>
+                  <option value="figurative">Figurative</option>
+                  <option value="heritage">Heritage</option>
+                </select>
+              </div>
+
+              <div className="sm:col-span-4">
+                <label className="block text-[11px] font-semibold text-brown-700 mb-1">Size</label>
+                <input
+                  type="text"
+                  value={editProduct.dimensions}
+                  onChange={(event) => handleEditProductFieldChange('dimensions', event.target.value)}
+                  className="w-full px-3 py-2 bg-bone-50 border border-sand-300 rounded-xl text-xs text-midnight-900 placeholder-brown-400 focus:outline-none focus:border-olive focus:ring-2 focus:ring-olive/10"
+                  placeholder="Any size"
+                />
+              </div>
+
+              <div className="sm:col-span-12">
+                <label className="block text-[11px] font-semibold text-brown-700 mb-1">Story</label>
+                <textarea
+                  required
+                  rows={4}
+                  value={editProduct.story}
+                  onChange={(event) => handleEditProductFieldChange('story', event.target.value)}
+                  className="w-full px-3 py-2 bg-bone-50 border border-sand-300 rounded-xl text-xs text-midnight-900 placeholder-brown-400 focus:outline-none focus:border-olive focus:ring-2 focus:ring-olive/10 resize-y"
+                  placeholder="Short artwork story or product description"
+                />
+              </div>
+
+              <div className="sm:col-span-12 flex flex-col-reverse sm:flex-row sm:items-center sm:justify-end gap-3 pt-2 border-t border-sand-200">
+                <button
+                  type="button"
+                  onClick={closeEditModal}
+                  className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl border border-sand-300 bg-white text-xs font-semibold text-brown-700 hover:bg-bone-100 transition"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={createLoading}
+                  className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-terracotta hover:bg-terracotta-600 disabled:opacity-60 text-white text-xs font-semibold shadow-md shadow-terracotta/20 transition"
+                >
+                  <Save className={`w-3.5 h-3.5 ${createLoading ? 'animate-pulse' : ''}`} />
+                  <span>{createLoading ? 'Saving Product...' : 'Save Product'}</span>
+                </button>
+              </div>
+            </form>
+          </div>
         </div>
       )}
 
