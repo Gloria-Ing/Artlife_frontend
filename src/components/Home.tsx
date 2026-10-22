@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import type { NavTab } from './Navbar';
 import type { GalleryProductResponse } from '../types/api';
-import { apiService, getStoredBaseUrl } from '../services/api';
+import { apiService, getStoredBaseUrl, parseApiError } from '../services/api';
+import { useAuth } from '../context/AuthContext';
 import {
   Sparkles,
   ArrowRight,
@@ -15,6 +16,9 @@ import {
   CheckCircle2,
   Calendar,
   UserPlus,
+  ShoppingCart,
+  Loader2,
+  AlertCircle,
 } from 'lucide-react';
 
 interface HomeProps {
@@ -22,8 +26,11 @@ interface HomeProps {
 }
 
 export const Home: React.FC<HomeProps> = ({ onNavigate }) => {
+  const { isAuthenticated } = useAuth();
   const [featuredWorks, setFeaturedWorks] = useState<GalleryProductResponse[]>([]);
   const [brokenFeaturedIds, setBrokenFeaturedIds] = useState<Record<string | number, boolean>>({});
+  const [addingToCartId, setAddingToCartId] = useState<string | number | null>(null);
+  const [cartMsg, setCartMsg] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
 
   const resolveImageUrl = (imageUrl: string | null | undefined) => {
     if (!imageUrl) return imageUrl;
@@ -46,6 +53,25 @@ export const Home: React.FC<HomeProps> = ({ onNavigate }) => {
     return `RWF ${new Intl.NumberFormat('en-US', {
       maximumFractionDigits: 0,
     }).format(amount)}`;
+  };
+
+  const handleAddToCart = async (work: GalleryProductResponse) => {
+    if (!isAuthenticated) {
+      onNavigate('account');
+      return;
+    }
+    try {
+      setAddingToCartId(work.id);
+      setCartMsg(null);
+      await apiService.addToCart({ gallery_product_id: Number(work.id), quantity: 1 });
+      setCartMsg({ type: 'success', text: `"${work.title}" added to cart.` });
+      setTimeout(() => setCartMsg(null), 3000);
+    } catch (err) {
+      setCartMsg({ type: 'error', text: parseApiError(err) });
+      setTimeout(() => setCartMsg(null), 4000);
+    } finally {
+      setAddingToCartId(null);
+    }
   };
 
   useEffect(() => {
@@ -304,67 +330,108 @@ export const Home: React.FC<HomeProps> = ({ onNavigate }) => {
         </div>
 
         {featuredWorks.length > 0 ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5">
-            {featuredWorks.map((work) => (
+          <>
+            {/* Cart feedback toast */}
+            {cartMsg && (
               <div
-                key={work.id}
-                className="bg-white rounded-xl border border-sand-200/90 overflow-hidden shadow-sm hover:shadow-md transition-all group flex flex-col justify-between"
+                className={`flex items-start gap-2.5 p-3 rounded-xl border text-xs animate-fadeIn ${cartMsg.type === 'success'
+                    ? 'bg-olive-50 border-olive-200 text-olive-800'
+                    : 'bg-terracotta-50 border-terracotta-200 text-terracotta-800'
+                  }`}
               >
-                <div>
-                  <div className="h-44 bg-gradient-to-br from-bone-100 via-sand-200 to-bone-300 relative overflow-hidden">
-                    {work.image_url && !brokenFeaturedIds[work.id] ? (
-                      <img
-                        src={resolveImageUrl(work.image_url) ?? undefined}
-                        alt={work.title}
-                        onError={() => setBrokenFeaturedIds((prev) => ({ ...prev, [work.id]: true }))}
-                        className="absolute inset-0 h-full w-full object-cover transition-transform duration-300 group-hover:scale-102"
-                      />
-                    ) : (
-                      <div className="absolute inset-0 flex flex-col items-center justify-center p-4 text-center bg-gradient-to-br from-bone-100 via-sand-100 to-bone-200">
-                        <div className="w-10 h-10 rounded-xl bg-white/80 border border-sand-300 shadow-sm flex items-center justify-center mb-1.5">
-                          <Palette className="w-5 h-5 text-terracotta" />
+                {cartMsg.type === 'success' ? (
+                  <CheckCircle2 className="w-4 h-4 shrink-0 mt-0.5" />
+                ) : (
+                  <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" />
+                )}
+                <span>{cartMsg.text}</span>
+                {cartMsg.type === 'success' && (
+                  <button
+                    onClick={() => onNavigate('cart')}
+                    className="ml-auto shrink-0 underline font-semibold whitespace-nowrap"
+                  >
+                    View Cart →
+                  </button>
+                )}
+              </div>
+            )}
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5">
+              {featuredWorks.map((work) => (
+                <div
+                  key={work.id}
+                  className="bg-white rounded-xl border border-sand-200/90 overflow-hidden shadow-sm hover:shadow-md transition-all group flex flex-col justify-between"
+                >
+                  <div>
+                    <div className="h-44 bg-gradient-to-br from-bone-100 via-sand-200 to-bone-300 relative overflow-hidden">
+                      {work.image_url && !brokenFeaturedIds[work.id] ? (
+                        <img
+                          src={resolveImageUrl(work.image_url) ?? undefined}
+                          alt={work.title}
+                          onError={() => setBrokenFeaturedIds((prev) => ({ ...prev, [work.id]: true }))}
+                          className="absolute inset-0 h-full w-full object-cover transition-transform duration-300 group-hover:scale-102"
+                        />
+                      ) : (
+                        <div className="absolute inset-0 flex flex-col items-center justify-center p-4 text-center bg-gradient-to-br from-bone-100 via-sand-100 to-bone-200">
+                          <div className="w-10 h-10 rounded-xl bg-white/80 border border-sand-300 shadow-sm flex items-center justify-center mb-1.5">
+                            <Palette className="w-5 h-5 text-terracotta" />
+                          </div>
+                          <h4 className="text-xs font-serif font-bold text-midnight-900 line-clamp-1">{work.title}</h4>
+                          <span className="text-[9px] text-olive font-semibold uppercase tracking-wider mt-0.5">
+                            {work.series}
+                          </span>
                         </div>
-                        <h4 className="text-xs font-serif font-bold text-midnight-900 line-clamp-1">{work.title}</h4>
-                        <span className="text-[9px] text-olive font-semibold uppercase tracking-wider mt-0.5">
+                      )}
+                      <span className="absolute top-2.5 left-2.5 text-[9px] font-semibold px-2 py-0.5 rounded-full uppercase tracking-wider bg-white/90 text-olive-800 border border-olive-200">
+                        {work.status}
+                      </span>
+                    </div>
+
+                    <div className="p-3.5 space-y-1.5">
+                      <div className="space-y-0.5">
+                        <span className="text-[9px] uppercase font-bold text-terracotta tracking-wider">
                           {work.series}
                         </span>
+                        <h4 className="text-sm font-serif font-bold text-midnight-900">{work.title}</h4>
+                        {formatPrice(work.price) && (
+                          <p className="text-xs font-bold text-olive">{formatPrice(work.price)}</p>
+                        )}
                       </div>
+                      <div className="flex items-center justify-between text-[10px] text-brown-600 font-medium">
+                        <span className="capitalize">{work.category}</span>
+                        <span className="font-mono text-olive font-bold">{work.year}</span>
+                      </div>
+                      <p className="text-[11px] text-brown-700 leading-relaxed line-clamp-2">{work.story}</p>
+                    </div>
+                  </div>
+
+                  <div className="px-3.5 pb-3 pt-2 border-t border-sand-200 flex items-center justify-between gap-2 text-xs">
+                    {work.status === 'Available' && (
+                      <button
+                        onClick={() => handleAddToCart(work)}
+                        disabled={addingToCartId === work.id}
+                        className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-olive hover:bg-olive-600 disabled:opacity-60 text-white text-[11px] font-semibold shadow-sm transition"
+                      >
+                        {addingToCartId === work.id ? (
+                          <Loader2 className="w-3 h-3 animate-spin" />
+                        ) : (
+                          <ShoppingCart className="w-3 h-3" />
+                        )}
+                        <span>{addingToCartId === work.id ? 'Adding…' : 'Add to Cart'}</span>
+                      </button>
                     )}
-                    <span className="absolute top-2.5 left-2.5 text-[9px] font-semibold px-2 py-0.5 rounded-full uppercase tracking-wider bg-white/90 text-olive-800 border border-olive-200">
-                      {work.status}
-                    </span>
-                  </div>
-
-                  <div className="p-3.5 space-y-1.5">
-                    <div className="space-y-0.5">
-                      <span className="text-[9px] uppercase font-bold text-terracotta tracking-wider">
-                        {work.series}
-                      </span>
-                      <h4 className="text-sm font-serif font-bold text-midnight-900">{work.title}</h4>
-                      {formatPrice(work.price) && (
-                        <p className="text-xs font-bold text-olive">{formatPrice(work.price)}</p>
-                      )}
-                    </div>
-                    <div className="flex items-center justify-between text-[10px] text-brown-600 font-medium">
-                      <span className="capitalize">{work.category}</span>
-                      <span className="font-mono text-olive font-bold">{work.year}</span>
-                    </div>
-                    <p className="text-[11px] text-brown-700 leading-relaxed line-clamp-2">{work.story}</p>
+                    <button
+                      onClick={() => onNavigate('contact')}
+                      className="font-semibold text-terracotta hover:text-terracotta-700 transition flex items-center gap-1 text-[11px] ml-auto"
+                    >
+                      <span>Inquire</span>
+                      <ArrowRight className="w-3 h-3" />
+                    </button>
                   </div>
                 </div>
-
-                <div className="px-3.5 pb-3 pt-2 border-t border-sand-200 flex items-center justify-end text-xs">
-                  <button
-                    onClick={() => onNavigate('contact')}
-                    className="font-semibold text-terracotta hover:text-terracotta-700 transition flex items-center gap-1 text-[11px]"
-                  >
-                    <span>Acquire / Inquire</span>
-                    <ArrowRight className="w-3 h-3" />
-                  </button>
-                </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          </>
         ) : (
           <div className="rounded-xl border border-dashed border-sand-300 bg-white p-6 text-center shadow-sm">
             <p className="text-xs font-semibold text-midnight-900">No curated works yet.</p>
