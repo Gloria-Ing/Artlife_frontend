@@ -12,24 +12,24 @@ interface TBRIMissionProps {
 
 export const TBRIMission: React.FC<TBRIMissionProps> = ({ onNavigate }) => {
   return (
-    <div className="space-y-12 sm:space-y-16 pb-16 animate-fadeIn">
+    <div className="space-y-8 sm:space-y-10 pb-12 animate-fadeIn">
       {/* ================= HERO HEADER ================= */}
-      <section className="relative overflow-hidden rounded-3xl border border-sand-300 bg-gradient-to-b from-bone-50 via-white to-bone-100 p-8 sm:p-14 text-center shadow-sm">
+      <section className="relative overflow-hidden rounded-2xl border border-sand-200/90 bg-gradient-to-b from-bone-50 via-white to-bone-100 p-5 sm:p-7 md:p-8 text-center shadow-xs">
         {/* Soft background flares */}
-        <div className="absolute -right-24 -top-24 w-96 h-96 rounded-full bg-olive-100/60 blur-3xl pointer-events-none" />
-        <div className="absolute -left-24 -bottom-24 w-96 h-96 rounded-full bg-terracotta-100/50 blur-3xl pointer-events-none" />
+        <div className="absolute -right-16 -top-16 w-56 h-56 rounded-full bg-olive-100/50 blur-2xl pointer-events-none" />
+        <div className="absolute -left-16 -bottom-16 w-56 h-56 rounded-full bg-terracotta-100/40 blur-2xl pointer-events-none" />
 
-        <div className="max-w-3xl mx-auto space-y-4 relative z-10">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-terracotta-100 text-terracotta text-xs font-semibold">
-            <Heart className="w-3.5 h-3.5" />
+        <div className="max-w-2xl mx-auto space-y-3 relative z-10">
+          <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-terracotta-100 text-terracotta text-[10px] font-semibold">
+            <Heart className="w-3 h-3" />
             <span>Social Impact & Healing Through Art</span>
           </div>
 
-          <h1 className="text-3xl sm:text-5xl font-serif font-bold text-midnight-900 tracking-tight">
+          <h1 className="text-2xl sm:text-3xl font-serif font-bold text-midnight-900 tracking-tight">
             The TBRI® Approach & Gisimba Programs
           </h1>
 
-          <p className="text-base sm:text-lg text-brown-700 leading-relaxed font-light">
+          <p className="text-xs sm:text-sm text-brown-700 leading-relaxed font-light">
             Using Trust-Based Relational Intervention, painting, and safe creative spaces in Kigali, Rwanda to help
             children express themselves, regulate emotion, and discover inner confidence.
           </p>
@@ -37,24 +37,24 @@ export const TBRIMission: React.FC<TBRIMissionProps> = ({ onNavigate }) => {
       </section>
 
       {/* ================= DECADE JOURNEY NARRATIVE ================= */}
-      <section className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
-        <div className="lg:col-span-7 bg-white rounded-3xl border border-sand-300 p-8 sm:p-10 shadow-sm space-y-5">
-          <span className="text-xs font-bold uppercase tracking-widest text-olive">
+      <section className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-start">
+        <div className="lg:col-span-7 bg-white rounded-2xl border border-sand-200/90 p-5 sm:p-7 shadow-xs space-y-3.5">
+          <span className="text-[10px] font-bold uppercase tracking-widest text-olive">
             A Decade of Dedication
           </span>
 
-          <h2 className="text-2xl sm:text-3xl font-serif font-bold text-midnight-900 leading-tight">
+          <h2 className="text-lg sm:text-xl font-serif font-bold text-midnight-900 leading-snug">
             “Art as a sanctuary for healing, imagination, and voice.”
           </h2>
 
-          <div className="space-y-4 text-sm sm:text-base text-brown-800 leading-relaxed font-light">
+          <div className="space-y-3 text-xs sm:text-sm text-brown-700 leading-relaxed font-light">
             <p>
               For nearly ten years, Cedrick Gisimba has worked alongside children in Kigali, particularly within the
               renowned <strong>Gisimba After School programs</strong>. In these programs, art is not merely an activity—it is
               a restorative bridge for children from diverse backgrounds to process difficult circumstances.
             </p>
 
-            <blockquote className="border-l-4 border-olive pl-4 py-2 italic font-serif text-midnight-900 bg-bone-100 rounded-r-xl">
+            <blockquote className="border-l-3 border-olive pl-3 py-1.5 italic font-serif text-midnight-900 bg-bone-100 rounded-r-lg text-xs sm:text-sm">
               “When I paint children, I am not only interested in capturing what they look like. I am interested in what
               I can feel or imagine behind the image: their emotions, innocence, energy, dreams, and the possibilities
               that exist within them.”
@@ -67,31 +67,31 @@ export const TBRIMission: React.FC<TBRIMissionProps> = ({ onNavigate }) => {
           </div>
         </div>
 
-        <div className="lg:col-span-5 space-y-4">
-          <div className="bg-white rounded-3xl border border-sand-300 p-6 sm:p-8 shadow-sm space-y-4">
-            <h3 className="text-lg font-serif font-bold text-midnight-900 flex items-center gap-2">
-              <Sun className="w-5 h-5 text-terracotta" />
+        <div className="lg:col-span-5 space-y-3">
+          <div className="bg-white rounded-2xl border border-sand-200/90 p-4 sm:p-5 shadow-xs space-y-3">
+            <h3 className="text-xs font-serif font-bold text-midnight-900 flex items-center gap-1.5 uppercase tracking-wider">
+              <Sun className="w-3.5 h-3.5 text-terracotta" />
               <span>Core TBRI Principles in Art</span>
             </h3>
 
-            <div className="space-y-3">
-              <div className="p-3.5 rounded-xl bg-bone-50 border border-sand-200">
-                <h4 className="text-xs font-bold text-midnight-900 mb-1">1. Connecting Principles</h4>
-                <p className="text-xs text-brown-600">
+            <div className="space-y-2">
+              <div className="p-2.5 rounded-lg bg-bone-50 border border-sand-200/80">
+                <h4 className="text-xs font-bold text-midnight-900 mb-0.5">1. Connecting Principles</h4>
+                <p className="text-[11px] text-brown-600 leading-relaxed">
                   Building deep trust, mutual eye contact, and emotional attunement through creative collaboration.
                 </p>
               </div>
 
-              <div className="p-3.5 rounded-xl bg-bone-50 border border-sand-200">
-                <h4 className="text-xs font-bold text-midnight-900 mb-1">2. Empowering Principles</h4>
-                <p className="text-xs text-brown-600">
+              <div className="p-2.5 rounded-lg bg-bone-50 border border-sand-200/80">
+                <h4 className="text-xs font-bold text-midnight-900 mb-0.5">2. Empowering Principles</h4>
+                <p className="text-[11px] text-brown-600 leading-relaxed">
                   Creating safe physical and sensory environments with rich acrylic paints, texture pastes, and paper.
                 </p>
               </div>
 
-              <div className="p-3.5 rounded-xl bg-bone-50 border border-sand-200">
-                <h4 className="text-xs font-bold text-midnight-900 mb-1">3. Correcting / Regulating Principles</h4>
-                <p className="text-xs text-brown-600">
+              <div className="p-2.5 rounded-lg bg-bone-50 border border-sand-200/80">
+                <h4 className="text-xs font-bold text-midnight-900 mb-0.5">3. Correcting / Regulating Principles</h4>
+                <p className="text-[11px] text-brown-600 leading-relaxed">
                   Translating complex, non-verbal emotional pain into constructive strokes, vibrant colors, and hope.
                 </p>
               </div>
@@ -101,55 +101,55 @@ export const TBRIMission: React.FC<TBRIMissionProps> = ({ onNavigate }) => {
       </section>
 
       {/* ================= WORKSHOP IMPACT STATS ================= */}
-      <section className="bg-bone-100 rounded-3xl border border-sand-300 p-8 sm:p-12 shadow-sm">
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
-          <div className="space-y-1">
-            <div className="text-3xl sm:text-4xl font-serif font-bold text-olive">10 Yrs</div>
-            <div className="text-xs text-brown-600 font-semibold tracking-wide uppercase">Community Workshops</div>
+      <section className="bg-bone-100 rounded-2xl border border-sand-200/90 p-5 sm:p-7 shadow-xs">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
+          <div className="space-y-0.5">
+            <div className="text-xl sm:text-2xl font-serif font-bold text-olive">10 Yrs</div>
+            <div className="text-[10px] text-brown-600 font-semibold tracking-wide uppercase">Community Workshops</div>
           </div>
-          <div className="space-y-1">
-            <div className="text-3xl sm:text-4xl font-serif font-bold text-terracotta">500+</div>
-            <div className="text-xs text-brown-600 font-semibold tracking-wide uppercase">Children Mentored</div>
+          <div className="space-y-0.5">
+            <div className="text-xl sm:text-2xl font-serif font-bold text-terracotta">500+</div>
+            <div className="text-[10px] text-brown-600 font-semibold tracking-wide uppercase">Children Mentored</div>
           </div>
-          <div className="space-y-1">
-            <div className="text-3xl sm:text-4xl font-serif font-bold text-midnight-900">100%</div>
-            <div className="text-xs text-brown-600 font-semibold tracking-wide uppercase">Safe Studio Sanctuary</div>
+          <div className="space-y-0.5">
+            <div className="text-xl sm:text-2xl font-serif font-bold text-midnight-900">100%</div>
+            <div className="text-[10px] text-brown-600 font-semibold tracking-wide uppercase">Safe Studio Sanctuary</div>
           </div>
-          <div className="space-y-1">
-            <div className="text-3xl sm:text-4xl font-serif font-bold text-brown-700">Kigali</div>
-            <div className="text-xs text-brown-600 font-semibold tracking-wide uppercase">Rwanda Community Roots</div>
+          <div className="space-y-0.5">
+            <div className="text-xl sm:text-2xl font-serif font-bold text-brown-700">Kigali</div>
+            <div className="text-[10px] text-brown-600 font-semibold tracking-wide uppercase">Rwanda Community Roots</div>
           </div>
         </div>
       </section>
 
       {/* ================= GET INVOLVED CALL TO ACTION ================= */}
-      <section className="bg-white rounded-3xl border border-sand-300 p-8 sm:p-12 text-center shadow-lg relative overflow-hidden">
-        <div className="max-w-2xl mx-auto space-y-5">
-          <div className="w-14 h-14 rounded-full bg-olive-100 text-olive flex items-center justify-center mx-auto">
-            <Heart className="w-7 h-7 text-terracotta" />
+      <section className="bg-white rounded-2xl border border-sand-200/90 p-6 sm:p-8 text-center shadow-xs relative overflow-hidden">
+        <div className="max-w-xl mx-auto space-y-3">
+          <div className="w-10 h-10 rounded-full bg-olive-100 text-olive flex items-center justify-center mx-auto">
+            <Heart className="w-5 h-5 text-terracotta" />
           </div>
 
-          <h2 className="text-2xl sm:text-3xl font-serif font-bold text-midnight-900">
+          <h2 className="text-xl sm:text-2xl font-serif font-bold text-midnight-900">
             Partner with Cedrick Gisimba on Youth Art Initiatives
           </h2>
 
-          <p className="text-sm text-brown-700 leading-relaxed">
+          <p className="text-xs text-brown-700 leading-relaxed">
             Whether you are a charitable organization, educational institution, gallery, or sponsor wishing to fund art
             supplies and workshops for Rwandan youth, we welcome your collaboration.
           </p>
 
-          <div className="flex flex-wrap items-center justify-center gap-3 pt-2">
+          <div className="flex flex-wrap items-center justify-center gap-2.5 pt-1.5">
             <button
               onClick={() => onNavigate('contact')}
-              className="px-6 py-3 rounded-xl bg-terracotta hover:bg-terracotta-600 text-white text-sm font-semibold shadow-md shadow-terracotta/20 transition-all active:scale-95 flex items-center gap-2"
+              className="px-4 py-2 rounded-lg bg-terracotta hover:bg-terracotta-600 text-white text-xs font-semibold shadow-xs transition-all active:scale-95 flex items-center gap-1.5"
             >
               <span>Initiate a Collaboration</span>
-              <ArrowRight className="w-4 h-4" />
+              <ArrowRight className="w-3.5 h-3.5" />
             </button>
 
             <button
               onClick={() => onNavigate('profile')}
-              className="px-6 py-3 rounded-xl bg-bone-100 hover:bg-bone-200 text-midnight-900 text-sm font-semibold border border-sand-300 transition-all"
+              className="px-4 py-2 rounded-lg bg-bone-100 hover:bg-bone-200 text-midnight-900 text-xs font-semibold border border-sand-200/90 transition-all shadow-xs"
             >
               Read Artist Biography
             </button>

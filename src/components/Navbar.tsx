@@ -32,15 +32,15 @@ export const Navbar: React.FC<NavbarProps> = ({ activeTab, setActiveTab }) => {
   };
 
   return (
-    <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-sand-200/80 shadow-sm transition-all duration-300">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-20">
+    <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-sand-200/90 shadow-sm transition-all duration-200">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6">
+        <div className="flex items-center justify-between h-14 sm:h-16">
           {/* Brand Logo & Artist Title */}
           <div
             onClick={() => handleTabClick('home')}
-            className="flex items-center space-x-3.5 cursor-pointer group"
+            className="flex items-center space-x-2.5 cursor-pointer group"
           >
-            <div className="relative w-12 h-12 rounded-full p-0.5 bg-gradient-to-tr from-olive via-sand to-terracotta shadow-md group-hover:scale-105 transition-transform duration-300">
+            <div className="relative w-8 h-8 sm:w-9 sm:h-9 rounded-full p-0.5 bg-gradient-to-tr from-olive via-sand to-terracotta shadow-sm group-hover:scale-105 transition-transform duration-200">
               <img
                 src="/artlife-logo.png"
                 alt="Artlife Fusion Emblem"
@@ -48,109 +48,109 @@ export const Navbar: React.FC<NavbarProps> = ({ activeTab, setActiveTab }) => {
               />
             </div>
             <div>
-              <div className="flex items-center space-x-2">
-                <span className="text-xl font-serif font-bold tracking-tight text-midnight-900 group-hover:text-olive transition-colors">
+              <div className="flex items-center space-x-1.5">
+                <span className="text-sm sm:text-base font-serif font-bold tracking-tight text-midnight-900 group-hover:text-olive transition-colors">
                   Artlife Fusion
                 </span>
-                <span className="text-[10px] uppercase font-semibold px-2 py-0.5 rounded-full bg-olive-50 text-olive-700 border border-olive-200 tracking-wider">
+                <span className="text-[9px] uppercase font-semibold px-1.5 py-0.2 rounded-full bg-olive-50 text-olive-700 border border-olive-200/80 tracking-wide">
                   Rwanda
                 </span>
               </div>
-              <p className="text-xs text-brown-600 font-serif italic">
+              <p className="text-[10px] text-brown-500 leading-tight">
                 Cedrick Gisimba • Visual Artist
               </p>
             </div>
           </div>
 
           {/* Desktop Navigation Links */}
-          <nav className="hidden md:flex items-center space-x-1 lg:space-x-2">
+          <nav className="hidden md:flex items-center space-x-1">
             <button
               onClick={() => handleTabClick('home')}
-              className={`flex items-center space-x-1.5 px-3.5 py-2 rounded-xl text-sm font-medium transition-all ${
+              className={`flex items-center space-x-1.5 px-2.5 py-1.5 rounded-lg text-xs font-medium transition-all ${
                 activeTab === 'home'
                   ? 'bg-olive text-white shadow-sm font-semibold'
                   : 'text-midnight-900/80 hover:text-olive hover:bg-bone-100'
               }`}
             >
-              <Home className="w-4 h-4" />
+              <Home className="w-3.5 h-3.5" />
               <span>Home</span>
             </button>
 
             <button
               onClick={() => handleTabClick('profile')}
-              className={`flex items-center space-x-1.5 px-3.5 py-2 rounded-xl text-sm font-medium transition-all ${
+              className={`flex items-center space-x-1.5 px-2.5 py-1.5 rounded-lg text-xs font-medium transition-all ${
                 activeTab === 'profile'
                   ? 'bg-olive text-white shadow-sm font-semibold'
                   : 'text-midnight-900/80 hover:text-olive hover:bg-bone-100'
               }`}
             >
-              <User className="w-4 h-4" />
-              <span>My Profile</span>
+              <User className="w-3.5 h-3.5" />
+              <span>Profile</span>
             </button>
 
             <button
               onClick={() => handleTabClick('gallery')}
-              className={`flex items-center space-x-1.5 px-3.5 py-2 rounded-xl text-sm font-medium transition-all ${
+              className={`flex items-center space-x-1.5 px-2.5 py-1.5 rounded-lg text-xs font-medium transition-all ${
                 activeTab === 'gallery'
                   ? 'bg-olive text-white shadow-sm font-semibold'
                   : 'text-midnight-900/80 hover:text-olive hover:bg-bone-100'
               }`}
             >
-              <Palette className="w-4 h-4" />
+              <Palette className="w-3.5 h-3.5" />
               <span>Gallery</span>
             </button>
 
             <button
               onClick={() => handleTabClick('tbri')}
-              className={`flex items-center space-x-1.5 px-3.5 py-2 rounded-xl text-sm font-medium transition-all ${
+              className={`flex items-center space-x-1.5 px-2.5 py-1.5 rounded-lg text-xs font-medium transition-all ${
                 activeTab === 'tbri'
                   ? 'bg-olive text-white shadow-sm font-semibold'
                   : 'text-midnight-900/80 hover:text-olive hover:bg-bone-100'
               }`}
             >
-              <Heart className="w-4 h-4 text-terracotta" />
-              <span>TBRI & Mission</span>
+              <Heart className="w-3.5 h-3.5 text-terracotta" />
+              <span>TBRI Mission</span>
             </button>
 
             <button
               onClick={() => handleTabClick('account')}
-              className={`flex items-center space-x-1.5 px-3.5 py-2 rounded-xl text-sm font-medium transition-all ${
+              className={`flex items-center space-x-1.5 px-2.5 py-1.5 rounded-lg text-xs font-medium transition-all ${
                 activeTab === 'account'
                   ? 'bg-olive text-white shadow-sm font-semibold'
                   : 'text-midnight-900/80 hover:text-olive hover:bg-bone-100'
               }`}
             >
-              <LogIn className="w-4 h-4" />
+              <LogIn className="w-3.5 h-3.5" />
               <span>Account</span>
             </button>
 
             <button
               onClick={() => handleTabClick('contact')}
-              className={`flex items-center space-x-1.5 px-3.5 py-2 rounded-xl text-sm font-medium transition-all ${
+              className={`flex items-center space-x-1.5 px-2.5 py-1.5 rounded-lg text-xs font-medium transition-all ${
                 activeTab === 'contact'
                   ? 'bg-olive text-white shadow-sm font-semibold'
                   : 'text-midnight-900/80 hover:text-olive hover:bg-bone-100'
               }`}
             >
-              <Mail className="w-4 h-4" />
-              <span>Contact Us</span>
+              <Mail className="w-3.5 h-3.5" />
+              <span>Contact</span>
             </button>
           </nav>
 
           {/* Desktop Right CTA Action */}
-          <div className="hidden md:flex items-center space-x-3">
+          <div className="hidden md:flex items-center space-x-2">
             {isAuthenticated && user && (
               <button
                 onClick={() => handleTabClick('account')}
-                className="flex items-center gap-2 px-3 py-2 rounded-xl bg-bone-50 hover:bg-bone-100 border border-sand-300 text-left transition"
+                className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-bone-50 hover:bg-bone-100 border border-sand-300 text-left transition"
                 title={`${userName} - ${userRole}`}
               >
-                <User className="w-4 h-4 text-olive shrink-0" />
+                <User className="w-3.5 h-3.5 text-olive shrink-0" />
                 <span className="min-w-0">
-                  <span className="block max-w-28 truncate text-xs font-semibold text-midnight-900">
+                  <span className="block max-w-24 truncate text-[11px] font-semibold text-midnight-900">
                     {userName}
                   </span>
-                  <span className="block text-[10px] uppercase tracking-wider text-terracotta font-bold">
+                  <span className="block text-[9px] uppercase tracking-wider text-terracotta font-bold">
                     {userRole}
                   </span>
                 </span>
@@ -159,87 +159,87 @@ export const Navbar: React.FC<NavbarProps> = ({ activeTab, setActiveTab }) => {
           </div>
 
           {/* Mobile Hamburger Toggle */}
-          <div className="flex md:hidden items-center space-x-2">
+          <div className="flex md:hidden items-center">
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="p-2.5 rounded-xl text-midnight-900 hover:bg-bone-100 border border-sand-300 transition"
+              className="p-1.5 rounded-lg text-midnight-900 hover:bg-bone-100 border border-sand-300 transition"
               aria-label="Toggle navigation menu"
             >
-              {mobileMenuOpen ? <X className="w-5 h-5 text-terracotta" /> : <Menu className="w-5 h-5 text-olive" />}
+              {mobileMenuOpen ? <X className="w-4 h-4 text-terracotta" /> : <Menu className="w-4 h-4 text-olive" />}
             </button>
           </div>
         </div>
 
         {/* Mobile Navigation Drawer */}
         {mobileMenuOpen && (
-          <div className="md:hidden py-4 border-t border-sand-200 space-y-1.5 animate-fadeIn bg-white">
+          <div className="md:hidden py-3 border-t border-sand-200 space-y-1 animate-fadeIn bg-white">
             <button
               onClick={() => handleTabClick('home')}
-              className={`w-full flex items-center space-x-3 px-4 py-2.5 rounded-xl text-sm font-medium transition ${
+              className={`w-full flex items-center space-x-2.5 px-3 py-2 rounded-lg text-xs font-medium transition ${
                 activeTab === 'home'
                   ? 'bg-olive text-white font-semibold'
                   : 'text-midnight-900 hover:bg-bone-100'
               }`}
             >
-              <Home className="w-4 h-4" />
+              <Home className="w-3.5 h-3.5" />
               <span>Home</span>
             </button>
 
             <button
               onClick={() => handleTabClick('profile')}
-              className={`w-full flex items-center space-x-3 px-4 py-2.5 rounded-xl text-sm font-medium transition ${
+              className={`w-full flex items-center space-x-2.5 px-3 py-2 rounded-lg text-xs font-medium transition ${
                 activeTab === 'profile'
                   ? 'bg-olive text-white font-semibold'
                   : 'text-midnight-900 hover:bg-bone-100'
               }`}
             >
-              <User className="w-4 h-4" />
-              <span>My Profile & Story</span>
+              <User className="w-3.5 h-3.5" />
+              <span>Profile & Story</span>
             </button>
 
             <button
               onClick={() => handleTabClick('gallery')}
-              className={`w-full flex items-center space-x-3 px-4 py-2.5 rounded-xl text-sm font-medium transition ${
+              className={`w-full flex items-center space-x-2.5 px-3 py-2 rounded-lg text-xs font-medium transition ${
                 activeTab === 'gallery'
                   ? 'bg-olive text-white font-semibold'
                   : 'text-midnight-900 hover:bg-bone-100'
               }`}
             >
-              <Palette className="w-4 h-4" />
+              <Palette className="w-3.5 h-3.5" />
               <span>Artwork Gallery</span>
             </button>
 
             <button
               onClick={() => handleTabClick('tbri')}
-              className={`w-full flex items-center space-x-3 px-4 py-2.5 rounded-xl text-sm font-medium transition ${
+              className={`w-full flex items-center space-x-2.5 px-3 py-2 rounded-lg text-xs font-medium transition ${
                 activeTab === 'tbri'
                   ? 'bg-olive text-white font-semibold'
                   : 'text-midnight-900 hover:bg-bone-100'
               }`}
             >
-              <Heart className="w-4 h-4 text-terracotta" />
-              <span>TBRI & Children Mission</span>
+              <Heart className="w-3.5 h-3.5 text-terracotta" />
+              <span>TBRI Mission</span>
             </button>
 
             <button
               onClick={() => handleTabClick('account')}
-              className={`w-full flex items-center space-x-3 px-4 py-2.5 rounded-xl text-sm font-medium transition ${
+              className={`w-full flex items-center space-x-2.5 px-3 py-2 rounded-lg text-xs font-medium transition ${
                 activeTab === 'account'
                   ? 'bg-olive text-white font-semibold'
                   : 'text-midnight-900 hover:bg-bone-100'
               }`}
             >
-              <LogIn className="w-4 h-4" />
-              <span>Account Login</span>
+              <LogIn className="w-3.5 h-3.5" />
+              <span>Account</span>
             </button>
 
             {isAuthenticated && user && (
-              <div className="mx-4 my-2 rounded-2xl bg-bone-50 border border-sand-300 p-3">
+              <div className="mx-3 my-1.5 rounded-xl bg-bone-50 border border-sand-300 p-2.5">
                 <div className="flex items-center gap-2">
-                  <User className="w-4 h-4 text-olive shrink-0" />
+                  <User className="w-3.5 h-3.5 text-olive shrink-0" />
                   <div className="min-w-0">
-                    <p className="text-sm font-semibold text-midnight-900 truncate">{userName}</p>
-                    <p className="text-[11px] uppercase tracking-wider text-terracotta font-bold">
+                    <p className="text-xs font-semibold text-midnight-900 truncate">{userName}</p>
+                    <p className="text-[10px] uppercase tracking-wider text-terracotta font-bold">
                       {userRole}
                     </p>
                   </div>
@@ -249,23 +249,23 @@ export const Navbar: React.FC<NavbarProps> = ({ activeTab, setActiveTab }) => {
 
             <button
               onClick={() => handleTabClick('contact')}
-              className={`w-full flex items-center space-x-3 px-4 py-2.5 rounded-xl text-sm font-medium transition ${
+              className={`w-full flex items-center space-x-2.5 px-3 py-2 rounded-lg text-xs font-medium transition ${
                 activeTab === 'contact'
                   ? 'bg-olive text-white font-semibold'
                   : 'text-midnight-900 hover:bg-bone-100'
               }`}
             >
-              <Mail className="w-4 h-4" />
-              <span>Contact & Studio</span>
+              <Mail className="w-3.5 h-3.5" />
+              <span>Contact Studio</span>
             </button>
 
-            <div className="pt-2 px-4">
+            <div className="pt-2 px-3">
               <button
                 onClick={() => handleTabClick('contact')}
-                className="w-full flex items-center justify-center space-x-2 py-2.5 rounded-xl bg-terracotta hover:bg-terracotta-600 text-white text-xs font-semibold shadow-md transition"
+                className="w-full flex items-center justify-center space-x-1.5 py-2 rounded-lg bg-terracotta hover:bg-terracotta-600 text-white text-xs font-semibold shadow-sm transition"
               >
-                <span>Studio Inquiries & Commissions</span>
-                <ArrowRight className="w-3.5 h-3.5" />
+                <span>Studio Inquiries</span>
+                <ArrowRight className="w-3 h-3" />
               </button>
             </div>
           </div>

@@ -20,7 +20,7 @@ export default function App() {
     <div className="min-h-screen flex flex-col bg-white text-midnight-900 font-sans selection:bg-terracotta selection:text-white">
       <Navbar activeTab={activeTab} setActiveTab={handleNavigate} />
 
-      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-10">
+      <main className="flex-1 max-w-6xl w-full mx-auto px-4 sm:px-6 py-6 sm:py-8">
         {activeTab === 'home' && <Home onNavigate={handleNavigate} />}
         {activeTab === 'profile' && <MyProfile />}
         {activeTab === 'gallery' && <Gallery onNavigate={handleNavigate} />}
@@ -31,10 +31,10 @@ export default function App() {
         )}
       </main>
 
-      <footer className="border-t border-sand-300 bg-bone-100 py-12 text-xs text-brown-700">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row items-center justify-between gap-8">
-          <div className="flex items-center space-x-3 text-center md:text-left">
-            <div className="w-11 h-11 rounded-full p-0.5 bg-gradient-to-tr from-olive via-sand to-terracotta shadow-md shrink-0">
+      <footer className="border-t border-sand-200/90 bg-bone-50 py-6 text-[11px] text-brown-600">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 flex flex-col md:flex-row items-center justify-between gap-5">
+          <div className="flex items-center space-x-2.5 text-center md:text-left">
+            <div className="w-8 h-8 rounded-full p-0.5 bg-gradient-to-tr from-olive via-sand to-terracotta shadow-sm shrink-0">
               <img
                 src="/artlife-logo.png"
                 alt="ALF Artlife Emblem"
@@ -42,72 +42,72 @@ export default function App() {
               />
             </div>
             <div>
-              <div className="flex items-center justify-center md:justify-start gap-2">
-                <span className="font-serif font-bold text-midnight-900 text-base">Artlife Fusion</span>
-                <span className="text-[11px] text-terracotta font-serif italic">Art in Motion</span>
+              <div className="flex items-center justify-center md:justify-start gap-1.5">
+                <span className="font-serif font-bold text-midnight-900 text-sm">Artlife Fusion</span>
+                <span className="text-[10px] text-terracotta font-serif italic">Art in Motion</span>
               </div>
-              <p className="text-xs text-brown-600 mt-0.5">
-                Cedrick Gisimba - Visual Artist & Creative Entrepreneur - Kigali, Rwanda
+              <p className="text-[10px] text-brown-500 mt-0.5">
+                Cedrick Gisimba • Visual Artist & Creative Entrepreneur • Kigali, Rwanda
               </p>
             </div>
           </div>
 
-          <div className="flex flex-wrap items-center justify-center gap-5 text-xs font-medium">
+          <div className="flex flex-wrap items-center justify-center gap-3.5 text-[11px] font-medium">
             <button
               onClick={() => handleNavigate('home')}
-              className="text-brown-700 hover:text-olive transition flex items-center gap-1"
+              className="text-brown-600 hover:text-olive transition flex items-center gap-1"
             >
-              <HomeIcon className="w-3.5 h-3.5" />
+              <HomeIcon className="w-3 h-3" />
               <span>Home</span>
             </button>
-            <span className="text-sand-400">|</span>
+            <span className="text-sand-300">|</span>
             <button
               onClick={() => handleNavigate('profile')}
-              className="text-brown-700 hover:text-olive transition flex items-center gap-1"
+              className="text-brown-600 hover:text-olive transition flex items-center gap-1"
             >
-              <User className="w-3.5 h-3.5" />
-              <span>My Profile</span>
+              <User className="w-3 h-3" />
+              <span>Profile</span>
             </button>
-            <span className="text-sand-400">|</span>
+            <span className="text-sand-300">|</span>
             <button
               onClick={() => handleNavigate('gallery')}
-              className="text-brown-700 hover:text-olive transition flex items-center gap-1"
+              className="text-brown-600 hover:text-olive transition flex items-center gap-1"
             >
-              <Palette className="w-3.5 h-3.5 text-terracotta" />
+              <Palette className="w-3 h-3 text-terracotta" />
               <span>Gallery</span>
             </button>
-            <span className="text-sand-400">|</span>
+            <span className="text-sand-300">|</span>
             <button
               onClick={() => handleNavigate('tbri')}
-              className="text-brown-700 hover:text-olive transition flex items-center gap-1"
+              className="text-brown-600 hover:text-olive transition flex items-center gap-1"
             >
-              <Heart className="w-3.5 h-3.5 text-terracotta" />
-              <span>TBRI Mission</span>
+              <Heart className="w-3 h-3 text-terracotta" />
+              <span>TBRI</span>
             </button>
-            <span className="text-sand-400">|</span>
+            <span className="text-sand-300">|</span>
             <button
               onClick={() => handleNavigate('account')}
-              className="text-brown-700 hover:text-olive transition flex items-center gap-1"
+              className="text-brown-600 hover:text-olive transition flex items-center gap-1"
             >
-              <User className="w-3.5 h-3.5" />
+              <User className="w-3 h-3" />
               <span>Account</span>
             </button>
-            <span className="text-sand-400">|</span>
+            <span className="text-sand-300">|</span>
             <button
               onClick={() => handleNavigate('contact')}
-              className="text-brown-700 hover:text-olive transition flex items-center gap-1"
+              className="text-brown-600 hover:text-olive transition flex items-center gap-1"
             >
-              <Mail className="w-3.5 h-3.5" />
+              <Mail className="w-3 h-3" />
               <span>Contact</span>
             </button>
           </div>
 
-          <div className="text-center md:text-right text-[11px] text-brown-500 space-y-1">
+          <div className="text-center md:text-right text-[10px] text-brown-500 space-y-0.5">
             <p className="flex items-center justify-center md:justify-end gap-1">
-              <MapPin className="w-3 h-3 text-terracotta" />
+              <MapPin className="w-2.5 h-2.5 text-terracotta" />
               <span>Kigali, Rwanda</span>
             </p>
-            <p>Copyright {new Date().getFullYear()} Cedrick Gisimba. All rights reserved.</p>
+            <p>© {new Date().getFullYear()} Cedrick Gisimba. All rights reserved.</p>
           </div>
         </div>
       </footer>

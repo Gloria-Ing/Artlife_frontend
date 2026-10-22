@@ -68,92 +68,87 @@ export const Home: React.FC<HomeProps> = ({ onNavigate }) => {
   }, []);
 
   return (
-    <div className="space-y-16 sm:space-y-24 pb-16 animate-fadeIn">
+    <div className="space-y-8 sm:space-y-10 pb-10 animate-fadeIn">
       {/* ================= HERO SECTION ================= */}
-      <section className="relative overflow-hidden rounded-3xl bg-gradient-to-b from-bone-50 via-white to-bone-100/60 border border-sand-300/80 p-6 sm:p-10 md:p-16 shadow-lg">
-        {/* Soft background artistic flares */}
-        <div className="absolute -right-24 -top-24 w-96 h-96 rounded-full bg-olive-100/60 blur-3xl pointer-events-none" />
-        <div className="absolute -left-24 -bottom-24 w-96 h-96 rounded-full bg-terracotta-100/50 blur-3xl pointer-events-none" />
-
-        <div className="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
+      <section className="relative overflow-hidden rounded-2xl bg-gradient-to-b from-bone-50 via-white to-bone-100/60 border border-sand-200/90 p-5 sm:p-7 md:p-8 shadow-sm">
+        <div className="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-center">
           {/* Hero Left Content */}
-          <div className="lg:col-span-7 space-y-6 text-center lg:text-left">
-            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-olive-100/80 text-olive-800 border border-olive-300/80 text-xs font-semibold tracking-wide">
-              <Sparkles className="w-3.5 h-3.5 text-terracotta" />
+          <div className="lg:col-span-7 space-y-4 text-center lg:text-left">
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-olive-100/80 text-olive-800 border border-olive-200 text-[11px] font-semibold tracking-wide">
+              <Sparkles className="w-3 h-3 text-terracotta" />
               <span>Artlife Fusion • Kigali, Rwanda</span>
             </div>
 
-            <h1 className="text-3xl sm:text-5xl lg:text-6xl font-serif font-bold text-midnight-900 tracking-tight leading-[1.15]">
+            <h1 className="text-2xl sm:text-3xl lg:text-4xl font-serif font-bold text-midnight-900 tracking-tight leading-tight">
               Art in Motion. <br />
               <span className="text-olive italic font-normal">Light, Children & Freedom</span> to Create.
             </h1>
 
-            <p className="text-base sm:text-lg text-brown-700 font-light leading-relaxed max-w-2xl mx-auto lg:mx-0">
+            <p className="text-xs sm:text-sm text-brown-700 leading-relaxed max-w-xl mx-auto lg:mx-0">
               Welcome to the official artistic home of <strong className="font-semibold text-midnight-900">Cedrick Gisimba</strong>,
               Rwandan visual artist and creative entrepreneur. Combining acrylic portraiture, palette knife impasto, and
               the trauma-informed healing power of the <strong className="font-semibold text-terracotta">TBRI approach</strong>.
             </p>
 
             {/* Quick Action Buttons */}
-            <div className="flex flex-wrap items-center justify-center lg:justify-start gap-3 pt-2">
+            <div className="flex flex-wrap items-center justify-center lg:justify-start gap-2.5 pt-1">
               <button
                 onClick={() => onNavigate('profile')}
-                className="inline-flex items-center space-x-2 px-6 py-3 rounded-xl bg-olive hover:bg-olive-600 text-white text-sm font-semibold shadow-md shadow-olive/20 transition-all active:scale-95"
+                className="inline-flex items-center space-x-1.5 px-4 py-2 rounded-lg bg-olive hover:bg-olive-600 text-white text-xs font-semibold shadow-sm transition-all active:scale-95"
               >
-                <span>Read Artist Story</span>
-                <ArrowRight className="w-4 h-4" />
+                <span>Read Story</span>
+                <ArrowRight className="w-3.5 h-3.5" />
               </button>
 
               <button
                 onClick={() => onNavigate('gallery')}
-                className="inline-flex items-center space-x-2 px-6 py-3 rounded-xl bg-white hover:bg-bone-100 text-midnight-900 text-sm font-semibold border border-sand-300 shadow-sm transition-all active:scale-95"
+                className="inline-flex items-center space-x-1.5 px-4 py-2 rounded-lg bg-white hover:bg-bone-100 text-midnight-900 text-xs font-semibold border border-sand-300 shadow-sm transition-all active:scale-95"
               >
-                <Palette className="w-4 h-4 text-terracotta" />
+                <Palette className="w-3.5 h-3.5 text-terracotta" />
                 <span>View Artworks</span>
               </button>
 
               <button
                 onClick={() => onNavigate('account')}
-                className="inline-flex items-center space-x-2 px-5 py-3 rounded-xl bg-midnight-900 hover:bg-midnight-800 text-white text-sm font-semibold shadow-md shadow-midnight-900/20 transition-all active:scale-95"
+                className="inline-flex items-center space-x-1.5 px-3.5 py-2 rounded-lg bg-midnight-900 hover:bg-midnight-800 text-white text-xs font-semibold shadow-sm transition-all active:scale-95"
               >
-                <UserPlus className="w-4 h-4" />
-                <span>Create Account</span>
+                <UserPlus className="w-3.5 h-3.5" />
+                <span>Account</span>
               </button>
 
               <button
                 onClick={() => onNavigate('contact')}
-                className="inline-flex items-center space-x-2 px-5 py-3 rounded-xl bg-terracotta hover:bg-terracotta-600 text-white text-sm font-semibold shadow-md shadow-terracotta/20 transition-all active:scale-95"
+                className="inline-flex items-center space-x-1.5 px-3.5 py-2 rounded-lg bg-terracotta hover:bg-terracotta-600 text-white text-xs font-semibold shadow-sm transition-all active:scale-95"
               >
                 <span>Studio Inquiry</span>
               </button>
             </div>
 
             {/* Key Attributes Bar */}
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-6 border-t border-sand-300/80">
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 pt-4 border-t border-sand-200">
               <div className="text-left">
-                <div className="text-2xl font-serif font-bold text-olive">10+ Yrs</div>
-                <div className="text-xs text-brown-600 font-medium">Fine Art Practice</div>
+                <div className="text-lg sm:text-xl font-serif font-bold text-olive">10+ Yrs</div>
+                <div className="text-[10px] text-brown-500 font-semibold uppercase tracking-wider">Fine Art Practice</div>
               </div>
               <div className="text-left">
-                <div className="text-2xl font-serif font-bold text-terracotta">TBRI</div>
-                <div className="text-xs text-brown-600 font-medium">Child Healing & Art</div>
+                <div className="text-lg sm:text-xl font-serif font-bold text-terracotta">TBRI</div>
+                <div className="text-[10px] text-brown-500 font-semibold uppercase tracking-wider">Child Healing & Art</div>
               </div>
               <div className="text-left">
-                <div className="text-2xl font-serif font-bold text-midnight-900">Acrylics</div>
-                <div className="text-xs text-brown-600 font-medium">Palette Knife Impasto</div>
+                <div className="text-lg sm:text-xl font-serif font-bold text-midnight-900">Acrylics</div>
+                <div className="text-[10px] text-brown-500 font-semibold uppercase tracking-wider">Palette Impasto</div>
               </div>
               <div className="text-left">
-                <div className="text-2xl font-serif font-bold text-brown-600">Kigali</div>
-                <div className="text-xs text-brown-600 font-medium">Rwanda Creative Base</div>
+                <div className="text-lg sm:text-xl font-serif font-bold text-brown-600">Kigali</div>
+                <div className="text-[10px] text-brown-500 font-semibold uppercase tracking-wider">Rwanda Base</div>
               </div>
             </div>
           </div>
 
-          {/* Hero Right Emblem & Fine Art Showcase */}
+          {/* Hero Right Emblem */}
           <div className="lg:col-span-5 flex flex-col items-center justify-center">
-            <div className="relative group p-4 sm:p-6 bg-white rounded-3xl border border-sand-300 shadow-xl max-w-sm w-full">
-              {/* Badge Centered */}
-              <div className="relative w-40 h-40 sm:w-48 sm:h-48 mx-auto rounded-full p-1 bg-gradient-to-tr from-olive via-sand to-terracotta shadow-xl flex items-center justify-center">
+            <div className="relative group p-4 bg-white rounded-2xl border border-sand-200/90 shadow-md max-w-xs w-full text-center">
+              <div className="relative w-20 h-20 sm:w-24 sm:h-24 mx-auto rounded-full p-0.5 bg-gradient-to-tr from-olive via-sand to-terracotta shadow-md flex items-center justify-center">
                 <img
                   src="/artlife-logo.png"
                   alt="Artlife Fusion Official Emblem"
@@ -161,25 +156,25 @@ export const Home: React.FC<HomeProps> = ({ onNavigate }) => {
                 />
               </div>
 
-              <div className="mt-6 text-center space-y-2">
-                <span className="text-[11px] uppercase tracking-widest text-terracotta font-bold">
+              <div className="mt-4 space-y-1">
+                <span className="text-[10px] uppercase tracking-wider text-terracotta font-bold">
                   Official Monogram
                 </span>
-                <h3 className="text-xl font-serif font-bold text-midnight-900">Artlife Fusion</h3>
-                <p className="text-xs text-brown-600 italic font-serif">
+                <h3 className="text-base font-serif font-bold text-midnight-900">Artlife Fusion</h3>
+                <p className="text-[11px] text-brown-600 italic font-serif leading-snug">
                   “Art beyond the canvas into exhibitions, workshops, products, and youth empowerment.”
                 </p>
               </div>
 
-              <div className="mt-5 pt-4 border-t border-sand-200 flex items-center justify-between text-xs text-midnight-800">
+              <div className="mt-3 pt-3 border-t border-sand-200 flex items-center justify-between text-[11px] text-midnight-800">
                 <span className="flex items-center gap-1 text-olive font-medium">
-                  <MapPin className="w-3.5 h-3.5 text-terracotta" /> Kigali, Rwanda
+                  <MapPin className="w-3 h-3 text-terracotta" /> Kigali, Rwanda
                 </span>
                 <button
                   onClick={() => onNavigate('profile')}
-                  className="text-xs font-semibold text-terracotta hover:underline inline-flex items-center gap-1"
+                  className="text-[11px] font-semibold text-terracotta hover:underline inline-flex items-center gap-0.5"
                 >
-                  <span>Brand Palette</span>
+                  <span>Brand Story</span>
                   <ArrowRight className="w-3 h-3" />
                 </button>
               </div>
@@ -189,15 +184,15 @@ export const Home: React.FC<HomeProps> = ({ onNavigate }) => {
       </section>
 
       {/* ================= THE ARTISTIC STATEMENT CALLOUT ================= */}
-      <section className="bg-bone-100 rounded-3xl border border-sand-300 p-8 sm:p-12 text-center relative overflow-hidden shadow-sm">
-        <div className="max-w-3xl mx-auto space-y-6">
-          <Quote className="w-10 h-10 text-olive mx-auto opacity-70" />
-          <p className="text-xl sm:text-2xl font-serif italic text-midnight-900 leading-relaxed">
+      <section className="bg-bone-50/80 rounded-2xl border border-sand-200/90 p-5 sm:p-7 text-center relative overflow-hidden shadow-sm">
+        <div className="max-w-2xl mx-auto space-y-3">
+          <Quote className="w-6 h-6 text-olive mx-auto opacity-60" />
+          <p className="text-base sm:text-lg font-serif italic text-midnight-900 leading-relaxed">
             “At the heart of my work are children, light, emotion, and the freedom to create. I want my paintings
             to have beauty, but also to make people feel something, see something differently, or discover their own
             meaning within the work.”
           </p>
-          <div className="flex items-center justify-center space-x-3 text-xs text-brown-600 uppercase tracking-widest font-semibold">
+          <div className="flex items-center justify-center space-x-2 text-[10px] text-brown-600 uppercase tracking-wider font-semibold">
             <span>Cedrick Gisimba</span>
             <span>•</span>
             <span>Visual Artist & Studio Founder</span>
@@ -206,80 +201,80 @@ export const Home: React.FC<HomeProps> = ({ onNavigate }) => {
       </section>
 
       {/* ================= THE FOUR PILLARS ================= */}
-      <section className="space-y-8">
-        <div className="text-center max-w-2xl mx-auto space-y-2">
-          <span className="text-xs font-semibold uppercase tracking-widest text-terracotta">
+      <section className="space-y-4">
+        <div className="text-center max-w-xl mx-auto space-y-1">
+          <span className="text-[10px] font-semibold uppercase tracking-wider text-terracotta">
             Artistic Philosophy
           </span>
-          <h2 className="text-3xl sm:text-4xl font-serif font-bold text-midnight-900">
+          <h2 className="text-xl sm:text-2xl font-serif font-bold text-midnight-900">
             The Four Pillars of Artlife
           </h2>
-          <p className="text-sm text-brown-600">
+          <p className="text-xs text-brown-600">
             Grounded in Rwandan culture, child psychology, and the luminous energy of abstract expressionism.
           </p>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
           {/* Pillar 1 */}
-          <div className="bg-white rounded-2xl border border-sand-300 p-6 hover:shadow-md hover:border-olive transition-all flex flex-col justify-between">
-            <div className="space-y-3">
-              <div className="w-12 h-12 rounded-xl bg-terracotta-50 text-terracotta flex items-center justify-center border border-terracotta-200">
-                <Heart className="w-6 h-6" />
+          <div className="bg-white rounded-xl border border-sand-200/90 p-4 hover:shadow-sm hover:border-olive transition-all flex flex-col justify-between">
+            <div className="space-y-2">
+              <div className="w-8 h-8 rounded-lg bg-terracotta-50 text-terracotta flex items-center justify-center border border-terracotta-200">
+                <Heart className="w-4 h-4" />
               </div>
-              <h3 className="text-lg font-serif font-bold text-midnight-900">Children</h3>
-              <p className="text-xs text-brown-600 leading-relaxed">
+              <h3 className="text-sm font-serif font-bold text-midnight-900">Children</h3>
+              <p className="text-[11px] text-brown-600 leading-relaxed">
                 Moments when children are purely being themselves—playing, laughing, and exploring without fear or mask.
               </p>
             </div>
-            <div className="mt-4 pt-3 border-t border-sand-200 text-[11px] font-semibold text-terracotta">
+            <div className="mt-3 pt-2 border-t border-sand-200 text-[10px] font-semibold text-terracotta">
               Authentic Emotion
             </div>
           </div>
 
           {/* Pillar 2 */}
-          <div className="bg-white rounded-2xl border border-sand-300 p-6 hover:shadow-md hover:border-olive transition-all flex flex-col justify-between">
-            <div className="space-y-3">
-              <div className="w-12 h-12 rounded-xl bg-olive-50 text-olive flex items-center justify-center border border-olive-200">
-                <Sun className="w-6 h-6" />
+          <div className="bg-white rounded-xl border border-sand-200/90 p-4 hover:shadow-sm hover:border-olive transition-all flex flex-col justify-between">
+            <div className="space-y-2">
+              <div className="w-8 h-8 rounded-lg bg-olive-50 text-olive flex items-center justify-center border border-olive-200">
+                <Sun className="w-4 h-4" />
               </div>
-              <h3 className="text-lg font-serif font-bold text-midnight-900">Light</h3>
-              <p className="text-xs text-brown-600 leading-relaxed">
+              <h3 className="text-sm font-serif font-bold text-midnight-900">Light</h3>
+              <p className="text-[11px] text-brown-600 leading-relaxed">
                 Light as a universal symbol of hope, innocence, and inner potential even amidst adverse circumstances.
               </p>
             </div>
-            <div className="mt-4 pt-3 border-t border-sand-200 text-[11px] font-semibold text-olive">
+            <div className="mt-3 pt-2 border-t border-sand-200 text-[10px] font-semibold text-olive">
               Symbol of Hope
             </div>
           </div>
 
           {/* Pillar 3 */}
-          <div className="bg-white rounded-2xl border border-sand-300 p-6 hover:shadow-md hover:border-olive transition-all flex flex-col justify-between">
-            <div className="space-y-3">
-              <div className="w-12 h-12 rounded-xl bg-bone-200 text-brown-700 flex items-center justify-center border border-sand-300">
-                <Layers className="w-6 h-6" />
+          <div className="bg-white rounded-xl border border-sand-200/90 p-4 hover:shadow-sm hover:border-olive transition-all flex flex-col justify-between">
+            <div className="space-y-2">
+              <div className="w-8 h-8 rounded-lg bg-bone-200 text-brown-700 flex items-center justify-center border border-sand-300">
+                <Layers className="w-4 h-4" />
               </div>
-              <h3 className="text-lg font-serif font-bold text-midnight-900">Emotion</h3>
-              <p className="text-xs text-brown-600 leading-relaxed">
+              <h3 className="text-sm font-serif font-bold text-midnight-900">Emotion</h3>
+              <p className="text-[11px] text-brown-600 leading-relaxed">
                 Combining figurative realism with abstract texture and marks that say what words cannot explain.
               </p>
             </div>
-            <div className="mt-4 pt-3 border-t border-sand-200 text-[11px] font-semibold text-brown-700">
+            <div className="mt-3 pt-2 border-t border-sand-200 text-[10px] font-semibold text-brown-700">
               Beyond Words
             </div>
           </div>
 
           {/* Pillar 4 */}
-          <div className="bg-white rounded-2xl border border-sand-300 p-6 hover:shadow-md hover:border-olive transition-all flex flex-col justify-between">
-            <div className="space-y-3">
-              <div className="w-12 h-12 rounded-xl bg-sand-100 text-midnight-900 flex items-center justify-center border border-sand-300">
-                <Brush className="w-6 h-6" />
+          <div className="bg-white rounded-xl border border-sand-200/90 p-4 hover:shadow-sm hover:border-olive transition-all flex flex-col justify-between">
+            <div className="space-y-2">
+              <div className="w-8 h-8 rounded-lg bg-sand-100 text-midnight-900 flex items-center justify-center border border-sand-300">
+                <Brush className="w-4 h-4" />
               </div>
-              <h3 className="text-lg font-serif font-bold text-midnight-900">Freedom to Create</h3>
-              <p className="text-xs text-brown-600 leading-relaxed">
+              <h3 className="text-sm font-serif font-bold text-midnight-900">Freedom to Create</h3>
+              <p className="text-[11px] text-brown-600 leading-relaxed">
                 Safe, non-judgmental studio spaces where youth can unlock their inner voices and discover confidence.
               </p>
             </div>
-            <div className="mt-4 pt-3 border-t border-sand-200 text-[11px] font-semibold text-midnight-900">
+            <div className="mt-3 pt-2 border-t border-sand-200 text-[10px] font-semibold text-midnight-900">
               Safe Studio Spaces
             </div>
           </div>
@@ -287,81 +282,81 @@ export const Home: React.FC<HomeProps> = ({ onNavigate }) => {
       </section>
 
       {/* ================= FEATURED ARTWORKS PREVIEW ================= */}
-      <section className="space-y-8">
-        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
+      <section className="space-y-4">
+        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-3">
           <div>
-            <span className="text-xs font-semibold uppercase tracking-widest text-olive">Curated Works</span>
-            <h2 className="text-3xl font-serif font-bold text-midnight-900 mt-1">
+            <span className="text-[10px] font-semibold uppercase tracking-wider text-olive">Curated Works</span>
+            <h2 className="text-xl sm:text-2xl font-serif font-bold text-midnight-900 mt-0.5">
               Featured Studio Collections
             </h2>
-            <p className="text-sm text-brown-600">
+            <p className="text-xs text-brown-600">
               Figurative acrylics, palette knife impasto, and luminous abstract studies from Kigali.
             </p>
           </div>
 
           <button
             onClick={() => onNavigate('gallery')}
-            className="inline-flex items-center space-x-1.5 text-sm font-semibold text-terracotta hover:text-terracotta-700 transition"
+            className="inline-flex items-center space-x-1 text-xs font-semibold text-terracotta hover:text-terracotta-700 transition"
           >
             <span>View All Artworks</span>
-            <ArrowRight className="w-4 h-4" />
+            <ArrowRight className="w-3.5 h-3.5" />
           </button>
         </div>
 
         {featuredWorks.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5">
             {featuredWorks.map((work) => (
               <div
                 key={work.id}
-                className="bg-white rounded-2xl border border-sand-300 overflow-hidden shadow-sm hover:shadow-lg transition-all group flex flex-col justify-between"
+                className="bg-white rounded-xl border border-sand-200/90 overflow-hidden shadow-sm hover:shadow-md transition-all group flex flex-col justify-between"
               >
                 <div>
-                  <div className="h-52 bg-gradient-to-br from-bone-100 via-sand-200 to-bone-300 relative overflow-hidden">
+                  <div className="h-44 bg-gradient-to-br from-bone-100 via-sand-200 to-bone-300 relative overflow-hidden">
                     {work.image_url && !brokenFeaturedIds[work.id] ? (
                       <img
                         src={resolveImageUrl(work.image_url) ?? undefined}
                         alt={work.title}
                         onError={() => setBrokenFeaturedIds((prev) => ({ ...prev, [work.id]: true }))}
-                        className="absolute inset-0 h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                        className="absolute inset-0 h-full w-full object-cover transition-transform duration-300 group-hover:scale-102"
                       />
                     ) : (
-                      <div className="absolute inset-0 flex flex-col items-center justify-center p-6 text-center bg-gradient-to-br from-bone-100 via-sand-100 to-bone-200">
-                        <div className="w-12 h-12 rounded-2xl bg-white/80 border border-sand-300 shadow-sm flex items-center justify-center mb-2">
-                          <Palette className="w-6 h-6 text-terracotta" />
+                      <div className="absolute inset-0 flex flex-col items-center justify-center p-4 text-center bg-gradient-to-br from-bone-100 via-sand-100 to-bone-200">
+                        <div className="w-10 h-10 rounded-xl bg-white/80 border border-sand-300 shadow-sm flex items-center justify-center mb-1.5">
+                          <Palette className="w-5 h-5 text-terracotta" />
                         </div>
-                        <h4 className="text-sm font-serif font-bold text-midnight-900 line-clamp-1">{work.title}</h4>
-                        <span className="text-[10px] text-olive font-semibold uppercase tracking-wider mt-0.5">
+                        <h4 className="text-xs font-serif font-bold text-midnight-900 line-clamp-1">{work.title}</h4>
+                        <span className="text-[9px] text-olive font-semibold uppercase tracking-wider mt-0.5">
                           {work.series}
                         </span>
                       </div>
                     )}
-                    <span className="absolute top-3 left-3 text-[10px] font-semibold px-2.5 py-1 rounded-full uppercase tracking-wider bg-white/85 text-olive-800 border border-olive-200">
+                    <span className="absolute top-2.5 left-2.5 text-[9px] font-semibold px-2 py-0.5 rounded-full uppercase tracking-wider bg-white/90 text-olive-800 border border-olive-200">
                       {work.status}
                     </span>
                   </div>
 
-                  <div className="p-4 space-y-2.5">
-                    <div className="space-y-1">
-                      <span className="text-[10px] uppercase font-bold text-terracotta tracking-wider">
+                  <div className="p-3.5 space-y-1.5">
+                    <div className="space-y-0.5">
+                      <span className="text-[9px] uppercase font-bold text-terracotta tracking-wider">
                         {work.series}
                       </span>
-                      <h4 className="text-base font-serif font-bold text-midnight-900">{work.title}</h4>
+                      <h4 className="text-sm font-serif font-bold text-midnight-900">{work.title}</h4>
                       {formatPrice(work.price) && (
-                        <p className="text-sm font-bold text-olive">{formatPrice(work.price)}</p>
+                        <p className="text-xs font-bold text-olive">{formatPrice(work.price)}</p>
                       )}
                     </div>
-                    <div className="flex items-center justify-between text-[11px] text-brown-600 font-medium">
+                    <div className="flex items-center justify-between text-[10px] text-brown-600 font-medium">
                       <span className="capitalize">{work.category}</span>
                       <span className="font-mono text-olive font-bold">{work.year}</span>
                     </div>
-                    <p className="text-xs text-brown-700 leading-relaxed line-clamp-2">{work.story}</p>
+                    <p className="text-[11px] text-brown-700 leading-relaxed line-clamp-2">{work.story}</p>
                   </div>
                 </div>
 
-                <div className="px-4 pb-4 pt-3 border-t border-sand-200 flex items-center justify-end text-xs">
+                <div className="px-3.5 pb-3 pt-2 border-t border-sand-200 flex items-center justify-end text-xs">
                   <button
                     onClick={() => onNavigate('contact')}
-                    className="font-semibold text-terracotta hover:text-terracotta-700 transition flex items-center gap-1"
+                    className="font-semibold text-terracotta hover:text-terracotta-700 transition flex items-center gap-1 text-[11px]"
                   >
                     <span>Acquire / Inquire</span>
                     <ArrowRight className="w-3 h-3" />
@@ -371,9 +366,9 @@ export const Home: React.FC<HomeProps> = ({ onNavigate }) => {
             ))}
           </div>
         ) : (
-          <div className="rounded-2xl border border-dashed border-sand-300 bg-white p-8 text-center shadow-sm">
-            <p className="text-sm font-semibold text-midnight-900">No curated works yet.</p>
-            <p className="mt-2 text-xs text-brown-700">
+          <div className="rounded-xl border border-dashed border-sand-300 bg-white p-6 text-center shadow-sm">
+            <p className="text-xs font-semibold text-midnight-900">No curated works yet.</p>
+            <p className="mt-1 text-[11px] text-brown-600">
               Products added by an admin will appear here.
             </p>
           </div>
@@ -381,64 +376,64 @@ export const Home: React.FC<HomeProps> = ({ onNavigate }) => {
       </section>
 
       {/* ================= TBRI & CHILDREN IMPACT SPOTLIGHT ================= */}
-      <section className="bg-gradient-to-r from-olive-50 via-white to-terracotta-50 rounded-3xl border border-sand-300 p-8 sm:p-12 shadow-sm">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
-          <div className="lg:col-span-8 space-y-4">
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-olive-100 text-olive-800 text-xs font-semibold">
-              <Heart className="w-3.5 h-3.5 text-terracotta" />
+      <section className="bg-gradient-to-r from-olive-50/60 via-white to-terracotta-50/50 rounded-2xl border border-sand-200/90 p-5 sm:p-7 shadow-sm">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
+          <div className="lg:col-span-8 space-y-3">
+            <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-olive-100 text-olive-800 text-[10px] font-semibold">
+              <Heart className="w-3 h-3 text-terracotta" />
               <span>Gisimba After School Programs</span>
             </span>
 
-            <h2 className="text-2xl sm:text-4xl font-serif font-bold text-midnight-900">
+            <h2 className="text-xl sm:text-2xl font-serif font-bold text-midnight-900">
               Healing, Expression & Empowerment for Children
             </h2>
 
-            <p className="text-sm sm:text-base text-brown-700 leading-relaxed">
+            <p className="text-xs sm:text-sm text-brown-700 leading-relaxed">
               “For almost a decade, I’ve been using painting, creative activities, and the TBRI approach to create
               spaces where children can feel safe, express themselves, build confidence, and discover their creativity.”
             </p>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
-              <div className="flex items-start space-x-2.5">
-                <CheckCircle2 className="w-4 h-4 text-olive shrink-0 mt-0.5" />
-                <span className="text-xs text-brown-800 font-medium">Safe, trauma-informed artistic spaces</span>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-1">
+              <div className="flex items-start space-x-2">
+                <CheckCircle2 className="w-3.5 h-3.5 text-olive shrink-0 mt-0.5" />
+                <span className="text-[11px] text-brown-800 font-medium">Safe, trauma-informed artistic spaces</span>
               </div>
-              <div className="flex items-start space-x-2.5">
-                <CheckCircle2 className="w-4 h-4 text-olive shrink-0 mt-0.5" />
-                <span className="text-xs text-brown-800 font-medium">Access to fine art supplies & mentorship</span>
+              <div className="flex items-start space-x-2">
+                <CheckCircle2 className="w-3.5 h-3.5 text-olive shrink-0 mt-0.5" />
+                <span className="text-[11px] text-brown-800 font-medium">Access to fine art supplies & mentorship</span>
               </div>
-              <div className="flex items-start space-x-2.5">
-                <CheckCircle2 className="w-4 h-4 text-olive shrink-0 mt-0.5" />
-                <span className="text-xs text-brown-800 font-medium">Emotional regulation through colors & tactile marks</span>
+              <div className="flex items-start space-x-2">
+                <CheckCircle2 className="w-3.5 h-3.5 text-olive shrink-0 mt-0.5" />
+                <span className="text-[11px] text-brown-800 font-medium">Emotional regulation through colors & marks</span>
               </div>
-              <div className="flex items-start space-x-2.5">
-                <CheckCircle2 className="w-4 h-4 text-olive shrink-0 mt-0.5" />
-                <span className="text-xs text-brown-800 font-medium">Community art exhibitions in Rwanda</span>
+              <div className="flex items-start space-x-2">
+                <CheckCircle2 className="w-3.5 h-3.5 text-olive shrink-0 mt-0.5" />
+                <span className="text-[11px] text-brown-800 font-medium">Community art exhibitions in Rwanda</span>
               </div>
             </div>
 
-            <div className="pt-2">
+            <div className="pt-1">
               <button
                 onClick={() => onNavigate('tbri')}
-                className="inline-flex items-center space-x-2 px-5 py-2.5 rounded-xl bg-olive hover:bg-olive-600 text-white text-xs font-semibold transition shadow-md shadow-olive/20"
+                className="inline-flex items-center space-x-1.5 px-3.5 py-1.5 rounded-lg bg-olive hover:bg-olive-600 text-white text-xs font-semibold transition shadow-sm"
               >
                 <span>Read About TBRI Programs</span>
-                <ArrowRight className="w-3.5 h-3.5" />
+                <ArrowRight className="w-3 h-3" />
               </button>
             </div>
           </div>
 
-          <div className="lg:col-span-4 bg-white p-6 rounded-2xl border border-sand-300 shadow-md text-center space-y-4">
-            <div className="w-14 h-14 rounded-full bg-terracotta-100 text-terracotta flex items-center justify-center mx-auto">
-              <Heart className="w-7 h-7" />
+          <div className="lg:col-span-4 bg-white p-4 sm:p-5 rounded-xl border border-sand-200/90 shadow-sm text-center space-y-2.5">
+            <div className="w-10 h-10 rounded-full bg-terracotta-100 text-terracotta flex items-center justify-center mx-auto">
+              <Heart className="w-5 h-5" />
             </div>
-            <h3 className="text-lg font-serif font-bold text-midnight-900">Get Involved with Artlife</h3>
-            <p className="text-xs text-brown-600 leading-relaxed">
+            <h3 className="text-sm font-serif font-bold text-midnight-900">Get Involved with Artlife</h3>
+            <p className="text-[11px] text-brown-600 leading-relaxed">
               Partner with Cedrick Gisimba for youth art workshops, charity exhibitions, or studio mentorship.
             </p>
             <button
               onClick={() => onNavigate('contact')}
-              className="w-full py-2.5 rounded-xl bg-terracotta hover:bg-terracotta-600 text-white text-xs font-semibold transition"
+              className="w-full py-2 rounded-lg bg-terracotta hover:bg-terracotta-600 text-white text-xs font-semibold transition shadow-sm"
             >
               Collaborate on Social Impact
             </button>
@@ -447,31 +442,31 @@ export const Home: React.FC<HomeProps> = ({ onNavigate }) => {
       </section>
 
       {/* ================= STUDIO VISIT & CONTACT CALLOUT ================= */}
-      <section className="bg-white rounded-3xl border border-sand-300 p-8 sm:p-12 text-center shadow-lg relative overflow-hidden">
-        <div className="max-w-2xl mx-auto space-y-5">
-          <div className="w-12 h-12 rounded-full bg-olive-100 text-olive flex items-center justify-center mx-auto">
-            <Calendar className="w-6 h-6" />
+      <section className="bg-white rounded-2xl border border-sand-200/90 p-5 sm:p-7 text-center shadow-sm relative overflow-hidden">
+        <div className="max-w-xl mx-auto space-y-3">
+          <div className="w-9 h-9 rounded-full bg-olive-100 text-olive flex items-center justify-center mx-auto">
+            <Calendar className="w-4 h-4" />
           </div>
 
-          <h2 className="text-2xl sm:text-3xl font-serif font-bold text-midnight-900">
+          <h2 className="text-lg sm:text-xl font-serif font-bold text-midnight-900">
             Visit the Studio in Kigali
           </h2>
 
-          <p className="text-sm text-brown-700 leading-relaxed">
+          <p className="text-xs sm:text-sm text-brown-700 leading-relaxed">
             Interested in viewing available originals, commissioning custom portraits, discussing exhibition opportunities,
             or organizing creative workshops? We look forward to connecting with you.
           </p>
 
-          <div className="flex flex-wrap items-center justify-center gap-3 pt-2">
+          <div className="flex flex-wrap items-center justify-center gap-2.5 pt-1">
             <button
               onClick={() => onNavigate('contact')}
-              className="px-6 py-3 rounded-xl bg-terracotta hover:bg-terracotta-600 text-white text-sm font-semibold shadow-md shadow-terracotta/20 transition-all active:scale-95"
+              className="px-4 py-2 rounded-lg bg-terracotta hover:bg-terracotta-600 text-white text-xs font-semibold shadow-sm transition-all active:scale-95"
             >
               Contact Cedrick Gisimba
             </button>
             <button
               onClick={() => onNavigate('profile')}
-              className="px-6 py-3 rounded-xl bg-bone-100 hover:bg-bone-200 text-midnight-900 text-sm font-semibold border border-sand-300 transition-all"
+              className="px-4 py-2 rounded-lg bg-bone-100 hover:bg-bone-200 text-midnight-900 text-xs font-semibold border border-sand-300 transition-all"
             >
               Explore Full Biography
             </button>
@@ -481,4 +476,3 @@ export const Home: React.FC<HomeProps> = ({ onNavigate }) => {
     </div>
   );
 };
-
