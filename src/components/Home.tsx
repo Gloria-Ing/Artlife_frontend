@@ -23,6 +23,7 @@ interface HomeProps {
 
 export const Home: React.FC<HomeProps> = ({ onNavigate }) => {
   const [featuredWorks, setFeaturedWorks] = useState<GalleryProductResponse[]>([]);
+  const [brokenFeaturedIds, setBrokenFeaturedIds] = useState<Record<string | number, boolean>>({});
 
   const resolveImageUrl = (imageUrl: string | null | undefined) => {
     if (!imageUrl) return imageUrl;
@@ -316,14 +317,23 @@ export const Home: React.FC<HomeProps> = ({ onNavigate }) => {
               >
                 <div>
                   <div className="h-52 bg-gradient-to-br from-bone-100 via-sand-200 to-bone-300 relative overflow-hidden">
-                    {work.image_url ? (
+                    {work.image_url && !brokenFeaturedIds[work.id] ? (
                       <img
                         src={resolveImageUrl(work.image_url) ?? undefined}
                         alt={work.title}
+                        onError={() => setBrokenFeaturedIds((prev) => ({ ...prev, [work.id]: true }))}
                         className="absolute inset-0 h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
                       />
                     ) : (
-                      <div className="absolute inset-0 opacity-20 bg-[radial-gradient(#6C705B_1px,transparent_1px)] [background-size:16px_16px]" />
+                      <div className="absolute inset-0 flex flex-col items-center justify-center p-6 text-center bg-gradient-to-br from-bone-100 via-sand-100 to-bone-200">
+                        <div className="w-12 h-12 rounded-2xl bg-white/80 border border-sand-300 shadow-sm flex items-center justify-center mb-2">
+                          <Palette className="w-6 h-6 text-terracotta" />
+                        </div>
+                        <h4 className="text-sm font-serif font-bold text-midnight-900 line-clamp-1">{work.title}</h4>
+                        <span className="text-[10px] text-olive font-semibold uppercase tracking-wider mt-0.5">
+                          {work.series}
+                        </span>
+                      </div>
                     )}
                     <span className="absolute top-3 left-3 text-[10px] font-semibold px-2.5 py-1 rounded-full uppercase tracking-wider bg-white/85 text-olive-800 border border-olive-200">
                       {work.status}

@@ -60,6 +60,22 @@ export const Gallery: React.FC<GalleryProps> = ({ onNavigate }) => {
   const [createLoading, setCreateLoading] = useState(false);
   const [createError, setCreateError] = useState<string | null>(null);
   const [createSuccess, setCreateSuccess] = useState<string | null>(null);
+  const [brokenImageIds, setBrokenImageIds] = useState<Record<string | number, boolean>>({});
+  const [newImagePreview, setNewImagePreview] = useState<string | null>(null);
+  const [editImagePreview, setEditImagePreview] = useState<string | null>(null);
+
+  const markImageBroken = (id: string | number) => {
+    setBrokenImageIds((current) => ({ ...current, [id]: true }));
+  };
+
+  const markImageWorking = (id: string | number) => {
+    setBrokenImageIds((current) => {
+      if (!current[id]) return current;
+      const next = { ...current };
+      delete next[id];
+      return next;
+    });
+  };
 
   const isAdmin = isAuthenticated && user?.role === 'admin';
   const artworks = managedArtworks;
@@ -138,12 +154,14 @@ export const Gallery: React.FC<GalleryProps> = ({ onNavigate }) => {
 
   const resetProductForm = () => {
     setNewProduct(EMPTY_PRODUCT);
+    setNewImagePreview(null);
   };
 
   const closeEditModal = () => {
     setEditProduct(EMPTY_PRODUCT);
     setEditingProductId(null);
     setEditingProductTitle('');
+    setEditImagePreview(null);
   };
 
   const handleCreateProduct = async (event: React.FormEvent) => {
@@ -203,6 +221,7 @@ export const Gallery: React.FC<GalleryProps> = ({ onNavigate }) => {
       setCreateLoading(true);
       const saved = await apiService.updateGalleryProduct(editingProductId, editProduct);
       const savedArtwork = mapGalleryProduct(saved);
+      markImageWorking(savedArtwork.id);
       setManagedArtworks((current) =>
         current.map((art) => (art.id === savedArtwork.id ? savedArtwork : art))
       );
@@ -372,15 +391,26 @@ export const Gallery: React.FC<GalleryProps> = ({ onNavigate }) => {
 
             <div className="lg:col-span-7">
               <label className="block text-[11px] font-semibold text-brown-700 mb-1">Image</label>
-              <input
-                type="file"
-                accept="image/jpeg,image/png,image/webp,image/gif"
-                required
-                onChange={(event) =>
-                  handleProductFieldChange('image_file', event.target.files?.[0] ?? null)
-                }
-                className="w-full px-3 py-2 bg-bone-50 border border-sand-300 rounded-xl text-xs text-midnight-900 file:mr-3 file:border-0 file:rounded-lg file:bg-olive file:px-3 file:py-1.5 file:text-xs file:font-semibold file:text-white focus:outline-none focus:border-olive focus:ring-2 focus:ring-olive/10"
-              />
+              <div className="flex items-center gap-3">
+                <input
+                  type="file"
+                  accept="image/jpeg,image/png,image/webp,image/gif"
+                  required
+                  onChange={(event) => {
+                    const file = event.target.files?.[0] ?? null;
+                    handleProductFieldChange('image_file', file);
+                    setNewImagePreview(file ? URL.createObjectURL(file) : null);
+                  }}
+                  className="w-full px-3 py-2 bg-bone-50 border border-sand-300 rounded-xl text-xs text-midnight-900 file:mr-3 file:border-0 file:rounded-lg file:bg-olive file:px-3 file:py-1.5 file:text-xs file:font-semibold file:text-white focus:outline-none focus:border-olive focus:ring-2 focus:ring-olive/10"
+                />
+                {newImagePreview && (
+                  <img
+                    src={newImagePreview}
+                    alt="Preview"
+                    className="h-10 w-10 shrink-0 rounded-lg object-cover border border-sand-300 shadow-sm"
+                  />
+                )}
+              </div>
             </div>
 
             <div className="lg:col-span-3">
@@ -519,15 +549,24 @@ export const Gallery: React.FC<GalleryProps> = ({ onNavigate }) => {
                   {filteredArtworks.map((art) => (
                     <tr key={art.id} className="hover:bg-bone-50 transition">
                       <td className="px-4 py-3">
-                        <div className="h-14 w-14 overflow-hidden rounded-lg border border-sand-300 bg-bone-100">
-                          {art.image_url ? (
+                        <div className="h-14 w-14 overflow-hidden rounded-lg border border-sand-300 bg-bone-100 flex items-center justify-center">
+                          {art.image_url && !brokenImageIds[art.id] ? (
                             <img
                               src={art.image_url}
                               alt={art.title}
+                              onError={() => markImageBroken(art.id)}
                               className="h-full w-full object-cover"
                             />
                           ) : (
-                            <div className="h-full w-full bg-[radial-gradient(#6C705B_1px,transparent_1px)] [background-size:12px_12px] opacity-20" />
+                            <div
+                              className="h-full w-full flex flex-col items-center justify-center bg-sand-100 text-brown-400 p-1 text-center"
+                              title="Image missing or expired - click Edit to re-upload"
+                            >
+                              <Palette className="w-4 h-4 text-terracotta" />
+                              <span className="text-[8px] font-bold text-terracotta tracking-tight mt-0.5">
+                                Re-upload
+                              </span>
+                            </div>
                           )}
                         </div>
                       </td>
@@ -598,14 +637,23 @@ export const Gallery: React.FC<GalleryProps> = ({ onNavigate }) => {
                 <div>
                   {/* Artwork Visual Representation */}
                   <div className="h-52 bg-gradient-to-br from-bone-100 via-sand-200 to-bone-300 relative flex items-center justify-center p-5 overflow-hidden">
-                    {art.image_url ? (
+                    {art.image_url && !brokenImageIds[art.id] ? (
                       <img
                         src={art.image_url}
                         alt={art.title}
+                        onError={() => markImageBroken(art.id)}
                         className="absolute inset-0 h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
                       />
                     ) : (
-                      <div className="absolute inset-0 opacity-15 bg-[radial-gradient(#6C705B_1px,transparent_1px)] [background-size:16px_16px]" />
+                      <div className="absolute inset-0 flex flex-col items-center justify-center p-6 text-center bg-gradient-to-br from-bone-100 via-sand-100 to-bone-200">
+                        <div className="w-12 h-12 rounded-2xl bg-white/80 border border-sand-300 shadow-sm flex items-center justify-center mb-2">
+                          <Palette className="w-6 h-6 text-terracotta" />
+                        </div>
+                        <h4 className="text-sm font-serif font-bold text-midnight-900 line-clamp-1">{art.title}</h4>
+                        <span className="text-[10px] text-olive font-semibold uppercase tracking-wider mt-0.5">
+                          {art.series}
+                        </span>
+                      </div>
                     )}
                     {/* Status Badge */}
                     <div className="absolute top-3 left-3 z-10">
@@ -773,14 +821,25 @@ export const Gallery: React.FC<GalleryProps> = ({ onNavigate }) => {
 
               <div className="sm:col-span-5">
                 <label className="block text-[11px] font-semibold text-brown-700 mb-1">Replace Image</label>
-                <input
-                  type="file"
-                  accept="image/jpeg,image/png,image/webp,image/gif"
-                  onChange={(event) =>
-                    handleEditProductFieldChange('image_file', event.target.files?.[0] ?? null)
-                  }
-                  className="w-full px-3 py-2 bg-bone-50 border border-sand-300 rounded-xl text-xs text-midnight-900 file:mr-3 file:border-0 file:rounded-lg file:bg-olive file:px-3 file:py-1.5 file:text-xs file:font-semibold file:text-white focus:outline-none focus:border-olive focus:ring-2 focus:ring-olive/10"
-                />
+                <div className="flex items-center gap-3">
+                  <input
+                    type="file"
+                    accept="image/jpeg,image/png,image/webp,image/gif"
+                    onChange={(event) => {
+                      const file = event.target.files?.[0] ?? null;
+                      handleEditProductFieldChange('image_file', file);
+                      setEditImagePreview(file ? URL.createObjectURL(file) : null);
+                    }}
+                    className="w-full px-3 py-2 bg-bone-50 border border-sand-300 rounded-xl text-xs text-midnight-900 file:mr-3 file:border-0 file:rounded-lg file:bg-olive file:px-3 file:py-1.5 file:text-xs file:font-semibold file:text-white focus:outline-none focus:border-olive focus:ring-2 focus:ring-olive/10"
+                  />
+                  {editImagePreview && (
+                    <img
+                      src={editImagePreview}
+                      alt="New preview"
+                      className="h-10 w-10 shrink-0 rounded-lg object-cover border border-sand-300 shadow-sm"
+                    />
+                  )}
+                </div>
               </div>
 
               <div className="sm:col-span-3">
@@ -870,12 +929,21 @@ export const Gallery: React.FC<GalleryProps> = ({ onNavigate }) => {
               )}
             </div>
 
-            {activeModalArtwork.image_url && (
+            {activeModalArtwork.image_url && !brokenImageIds[activeModalArtwork.id] ? (
               <img
                 src={activeModalArtwork.image_url}
                 alt={activeModalArtwork.title}
+                onError={() => markImageBroken(activeModalArtwork.id)}
                 className="h-64 w-full rounded-2xl object-cover border border-sand-300"
               />
+            ) : (
+              <div className="h-64 w-full rounded-2xl border border-sand-300 bg-gradient-to-br from-bone-100 via-sand-100 to-bone-200 flex flex-col items-center justify-center text-center p-6">
+                <div className="w-16 h-16 rounded-2xl bg-white/80 border border-sand-300 shadow-sm flex items-center justify-center mb-3">
+                  <Palette className="w-8 h-8 text-terracotta" />
+                </div>
+                <h3 className="text-base font-serif font-bold text-midnight-900">{activeModalArtwork.title}</h3>
+                <span className="text-xs text-olive font-semibold uppercase tracking-wider mt-1">{activeModalArtwork.series}</span>
+              </div>
             )}
 
             <div className="p-4 rounded-xl bg-bone-100 border border-sand-300 space-y-2">
