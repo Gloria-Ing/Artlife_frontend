@@ -6,7 +6,7 @@ import { Gallery } from './components/Gallery';
 import { TBRIMission } from './components/TBRIMission';
 import { ContactUs } from './components/ContactUs';
 import { AuthSection } from './components/AuthSection';
-import { MapPin } from 'lucide-react';
+
 
 export default function App() {
   const [activeTab, setActiveTab] = useState<NavTab>('home');
@@ -31,34 +31,19 @@ export default function App() {
         )}
       </main>
 
-      <footer className="border-t border-sand-200/90 bg-bone-50 py-6 text-[11px] text-brown-600">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 flex flex-col md:flex-row items-center justify-between gap-5">
-          <div className="flex items-center space-x-2.5 text-center md:text-left">
-            <div className="w-8 h-8 rounded-full p-0.5 bg-gradient-to-tr from-olive via-sand to-terracotta shadow-sm shrink-0">
-              <img
-                src="/artlife-logo.png"
-                alt="ALF Artlife Emblem"
-                className="w-full h-full object-contain rounded-full bg-[#464A37]"
-              />
-            </div>
-            <div>
-              <div className="flex items-center justify-center md:justify-start gap-1.5">
-                <span className="font-serif font-bold text-midnight-900 text-sm">Artlife Fusion</span>
-                <span className="text-[10px] text-terracotta font-serif italic">Art in Motion</span>
-              </div>
-              <p className="text-[10px] text-brown-500 mt-0.5">
-                Cedrick Gisimba • Visual Artist & Creative Entrepreneur • Kigali, Rwanda
-              </p>
-            </div>
-          </div>
-
-          <div className="text-center md:text-right text-[10px] text-brown-500 space-y-0.5">
-            <p className="flex items-center justify-center md:justify-end gap-1">
-              <MapPin className="w-2.5 h-2.5 text-terracotta" />
-              <span>Kigali, Rwanda</span>
-            </p>
-            <p>© {new Date().getFullYear()} Cedrick Gisimba. All rights reserved.</p>
-          </div>
+      <footer className="border-t border-sand-200/90 bg-bone-50 py-3 text-[11px] text-brown-600">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 flex items-center justify-center gap-1.5 flex-wrap text-center">
+          <img
+            src="/artlife-logo.png"
+            alt="ALF Artlife Emblem"
+            className="w-5 h-5 object-contain rounded-full bg-[#464A37] shrink-0"
+          />
+          <span className="font-serif font-bold text-midnight-900">Artlife Fusion</span>
+          <span className="text-terracotta font-serif italic">Art in Motion</span>
+          <span className="text-sand-300">•</span>
+          <span>Cedrick Gisimba • Visual Artist & Creative Entrepreneur • Kigali, Rwanda</span>
+          <span className="text-sand-300">•</span>
+          <span>© {new Date().getFullYear()} Cedrick Gisimba. All rights reserved.</span>
         </div>
       </footer>
     </div>
