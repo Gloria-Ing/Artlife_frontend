@@ -6,7 +6,7 @@ import { Gallery } from './components/Gallery';
 import { TBRIMission } from './components/TBRIMission';
 import { ContactUs } from './components/ContactUs';
 import { AuthSection } from './components/AuthSection';
-import { Palette, Heart, Mail, Home as HomeIcon, User, MapPin } from 'lucide-react';
+import { MapPin } from 'lucide-react';
 
 export default function App() {
   const [activeTab, setActiveTab] = useState<NavTab>('home');
@@ -50,56 +50,6 @@ export default function App() {
                 Cedrick Gisimba • Visual Artist & Creative Entrepreneur • Kigali, Rwanda
               </p>
             </div>
-          </div>
-
-          <div className="flex flex-wrap items-center justify-center gap-3.5 text-[11px] font-medium">
-            <button
-              onClick={() => handleNavigate('home')}
-              className="text-brown-600 hover:text-olive transition flex items-center gap-1"
-            >
-              <HomeIcon className="w-3 h-3" />
-              <span>Home</span>
-            </button>
-            <span className="text-sand-300">|</span>
-            <button
-              onClick={() => handleNavigate('profile')}
-              className="text-brown-600 hover:text-olive transition flex items-center gap-1"
-            >
-              <User className="w-3 h-3" />
-              <span>Profile</span>
-            </button>
-            <span className="text-sand-300">|</span>
-            <button
-              onClick={() => handleNavigate('gallery')}
-              className="text-brown-600 hover:text-olive transition flex items-center gap-1"
-            >
-              <Palette className="w-3 h-3 text-terracotta" />
-              <span>Gallery</span>
-            </button>
-            <span className="text-sand-300">|</span>
-            <button
-              onClick={() => handleNavigate('tbri')}
-              className="text-brown-600 hover:text-olive transition flex items-center gap-1"
-            >
-              <Heart className="w-3 h-3 text-terracotta" />
-              <span>TBRI</span>
-            </button>
-            <span className="text-sand-300">|</span>
-            <button
-              onClick={() => handleNavigate('account')}
-              className="text-brown-600 hover:text-olive transition flex items-center gap-1"
-            >
-              <User className="w-3 h-3" />
-              <span>Account</span>
-            </button>
-            <span className="text-sand-300">|</span>
-            <button
-              onClick={() => handleNavigate('contact')}
-              className="text-brown-600 hover:text-olive transition flex items-center gap-1"
-            >
-              <Mail className="w-3 h-3" />
-              <span>Contact</span>
-            </button>
           </div>
 
           <div className="text-center md:text-right text-[10px] text-brown-500 space-y-0.5">
