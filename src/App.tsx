@@ -6,6 +6,7 @@ import { Gallery } from './components/Gallery';
 import { TBRIMission } from './components/TBRIMission';
 import { ContactUs } from './components/ContactUs';
 import { AuthSection } from './components/AuthSection';
+import { Cart } from './components/Cart';
 
 
 export default function App() {
@@ -29,6 +30,7 @@ export default function App() {
         {activeTab === 'account' && (
           <AuthSection onAuthenticated={() => handleNavigate('home')} />
         )}
+        {activeTab === 'cart' && <Cart onNavigate={handleNavigate} />}
       </main>
 
       <footer className="border-t border-sand-200/90 bg-bone-50 py-3 text-[11px] text-brown-600">

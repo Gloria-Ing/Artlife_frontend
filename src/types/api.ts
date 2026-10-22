@@ -55,6 +55,41 @@ export interface ApiError {
   message?: string;
 }
 
+// ── Cart ────────────────────────────────────────────────────────────────────
+
+export interface CartItemResponse {
+  id: number;
+  cart_id: number;
+  gallery_product_id: number;
+  quantity: number;
+  added_at: string;
+  product_title: string;
+  product_price: string;
+  product_image_url: string | null;
+  product_status: string;
+}
+
+export interface CartResponse {
+  id: number;
+  account_id: number;
+  items: CartItemResponse[];
+  total_items: number;
+  total_price: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface CartItemAdd {
+  gallery_product_id: number;
+  quantity: number;
+}
+
+export interface CartItemUpdate {
+  quantity: number;
+}
+
+// ── Gallery ──────────────────────────────────────────────────────────────────
+
 export type GalleryCategory = 'children' | 'abstract' | 'figurative' | 'heritage';
 
 export type GalleryStatus = 'Available' | 'Private Collection' | 'Exhibition Feature';

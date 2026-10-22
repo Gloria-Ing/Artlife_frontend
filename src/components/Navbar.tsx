@@ -9,10 +9,11 @@ import {
   Mail,
   ArrowRight,
   LogIn,
+  ShoppingCart,
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 
-export type NavTab = 'home' | 'profile' | 'gallery' | 'tbri' | 'contact' | 'account';
+export type NavTab = 'home' | 'profile' | 'gallery' | 'tbri' | 'contact' | 'account' | 'cart';
 
 interface NavbarProps {
   activeTab: NavTab;
@@ -66,11 +67,10 @@ export const Navbar: React.FC<NavbarProps> = ({ activeTab, setActiveTab }) => {
           <nav className="hidden md:flex items-center space-x-1">
             <button
               onClick={() => handleTabClick('home')}
-              className={`flex items-center space-x-1.5 px-2.5 py-1.5 rounded-lg text-xs font-medium transition-all ${
-                activeTab === 'home'
-                  ? 'bg-olive text-white shadow-sm font-semibold'
-                  : 'text-midnight-900/80 hover:text-olive hover:bg-bone-100'
-              }`}
+              className={`flex items-center space-x-1.5 px-2.5 py-1.5 rounded-lg text-xs font-medium transition-all ${activeTab === 'home'
+                ? 'bg-olive text-white shadow-sm font-semibold'
+                : 'text-midnight-900/80 hover:text-olive hover:bg-bone-100'
+                }`}
             >
               <Home className="w-3.5 h-3.5" />
               <span>Home</span>
@@ -78,11 +78,10 @@ export const Navbar: React.FC<NavbarProps> = ({ activeTab, setActiveTab }) => {
 
             <button
               onClick={() => handleTabClick('profile')}
-              className={`flex items-center space-x-1.5 px-2.5 py-1.5 rounded-lg text-xs font-medium transition-all ${
-                activeTab === 'profile'
-                  ? 'bg-olive text-white shadow-sm font-semibold'
-                  : 'text-midnight-900/80 hover:text-olive hover:bg-bone-100'
-              }`}
+              className={`flex items-center space-x-1.5 px-2.5 py-1.5 rounded-lg text-xs font-medium transition-all ${activeTab === 'profile'
+                ? 'bg-olive text-white shadow-sm font-semibold'
+                : 'text-midnight-900/80 hover:text-olive hover:bg-bone-100'
+                }`}
             >
               <User className="w-3.5 h-3.5" />
               <span>Profile</span>
@@ -90,11 +89,10 @@ export const Navbar: React.FC<NavbarProps> = ({ activeTab, setActiveTab }) => {
 
             <button
               onClick={() => handleTabClick('gallery')}
-              className={`flex items-center space-x-1.5 px-2.5 py-1.5 rounded-lg text-xs font-medium transition-all ${
-                activeTab === 'gallery'
-                  ? 'bg-olive text-white shadow-sm font-semibold'
-                  : 'text-midnight-900/80 hover:text-olive hover:bg-bone-100'
-              }`}
+              className={`flex items-center space-x-1.5 px-2.5 py-1.5 rounded-lg text-xs font-medium transition-all ${activeTab === 'gallery'
+                ? 'bg-olive text-white shadow-sm font-semibold'
+                : 'text-midnight-900/80 hover:text-olive hover:bg-bone-100'
+                }`}
             >
               <Palette className="w-3.5 h-3.5" />
               <span>Gallery</span>
@@ -102,11 +100,10 @@ export const Navbar: React.FC<NavbarProps> = ({ activeTab, setActiveTab }) => {
 
             <button
               onClick={() => handleTabClick('tbri')}
-              className={`flex items-center space-x-1.5 px-2.5 py-1.5 rounded-lg text-xs font-medium transition-all ${
-                activeTab === 'tbri'
-                  ? 'bg-olive text-white shadow-sm font-semibold'
-                  : 'text-midnight-900/80 hover:text-olive hover:bg-bone-100'
-              }`}
+              className={`flex items-center space-x-1.5 px-2.5 py-1.5 rounded-lg text-xs font-medium transition-all ${activeTab === 'tbri'
+                ? 'bg-olive text-white shadow-sm font-semibold'
+                : 'text-midnight-900/80 hover:text-olive hover:bg-bone-100'
+                }`}
             >
               <Heart className="w-3.5 h-3.5 text-terracotta" />
               <span>TBRI Mission</span>
@@ -114,11 +111,10 @@ export const Navbar: React.FC<NavbarProps> = ({ activeTab, setActiveTab }) => {
 
             <button
               onClick={() => handleTabClick('account')}
-              className={`flex items-center space-x-1.5 px-2.5 py-1.5 rounded-lg text-xs font-medium transition-all ${
-                activeTab === 'account'
-                  ? 'bg-olive text-white shadow-sm font-semibold'
-                  : 'text-midnight-900/80 hover:text-olive hover:bg-bone-100'
-              }`}
+              className={`flex items-center space-x-1.5 px-2.5 py-1.5 rounded-lg text-xs font-medium transition-all ${activeTab === 'account'
+                ? 'bg-olive text-white shadow-sm font-semibold'
+                : 'text-midnight-900/80 hover:text-olive hover:bg-bone-100'
+                }`}
             >
               <LogIn className="w-3.5 h-3.5" />
               <span>Account</span>
@@ -126,11 +122,10 @@ export const Navbar: React.FC<NavbarProps> = ({ activeTab, setActiveTab }) => {
 
             <button
               onClick={() => handleTabClick('contact')}
-              className={`flex items-center space-x-1.5 px-2.5 py-1.5 rounded-lg text-xs font-medium transition-all ${
-                activeTab === 'contact'
-                  ? 'bg-olive text-white shadow-sm font-semibold'
-                  : 'text-midnight-900/80 hover:text-olive hover:bg-bone-100'
-              }`}
+              className={`flex items-center space-x-1.5 px-2.5 py-1.5 rounded-lg text-xs font-medium transition-all ${activeTab === 'contact'
+                ? 'bg-olive text-white shadow-sm font-semibold'
+                : 'text-midnight-900/80 hover:text-olive hover:bg-bone-100'
+                }`}
             >
               <Mail className="w-3.5 h-3.5" />
               <span>Contact</span>
@@ -139,6 +134,19 @@ export const Navbar: React.FC<NavbarProps> = ({ activeTab, setActiveTab }) => {
 
           {/* Desktop Right CTA Action */}
           <div className="hidden md:flex items-center space-x-2">
+            {isAuthenticated && user && (
+              <button
+                onClick={() => handleTabClick('cart')}
+                className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border transition text-xs font-medium ${activeTab === 'cart'
+                  ? 'bg-olive text-white border-olive shadow-sm'
+                  : 'border-sand-300 bg-bone-50 hover:bg-bone-100 text-midnight-900'
+                  }`}
+                title="My Cart"
+              >
+                <ShoppingCart className="w-3.5 h-3.5" />
+                <span>Cart</span>
+              </button>
+            )}
             {isAuthenticated && user && (
               <button
                 onClick={() => handleTabClick('account')}
@@ -175,11 +183,10 @@ export const Navbar: React.FC<NavbarProps> = ({ activeTab, setActiveTab }) => {
           <div className="md:hidden py-3 border-t border-sand-200 space-y-1 animate-fadeIn bg-white">
             <button
               onClick={() => handleTabClick('home')}
-              className={`w-full flex items-center space-x-2.5 px-3 py-2 rounded-lg text-xs font-medium transition ${
-                activeTab === 'home'
-                  ? 'bg-olive text-white font-semibold'
-                  : 'text-midnight-900 hover:bg-bone-100'
-              }`}
+              className={`w-full flex items-center space-x-2.5 px-3 py-2 rounded-lg text-xs font-medium transition ${activeTab === 'home'
+                ? 'bg-olive text-white font-semibold'
+                : 'text-midnight-900 hover:bg-bone-100'
+                }`}
             >
               <Home className="w-3.5 h-3.5" />
               <span>Home</span>
@@ -187,11 +194,10 @@ export const Navbar: React.FC<NavbarProps> = ({ activeTab, setActiveTab }) => {
 
             <button
               onClick={() => handleTabClick('profile')}
-              className={`w-full flex items-center space-x-2.5 px-3 py-2 rounded-lg text-xs font-medium transition ${
-                activeTab === 'profile'
-                  ? 'bg-olive text-white font-semibold'
-                  : 'text-midnight-900 hover:bg-bone-100'
-              }`}
+              className={`w-full flex items-center space-x-2.5 px-3 py-2 rounded-lg text-xs font-medium transition ${activeTab === 'profile'
+                ? 'bg-olive text-white font-semibold'
+                : 'text-midnight-900 hover:bg-bone-100'
+                }`}
             >
               <User className="w-3.5 h-3.5" />
               <span>Profile & Story</span>
@@ -199,11 +205,10 @@ export const Navbar: React.FC<NavbarProps> = ({ activeTab, setActiveTab }) => {
 
             <button
               onClick={() => handleTabClick('gallery')}
-              className={`w-full flex items-center space-x-2.5 px-3 py-2 rounded-lg text-xs font-medium transition ${
-                activeTab === 'gallery'
-                  ? 'bg-olive text-white font-semibold'
-                  : 'text-midnight-900 hover:bg-bone-100'
-              }`}
+              className={`w-full flex items-center space-x-2.5 px-3 py-2 rounded-lg text-xs font-medium transition ${activeTab === 'gallery'
+                ? 'bg-olive text-white font-semibold'
+                : 'text-midnight-900 hover:bg-bone-100'
+                }`}
             >
               <Palette className="w-3.5 h-3.5" />
               <span>Artwork Gallery</span>
@@ -211,11 +216,10 @@ export const Navbar: React.FC<NavbarProps> = ({ activeTab, setActiveTab }) => {
 
             <button
               onClick={() => handleTabClick('tbri')}
-              className={`w-full flex items-center space-x-2.5 px-3 py-2 rounded-lg text-xs font-medium transition ${
-                activeTab === 'tbri'
-                  ? 'bg-olive text-white font-semibold'
-                  : 'text-midnight-900 hover:bg-bone-100'
-              }`}
+              className={`w-full flex items-center space-x-2.5 px-3 py-2 rounded-lg text-xs font-medium transition ${activeTab === 'tbri'
+                ? 'bg-olive text-white font-semibold'
+                : 'text-midnight-900 hover:bg-bone-100'
+                }`}
             >
               <Heart className="w-3.5 h-3.5 text-terracotta" />
               <span>TBRI Mission</span>
@@ -223,15 +227,27 @@ export const Navbar: React.FC<NavbarProps> = ({ activeTab, setActiveTab }) => {
 
             <button
               onClick={() => handleTabClick('account')}
-              className={`w-full flex items-center space-x-2.5 px-3 py-2 rounded-lg text-xs font-medium transition ${
-                activeTab === 'account'
-                  ? 'bg-olive text-white font-semibold'
-                  : 'text-midnight-900 hover:bg-bone-100'
-              }`}
+              className={`w-full flex items-center space-x-2.5 px-3 py-2 rounded-lg text-xs font-medium transition ${activeTab === 'account'
+                ? 'bg-olive text-white font-semibold'
+                : 'text-midnight-900 hover:bg-bone-100'
+                }`}
             >
               <LogIn className="w-3.5 h-3.5" />
               <span>Account</span>
             </button>
+
+            {isAuthenticated && user && (
+              <button
+                onClick={() => handleTabClick('cart')}
+                className={`w-full flex items-center space-x-2.5 px-3 py-2 rounded-lg text-xs font-medium transition ${activeTab === 'cart'
+                  ? 'bg-olive text-white font-semibold'
+                  : 'text-midnight-900 hover:bg-bone-100'
+                  }`}
+              >
+                <ShoppingCart className="w-3.5 h-3.5" />
+                <span>My Cart</span>
+              </button>
+            )}
 
             {isAuthenticated && user && (
               <div className="mx-3 my-1.5 rounded-xl bg-bone-50 border border-sand-300 p-2.5">
@@ -249,11 +265,10 @@ export const Navbar: React.FC<NavbarProps> = ({ activeTab, setActiveTab }) => {
 
             <button
               onClick={() => handleTabClick('contact')}
-              className={`w-full flex items-center space-x-2.5 px-3 py-2 rounded-lg text-xs font-medium transition ${
-                activeTab === 'contact'
-                  ? 'bg-olive text-white font-semibold'
-                  : 'text-midnight-900 hover:bg-bone-100'
-              }`}
+              className={`w-full flex items-center space-x-2.5 px-3 py-2 rounded-lg text-xs font-medium transition ${activeTab === 'contact'
+                ? 'bg-olive text-white font-semibold'
+                : 'text-midnight-900 hover:bg-bone-100'
+                }`}
             >
               <Mail className="w-3.5 h-3.5" />
               <span>Contact Studio</span>

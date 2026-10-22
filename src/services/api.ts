@@ -8,6 +8,9 @@ import type {
   LoginRequest,
   LoginResponse,
   RootResponse,
+  CartResponse,
+  CartItemAdd,
+  CartItemUpdate,
 } from '../types/api';
 
 const DEFAULT_BASE_URL = 'https://gogo.mababa.app';
@@ -186,6 +189,38 @@ export const apiService = {
 
   async deleteGalleryProduct(productId: string | number): Promise<{ message: string }> {
     const response = await apiClient.delete<{ message: string }>(`/gallery/products/${productId}`);
+    return response.data;
+  },
+
+  // ── Cart ────────────────────────────────────────────────────────────────
+
+  // GET /cart — fetch current user's cart with all items and totals
+  async getCart(): Promise<CartResponse> {
+    const response = await apiClient.get<CartResponse>('/cart');
+    return response.data;
+  },
+
+  // POST /cart/items — add a product to the cart
+  async addToCart(data: CartItemAdd): Promise<CartResponse> {
+    const response = await apiClient.post<CartResponse>('/cart/items', data);
+    return response.data;
+  },
+
+  // PUT /cart/items/:id — update quantity of a cart item
+  async updateCartItem(itemId: number, data: CartItemUpdate): Promise<CartResponse> {
+    const response = await apiClient.put<CartResponse>(`/cart/items/${itemId}`, data);
+    return response.data;
+  },
+
+  // DELETE /cart/items/:id — remove a single item
+  async removeCartItem(itemId: number): Promise<CartResponse> {
+    const response = await apiClient.delete<CartResponse>(`/cart/items/${itemId}`);
+    return response.data;
+  },
+
+  // DELETE /cart — clear the entire cart
+  async clearCart(): Promise<{ message: string }> {
+    const response = await apiClient.delete<{ message: string }>('/cart');
     return response.data;
   },
 

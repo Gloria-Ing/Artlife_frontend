@@ -15,6 +15,8 @@ import {
   CheckCircle2,
   Pencil,
   Trash2,
+  ShoppingCart,
+  Loader2,
 } from 'lucide-react';
 
 interface Artwork {
@@ -63,6 +65,8 @@ export const Gallery: React.FC<GalleryProps> = ({ onNavigate }) => {
   const [brokenImageIds, setBrokenImageIds] = useState<Record<string | number, boolean>>({});
   const [newImagePreview, setNewImagePreview] = useState<string | null>(null);
   const [editImagePreview, setEditImagePreview] = useState<string | null>(null);
+  const [addingToCartId, setAddingToCartId] = useState<string | number | null>(null);
+  const [cartMsg, setCartMsg] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
 
   const markImageBroken = (id: string | number) => {
     setBrokenImageIds((current) => ({ ...current, [id]: true }));
@@ -271,6 +275,25 @@ export const Gallery: React.FC<GalleryProps> = ({ onNavigate }) => {
     }).format(amount)}`;
   };
 
+  const handleAddToCart = async (art: Artwork) => {
+    if (!isAuthenticated) {
+      onNavigate('account');
+      return;
+    }
+    try {
+      setAddingToCartId(art.id);
+      setCartMsg(null);
+      await apiService.addToCart({ gallery_product_id: Number(art.id), quantity: 1 });
+      setCartMsg({ type: 'success', text: `"${art.title}" added to cart.` });
+      setTimeout(() => setCartMsg(null), 3000);
+    } catch (err) {
+      setCartMsg({ type: 'error', text: parseApiError(err) });
+      setTimeout(() => setCartMsg(null), 4000);
+    } finally {
+      setAddingToCartId(null);
+    }
+  };
+
   return (
     <div className="space-y-6 sm:space-y-8 pb-10 animate-fadeIn">
       {/* ================= GALLERY HEADER ================= */}
@@ -293,6 +316,32 @@ export const Gallery: React.FC<GalleryProps> = ({ onNavigate }) => {
       </section>
 
       {/* ================= CATEGORY FILTER TABS ================= */}
+
+      {/* Cart feedback toast */}
+      {cartMsg && (
+        <div
+          className={`flex items-start gap-2.5 p-3 rounded-xl border text-xs animate-fadeIn ${cartMsg.type === 'success'
+              ? 'bg-olive-50 border-olive-200 text-olive-800'
+              : 'bg-terracotta-50 border-terracotta-200 text-terracotta-800'
+            }`}
+        >
+          {cartMsg.type === 'success' ? (
+            <CheckCircle2 className="w-4 h-4 shrink-0 mt-0.5" />
+          ) : (
+            <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" />
+          )}
+          <span>{cartMsg.text}</span>
+          {cartMsg.type === 'success' && (
+            <button
+              onClick={() => onNavigate('cart')}
+              className="ml-auto shrink-0 underline font-semibold whitespace-nowrap"
+            >
+              View Cart →
+            </button>
+          )}
+        </div>
+      )}
+
       {isAdmin && (
         <section className="bg-white rounded-2xl border border-sand-200/90 p-4 sm:p-5 shadow-sm space-y-4">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
@@ -338,135 +387,135 @@ export const Gallery: React.FC<GalleryProps> = ({ onNavigate }) => {
           )}
 
           {isProductFormOpen && (
-          <form onSubmit={handleCreateProduct} className="grid grid-cols-1 lg:grid-cols-12 gap-4">
-            <div className="lg:col-span-4">
-              <label className="block text-[11px] font-semibold text-brown-700 mb-1">Title</label>
-              <input
-                type="text"
-                required
-                value={newProduct.title}
-                onChange={(event) => handleProductFieldChange('title', event.target.value)}
-                className="w-full px-3 py-2 bg-bone-50 border border-sand-300 rounded-xl text-xs text-midnight-900 placeholder-brown-400 focus:outline-none focus:border-olive focus:ring-2 focus:ring-olive/10"
-                placeholder="Artwork title"
-              />
-            </div>
-
-            <div className="lg:col-span-4">
-              <label className="block text-[11px] font-semibold text-brown-700 mb-1">Series</label>
-              <input
-                type="text"
-                required
-                value={newProduct.series}
-                onChange={(event) => handleProductFieldChange('series', event.target.value)}
-                className="w-full px-3 py-2 bg-bone-50 border border-sand-300 rounded-xl text-xs text-midnight-900 placeholder-brown-400 focus:outline-none focus:border-olive focus:ring-2 focus:ring-olive/10"
-                placeholder="Collection or series"
-              />
-            </div>
-
-            <div className="lg:col-span-2">
-              <label className="block text-[11px] font-semibold text-brown-700 mb-1">Price (RWF)</label>
-              <input
-                type="number"
-                min="1"
-                step="1"
-                required
-                value={newProduct.price}
-                onChange={(event) => handleProductFieldChange('price', event.target.value)}
-                className="w-full px-3 py-2 bg-bone-50 border border-sand-300 rounded-xl text-xs text-midnight-900 placeholder-brown-400 focus:outline-none focus:border-olive focus:ring-2 focus:ring-olive/10"
-                placeholder="250000"
-              />
-            </div>
-
-            <div className="lg:col-span-2">
-              <label className="block text-[11px] font-semibold text-brown-700 mb-1">Year</label>
-              <input
-                type="text"
-                required
-                value={newProduct.year}
-                onChange={(event) => handleProductFieldChange('year', event.target.value)}
-                className="w-full px-3 py-2 bg-bone-50 border border-sand-300 rounded-xl text-xs text-midnight-900 placeholder-brown-400 focus:outline-none focus:border-olive focus:ring-2 focus:ring-olive/10"
-                placeholder="2026"
-              />
-            </div>
-
-            <div className="lg:col-span-7">
-              <label className="block text-[11px] font-semibold text-brown-700 mb-1">Image</label>
-              <div className="flex items-center gap-3">
+            <form onSubmit={handleCreateProduct} className="grid grid-cols-1 lg:grid-cols-12 gap-4">
+              <div className="lg:col-span-4">
+                <label className="block text-[11px] font-semibold text-brown-700 mb-1">Title</label>
                 <input
-                  type="file"
-                  accept="image/jpeg,image/png,image/webp,image/gif"
+                  type="text"
                   required
-                  onChange={(event) => {
-                    const file = event.target.files?.[0] ?? null;
-                    handleProductFieldChange('image_file', file);
-                    setNewImagePreview(file ? URL.createObjectURL(file) : null);
-                  }}
-                  className="w-full px-3 py-2 bg-bone-50 border border-sand-300 rounded-xl text-xs text-midnight-900 file:mr-3 file:border-0 file:rounded-lg file:bg-olive file:px-3 file:py-1.5 file:text-xs file:font-semibold file:text-white focus:outline-none focus:border-olive focus:ring-2 focus:ring-olive/10"
+                  value={newProduct.title}
+                  onChange={(event) => handleProductFieldChange('title', event.target.value)}
+                  className="w-full px-3 py-2 bg-bone-50 border border-sand-300 rounded-xl text-xs text-midnight-900 placeholder-brown-400 focus:outline-none focus:border-olive focus:ring-2 focus:ring-olive/10"
+                  placeholder="Artwork title"
                 />
-                {newImagePreview && (
-                  <img
-                    src={newImagePreview}
-                    alt="Preview"
-                    className="h-10 w-10 shrink-0 rounded-lg object-cover border border-sand-300 shadow-sm"
-                  />
-                )}
               </div>
-            </div>
 
-            <div className="lg:col-span-3">
-              <label className="block text-[11px] font-semibold text-brown-700 mb-1">Category</label>
-              <select
-                value={newProduct.category}
-                onChange={(event) =>
-                  handleProductFieldChange('category', event.target.value as GalleryCategory)
-                }
-                className="w-full px-3 py-2 bg-bone-50 border border-sand-300 rounded-xl text-xs text-midnight-900 focus:outline-none focus:border-olive focus:ring-2 focus:ring-olive/10"
-              >
-                <option value="children">Children</option>
-                <option value="abstract">Abstract</option>
-                <option value="figurative">Figurative</option>
-                <option value="heritage">Heritage</option>
-              </select>
-            </div>
+              <div className="lg:col-span-4">
+                <label className="block text-[11px] font-semibold text-brown-700 mb-1">Series</label>
+                <input
+                  type="text"
+                  required
+                  value={newProduct.series}
+                  onChange={(event) => handleProductFieldChange('series', event.target.value)}
+                  className="w-full px-3 py-2 bg-bone-50 border border-sand-300 rounded-xl text-xs text-midnight-900 placeholder-brown-400 focus:outline-none focus:border-olive focus:ring-2 focus:ring-olive/10"
+                  placeholder="Collection or series"
+                />
+              </div>
 
-            <div className="lg:col-span-2">
-              <label className="block text-[11px] font-semibold text-brown-700 mb-1">Status</label>
-              <select
-                value={newProduct.status}
-                onChange={(event) =>
-                  handleProductFieldChange('status', event.target.value as GalleryStatus)
-                }
-                className="w-full px-3 py-2 bg-bone-50 border border-sand-300 rounded-xl text-xs text-midnight-900 focus:outline-none focus:border-olive focus:ring-2 focus:ring-olive/10"
-              >
-                <option value="Available">Available</option>
-                <option value="Private Collection">Private Collection</option>
-                <option value="Exhibition Feature">Exhibition Feature</option>
-              </select>
-            </div>
+              <div className="lg:col-span-2">
+                <label className="block text-[11px] font-semibold text-brown-700 mb-1">Price (RWF)</label>
+                <input
+                  type="number"
+                  min="1"
+                  step="1"
+                  required
+                  value={newProduct.price}
+                  onChange={(event) => handleProductFieldChange('price', event.target.value)}
+                  className="w-full px-3 py-2 bg-bone-50 border border-sand-300 rounded-xl text-xs text-midnight-900 placeholder-brown-400 focus:outline-none focus:border-olive focus:ring-2 focus:ring-olive/10"
+                  placeholder="250000"
+                />
+              </div>
 
-            <div className="lg:col-span-12">
-              <label className="block text-[11px] font-semibold text-brown-700 mb-1">Story</label>
-              <textarea
-                required
-                rows={3}
-                value={newProduct.story}
-                onChange={(event) => handleProductFieldChange('story', event.target.value)}
-                className="w-full px-3 py-2 bg-bone-50 border border-sand-300 rounded-xl text-xs text-midnight-900 placeholder-brown-400 focus:outline-none focus:border-olive focus:ring-2 focus:ring-olive/10 resize-y"
-                placeholder="Short artwork story or product description"
-              />
-            </div>
+              <div className="lg:col-span-2">
+                <label className="block text-[11px] font-semibold text-brown-700 mb-1">Year</label>
+                <input
+                  type="text"
+                  required
+                  value={newProduct.year}
+                  onChange={(event) => handleProductFieldChange('year', event.target.value)}
+                  className="w-full px-3 py-2 bg-bone-50 border border-sand-300 rounded-xl text-xs text-midnight-900 placeholder-brown-400 focus:outline-none focus:border-olive focus:ring-2 focus:ring-olive/10"
+                  placeholder="2026"
+                />
+              </div>
 
-            <div className="lg:col-span-12 flex justify-end gap-3">
-              <button
-                type="submit"
-                disabled={createLoading}
-                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-terracotta hover:bg-terracotta-600 disabled:opacity-60 text-white text-xs font-semibold shadow-md shadow-terracotta/20 transition"
-              >
-                {createLoading ? <Save className="w-3.5 h-3.5 animate-pulse" /> : <Plus className="w-3.5 h-3.5" />}
-                <span>{createLoading ? 'Adding Product...' : 'Add Gallery Product'}</span>
-              </button>
-            </div>
-          </form>
+              <div className="lg:col-span-7">
+                <label className="block text-[11px] font-semibold text-brown-700 mb-1">Image</label>
+                <div className="flex items-center gap-3">
+                  <input
+                    type="file"
+                    accept="image/jpeg,image/png,image/webp,image/gif"
+                    required
+                    onChange={(event) => {
+                      const file = event.target.files?.[0] ?? null;
+                      handleProductFieldChange('image_file', file);
+                      setNewImagePreview(file ? URL.createObjectURL(file) : null);
+                    }}
+                    className="w-full px-3 py-2 bg-bone-50 border border-sand-300 rounded-xl text-xs text-midnight-900 file:mr-3 file:border-0 file:rounded-lg file:bg-olive file:px-3 file:py-1.5 file:text-xs file:font-semibold file:text-white focus:outline-none focus:border-olive focus:ring-2 focus:ring-olive/10"
+                  />
+                  {newImagePreview && (
+                    <img
+                      src={newImagePreview}
+                      alt="Preview"
+                      className="h-10 w-10 shrink-0 rounded-lg object-cover border border-sand-300 shadow-sm"
+                    />
+                  )}
+                </div>
+              </div>
+
+              <div className="lg:col-span-3">
+                <label className="block text-[11px] font-semibold text-brown-700 mb-1">Category</label>
+                <select
+                  value={newProduct.category}
+                  onChange={(event) =>
+                    handleProductFieldChange('category', event.target.value as GalleryCategory)
+                  }
+                  className="w-full px-3 py-2 bg-bone-50 border border-sand-300 rounded-xl text-xs text-midnight-900 focus:outline-none focus:border-olive focus:ring-2 focus:ring-olive/10"
+                >
+                  <option value="children">Children</option>
+                  <option value="abstract">Abstract</option>
+                  <option value="figurative">Figurative</option>
+                  <option value="heritage">Heritage</option>
+                </select>
+              </div>
+
+              <div className="lg:col-span-2">
+                <label className="block text-[11px] font-semibold text-brown-700 mb-1">Status</label>
+                <select
+                  value={newProduct.status}
+                  onChange={(event) =>
+                    handleProductFieldChange('status', event.target.value as GalleryStatus)
+                  }
+                  className="w-full px-3 py-2 bg-bone-50 border border-sand-300 rounded-xl text-xs text-midnight-900 focus:outline-none focus:border-olive focus:ring-2 focus:ring-olive/10"
+                >
+                  <option value="Available">Available</option>
+                  <option value="Private Collection">Private Collection</option>
+                  <option value="Exhibition Feature">Exhibition Feature</option>
+                </select>
+              </div>
+
+              <div className="lg:col-span-12">
+                <label className="block text-[11px] font-semibold text-brown-700 mb-1">Story</label>
+                <textarea
+                  required
+                  rows={3}
+                  value={newProduct.story}
+                  onChange={(event) => handleProductFieldChange('story', event.target.value)}
+                  className="w-full px-3 py-2 bg-bone-50 border border-sand-300 rounded-xl text-xs text-midnight-900 placeholder-brown-400 focus:outline-none focus:border-olive focus:ring-2 focus:ring-olive/10 resize-y"
+                  placeholder="Short artwork story or product description"
+                />
+              </div>
+
+              <div className="lg:col-span-12 flex justify-end gap-3">
+                <button
+                  type="submit"
+                  disabled={createLoading}
+                  className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-terracotta hover:bg-terracotta-600 disabled:opacity-60 text-white text-xs font-semibold shadow-md shadow-terracotta/20 transition"
+                >
+                  {createLoading ? <Save className="w-3.5 h-3.5 animate-pulse" /> : <Plus className="w-3.5 h-3.5" />}
+                  <span>{createLoading ? 'Adding Product...' : 'Add Gallery Product'}</span>
+                </button>
+              </div>
+            </form>
           )}
         </section>
       )}
@@ -474,55 +523,50 @@ export const Gallery: React.FC<GalleryProps> = ({ onNavigate }) => {
       <div className="flex items-center justify-start sm:justify-center gap-1.5 overflow-x-auto no-scrollbar pb-1">
         <button
           onClick={() => setSelectedCategory('all')}
-          className={`px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap transition-all ${
-            selectedCategory === 'all'
-              ? 'bg-olive text-white shadow-sm font-semibold'
-              : 'bg-white text-brown-700 hover:bg-bone-100 border border-sand-300'
-          }`}
+          className={`px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap transition-all ${selectedCategory === 'all'
+            ? 'bg-olive text-white shadow-sm font-semibold'
+            : 'bg-white text-brown-700 hover:bg-bone-100 border border-sand-300'
+            }`}
         >
           All ({artworks.length})
         </button>
 
         <button
           onClick={() => setSelectedCategory('children')}
-          className={`px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap transition-all ${
-            selectedCategory === 'children'
-              ? 'bg-olive text-white shadow-sm font-semibold'
-              : 'bg-white text-brown-700 hover:bg-bone-100 border border-sand-300'
-          }`}
+          className={`px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap transition-all ${selectedCategory === 'children'
+            ? 'bg-olive text-white shadow-sm font-semibold'
+            : 'bg-white text-brown-700 hover:bg-bone-100 border border-sand-300'
+            }`}
         >
           Children of Rwanda
         </button>
 
         <button
           onClick={() => setSelectedCategory('abstract')}
-          className={`px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap transition-all ${
-            selectedCategory === 'abstract'
-              ? 'bg-olive text-white shadow-sm font-semibold'
-              : 'bg-white text-brown-700 hover:bg-bone-100 border border-sand-300'
-          }`}
+          className={`px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap transition-all ${selectedCategory === 'abstract'
+            ? 'bg-olive text-white shadow-sm font-semibold'
+            : 'bg-white text-brown-700 hover:bg-bone-100 border border-sand-300'
+            }`}
         >
           Luminous Abstracts
         </button>
 
         <button
           onClick={() => setSelectedCategory('figurative')}
-          className={`px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap transition-all ${
-            selectedCategory === 'figurative'
-              ? 'bg-olive text-white shadow-sm font-semibold'
-              : 'bg-white text-brown-700 hover:bg-bone-100 border border-sand-300'
-          }`}
+          className={`px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap transition-all ${selectedCategory === 'figurative'
+            ? 'bg-olive text-white shadow-sm font-semibold'
+            : 'bg-white text-brown-700 hover:bg-bone-100 border border-sand-300'
+            }`}
         >
           TBRI & Safe Spaces
         </button>
 
         <button
           onClick={() => setSelectedCategory('heritage')}
-          className={`px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap transition-all ${
-            selectedCategory === 'heritage'
-              ? 'bg-olive text-white shadow-sm font-semibold'
-              : 'bg-white text-brown-700 hover:bg-bone-100 border border-sand-300'
-          }`}
+          className={`px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap transition-all ${selectedCategory === 'heritage'
+            ? 'bg-olive text-white shadow-sm font-semibold'
+            : 'bg-white text-brown-700 hover:bg-bone-100 border border-sand-300'
+            }`}
         >
           Heritage & Origins
         </button>
@@ -584,13 +628,12 @@ export const Gallery: React.FC<GalleryProps> = ({ onNavigate }) => {
                       <td className="px-3 py-2 font-bold text-midnight-900 text-xs">{formatPrice(art.price) ?? '-'}</td>
                       <td className="px-3 py-2">
                         <span
-                          className={`inline-flex rounded-full px-2 py-0.5 text-[9px] font-semibold uppercase tracking-wider ${
-                            art.status === 'Available'
-                              ? 'bg-olive-100 text-olive-800 border border-olive-300'
-                              : art.status === 'Exhibition Feature'
+                          className={`inline-flex rounded-full px-2 py-0.5 text-[9px] font-semibold uppercase tracking-wider ${art.status === 'Available'
+                            ? 'bg-olive-100 text-olive-800 border border-olive-300'
+                            : art.status === 'Exhibition Feature'
                               ? 'bg-terracotta-100 text-terracotta border border-terracotta-300'
                               : 'bg-sand-200 text-brown-800 border border-sand-300'
-                          }`}
+                            }`}
                         >
                           {art.status}
                         </span>
@@ -658,13 +701,12 @@ export const Gallery: React.FC<GalleryProps> = ({ onNavigate }) => {
                     {/* Status Badge */}
                     <div className="absolute top-2.5 left-2.5 z-10">
                       <span
-                        className={`text-[9px] font-semibold px-2 py-0.5 rounded-full uppercase tracking-wider ${
-                          art.status === 'Available'
-                            ? 'bg-olive-100 text-olive-800 border border-olive-300'
-                            : art.status === 'Exhibition Feature'
+                        className={`text-[9px] font-semibold px-2 py-0.5 rounded-full uppercase tracking-wider ${art.status === 'Available'
+                          ? 'bg-olive-100 text-olive-800 border border-olive-300'
+                          : art.status === 'Exhibition Feature'
                             ? 'bg-terracotta-100 text-terracotta border border-terracotta-300'
                             : 'bg-sand-200 text-brown-800 border border-sand-300'
-                        }`}
+                          }`}
                       >
                         {art.status}
                       </span>
@@ -708,6 +750,21 @@ export const Gallery: React.FC<GalleryProps> = ({ onNavigate }) => {
                     <Info className="w-3 h-3" />
                     <span>Details</span>
                   </button>
+
+                  {art.status === 'Available' && (
+                    <button
+                      onClick={() => handleAddToCart(art)}
+                      disabled={addingToCartId === art.id}
+                      className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-olive hover:bg-olive-600 disabled:opacity-60 text-white text-[11px] font-semibold shadow-sm transition"
+                    >
+                      {addingToCartId === art.id ? (
+                        <Loader2 className="w-3 h-3 animate-spin" />
+                      ) : (
+                        <ShoppingCart className="w-3 h-3" />
+                      )}
+                      <span>{addingToCartId === art.id ? 'Adding…' : 'Add to Cart'}</span>
+                    </button>
+                  )}
 
                   <button
                     onClick={() => onNavigate('contact')}
