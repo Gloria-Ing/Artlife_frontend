@@ -12,6 +12,7 @@ import {
   ShoppingCart,
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+import { useCart } from '../context/CartContext';
 
 export type NavTab = 'home' | 'profile' | 'gallery' | 'tbri' | 'contact' | 'account' | 'cart';
 
@@ -23,6 +24,7 @@ interface NavbarProps {
 export const Navbar: React.FC<NavbarProps> = ({ activeTab, setActiveTab }) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { isAuthenticated, user } = useAuth();
+  const { cartCount } = useCart();
   const userName = user ? `${user.firstname} ${user.lastname}`.trim() || user.email : '';
   const userRole = user?.role || 'user';
 
@@ -137,7 +139,7 @@ export const Navbar: React.FC<NavbarProps> = ({ activeTab, setActiveTab }) => {
             {isAuthenticated && user && (
               <button
                 onClick={() => handleTabClick('cart')}
-                className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border transition text-xs font-medium ${activeTab === 'cart'
+                className={`relative flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border transition text-xs font-medium ${activeTab === 'cart'
                   ? 'bg-olive text-white border-olive shadow-sm'
                   : 'border-sand-300 bg-bone-50 hover:bg-bone-100 text-midnight-900'
                   }`}
@@ -145,6 +147,11 @@ export const Navbar: React.FC<NavbarProps> = ({ activeTab, setActiveTab }) => {
               >
                 <ShoppingCart className="w-3.5 h-3.5" />
                 <span>Cart</span>
+                {cartCount > 0 && (
+                  <span className="absolute -top-1.5 -right-1.5 min-w-[16px] h-4 px-1 rounded-full bg-terracotta text-white text-[9px] font-bold flex items-center justify-center leading-none">
+                    {cartCount > 99 ? '99+' : cartCount}
+                  </span>
+                )}
               </button>
             )}
             {isAuthenticated && user && (
@@ -246,6 +253,11 @@ export const Navbar: React.FC<NavbarProps> = ({ activeTab, setActiveTab }) => {
               >
                 <ShoppingCart className="w-3.5 h-3.5" />
                 <span>My Cart</span>
+                {cartCount > 0 && (
+                  <span className="ml-auto min-w-[18px] h-[18px] px-1 rounded-full bg-terracotta text-white text-[9px] font-bold flex items-center justify-center leading-none">
+                    {cartCount > 99 ? '99+' : cartCount}
+                  </span>
+                )}
               </button>
             )}
 

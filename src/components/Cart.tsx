@@ -12,6 +12,7 @@ import {
 } from 'lucide-react';
 import { apiService, getStoredBaseUrl, parseApiError } from '../services/api';
 import { useAuth } from '../context/AuthContext';
+import { useCart } from '../context/CartContext';
 import type { CartResponse, CartItemResponse } from '../types/api';
 import type { NavTab } from './Navbar';
 
@@ -21,6 +22,7 @@ interface CartProps {
 
 export const Cart: React.FC<CartProps> = ({ onNavigate }) => {
     const { isAuthenticated } = useAuth();
+    const { refreshCartCount } = useCart();
 
     const [cart, setCart] = useState<CartResponse | null>(null);
     const [loading, setLoading] = useState(true);
@@ -55,12 +57,13 @@ export const Cart: React.FC<CartProps> = ({ onNavigate }) => {
             setError(null);
             const data = await apiService.getCart();
             setCart(data);
+            refreshCartCount();
         } catch (err) {
             setError(parseApiError(err));
         } finally {
             setLoading(false);
         }
-    }, [isAuthenticated]);
+    }, [isAuthenticated, refreshCartCount]);
 
     useEffect(() => {
         fetchCart();
@@ -74,6 +77,7 @@ export const Cart: React.FC<CartProps> = ({ onNavigate }) => {
             setError(null);
             const updated = await apiService.updateCartItem(item.id, { quantity: newQty });
             setCart(updated);
+            refreshCartCount();
         } catch (err) {
             setError(parseApiError(err));
         } finally {
@@ -87,6 +91,7 @@ export const Cart: React.FC<CartProps> = ({ onNavigate }) => {
             setError(null);
             const updated = await apiService.removeCartItem(item.id);
             setCart(updated);
+            refreshCartCount();
             showSuccess(`"${item.product_title}" removed from cart.`);
         } catch (err) {
             setError(parseApiError(err));
@@ -102,6 +107,7 @@ export const Cart: React.FC<CartProps> = ({ onNavigate }) => {
             setError(null);
             await apiService.clearCart();
             setCart(null);
+            refreshCartCount();
             showSuccess('Cart cleared.');
         } catch (err) {
             setError(parseApiError(err));
@@ -246,8 +252,8 @@ export const Cart: React.FC<CartProps> = ({ onNavigate }) => {
                                             </h3>
                                             <span
                                                 className={`inline-block mt-0.5 text-[9px] font-semibold px-1.5 py-0.5 rounded-full uppercase tracking-wider ${item.product_status === 'Available'
-                                                        ? 'bg-olive-100 text-olive-800 border border-olive-300'
-                                                        : 'bg-sand-200 text-brown-700 border border-sand-300'
+                                                    ? 'bg-olive-100 text-olive-800 border border-olive-300'
+                                                    : 'bg-sand-200 text-brown-700 border border-sand-300'
                                                     }`}
                                             >
                                                 {item.product_status}

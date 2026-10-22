@@ -3,6 +3,7 @@ import type { NavTab } from './Navbar';
 import type { GalleryProductResponse } from '../types/api';
 import { apiService, getStoredBaseUrl, parseApiError } from '../services/api';
 import { useAuth } from '../context/AuthContext';
+import { useCart } from '../context/CartContext';
 import {
   Sparkles,
   ArrowRight,
@@ -27,6 +28,7 @@ interface HomeProps {
 
 export const Home: React.FC<HomeProps> = ({ onNavigate }) => {
   const { isAuthenticated } = useAuth();
+  const { refreshCartCount } = useCart();
   const [featuredWorks, setFeaturedWorks] = useState<GalleryProductResponse[]>([]);
   const [brokenFeaturedIds, setBrokenFeaturedIds] = useState<Record<string | number, boolean>>({});
   const [addingToCartId, setAddingToCartId] = useState<string | number | null>(null);
@@ -64,6 +66,7 @@ export const Home: React.FC<HomeProps> = ({ onNavigate }) => {
       setAddingToCartId(work.id);
       setCartMsg(null);
       await apiService.addToCart({ gallery_product_id: Number(work.id), quantity: 1 });
+      refreshCartCount();
       setCartMsg({ type: 'success', text: `"${work.title}" added to cart.` });
       setTimeout(() => setCartMsg(null), 3000);
     } catch (err) {
@@ -335,8 +338,8 @@ export const Home: React.FC<HomeProps> = ({ onNavigate }) => {
             {cartMsg && (
               <div
                 className={`flex items-start gap-2.5 p-3 rounded-xl border text-xs animate-fadeIn ${cartMsg.type === 'success'
-                    ? 'bg-olive-50 border-olive-200 text-olive-800'
-                    : 'bg-terracotta-50 border-terracotta-200 text-terracotta-800'
+                  ? 'bg-olive-50 border-olive-200 text-olive-800'
+                  : 'bg-terracotta-50 border-terracotta-200 text-terracotta-800'
                   }`}
               >
                 {cartMsg.type === 'success' ? (

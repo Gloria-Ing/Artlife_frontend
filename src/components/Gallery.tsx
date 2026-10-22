@@ -3,6 +3,7 @@ import type { NavTab } from './Navbar';
 import type { GalleryCategory, GalleryProductCreate, GalleryStatus } from '../types/api';
 import { apiService, getStoredBaseUrl, parseApiError } from '../services/api';
 import { useAuth } from '../context/AuthContext';
+import { useCart } from '../context/CartContext';
 import {
   Palette,
   ArrowRight,
@@ -50,6 +51,7 @@ interface GalleryProps {
 
 export const Gallery: React.FC<GalleryProps> = ({ onNavigate }) => {
   const { isAuthenticated, user } = useAuth();
+  const { refreshCartCount } = useCart();
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [activeModalArtwork, setActiveModalArtwork] = useState<Artwork | null>(null);
   const [managedArtworks, setManagedArtworks] = useState<Artwork[]>([]);
@@ -284,6 +286,7 @@ export const Gallery: React.FC<GalleryProps> = ({ onNavigate }) => {
       setAddingToCartId(art.id);
       setCartMsg(null);
       await apiService.addToCart({ gallery_product_id: Number(art.id), quantity: 1 });
+      refreshCartCount();
       setCartMsg({ type: 'success', text: `"${art.title}" added to cart.` });
       setTimeout(() => setCartMsg(null), 3000);
     } catch (err) {
@@ -321,8 +324,8 @@ export const Gallery: React.FC<GalleryProps> = ({ onNavigate }) => {
       {cartMsg && (
         <div
           className={`flex items-start gap-2.5 p-3 rounded-xl border text-xs animate-fadeIn ${cartMsg.type === 'success'
-              ? 'bg-olive-50 border-olive-200 text-olive-800'
-              : 'bg-terracotta-50 border-terracotta-200 text-terracotta-800'
+            ? 'bg-olive-50 border-olive-200 text-olive-800'
+            : 'bg-terracotta-50 border-terracotta-200 text-terracotta-800'
             }`}
         >
           {cartMsg.type === 'success' ? (
