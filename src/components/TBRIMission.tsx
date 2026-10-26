@@ -100,28 +100,6 @@ export const TBRIMission: React.FC<TBRIMissionProps> = ({ onNavigate }) => {
         </div>
       </section>
 
-      {/* ================= WORKSHOP IMPACT STATS ================= */}
-      <section className="bg-bone-100 rounded-2xl border border-sand-200/90 p-5 sm:p-7 shadow-xs">
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
-          <div className="space-y-0.5">
-            <div className="text-xl sm:text-2xl font-serif font-bold text-olive">10 Yrs</div>
-            <div className="text-[10px] text-brown-600 font-semibold tracking-wide uppercase">Community Workshops</div>
-          </div>
-          <div className="space-y-0.5">
-            <div className="text-xl sm:text-2xl font-serif font-bold text-terracotta">500+</div>
-            <div className="text-[10px] text-brown-600 font-semibold tracking-wide uppercase">Children Mentored</div>
-          </div>
-          <div className="space-y-0.5">
-            <div className="text-xl sm:text-2xl font-serif font-bold text-midnight-900">100%</div>
-            <div className="text-[10px] text-brown-600 font-semibold tracking-wide uppercase">Safe Studio Sanctuary</div>
-          </div>
-          <div className="space-y-0.5">
-            <div className="text-xl sm:text-2xl font-serif font-bold text-brown-700">Kigali</div>
-            <div className="text-[10px] text-brown-600 font-semibold tracking-wide uppercase">Rwanda Community Roots</div>
-          </div>
-        </div>
-      </section>
-
       {/* ================= GET INVOLVED CALL TO ACTION ================= */}
       <section className="bg-white rounded-2xl border border-sand-200/90 p-6 sm:p-8 text-center shadow-xs relative overflow-hidden">
         <div className="max-w-xl mx-auto space-y-3">
