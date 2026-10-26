@@ -136,24 +136,22 @@ export const Navbar: React.FC<NavbarProps> = ({ activeTab, setActiveTab }) => {
 
           {/* Desktop Right CTA Action */}
           <div className="hidden md:flex items-center space-x-2">
-            {isAuthenticated && user && (
-              <button
-                onClick={() => handleTabClick('cart')}
-                className={`relative flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border transition text-xs font-medium ${activeTab === 'cart'
-                  ? 'bg-olive text-white border-olive shadow-sm'
-                  : 'border-sand-300 bg-bone-50 hover:bg-bone-100 text-midnight-900'
-                  }`}
-                title="My Cart"
-              >
-                <ShoppingCart className="w-3.5 h-3.5" />
-                <span>Cart</span>
-                {cartCount > 0 && (
-                  <span className="absolute -top-1.5 -right-1.5 min-w-[16px] h-4 px-1 rounded-full bg-terracotta text-white text-[9px] font-bold flex items-center justify-center leading-none">
-                    {cartCount > 99 ? '99+' : cartCount}
-                  </span>
-                )}
-              </button>
-            )}
+            <button
+              onClick={() => handleTabClick('cart')}
+              className={`relative flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border transition text-xs font-medium ${activeTab === 'cart'
+                ? 'bg-olive text-white border-olive shadow-sm'
+                : 'border-sand-300 bg-bone-50 hover:bg-bone-100 text-midnight-900'
+                }`}
+              title="My Cart"
+            >
+              <ShoppingCart className="w-3.5 h-3.5" />
+              <span>Cart</span>
+              {cartCount > 0 && (
+                <span className="absolute -top-1.5 -right-1.5 min-w-[16px] h-4 px-1 rounded-full bg-terracotta text-white text-[9px] font-bold flex items-center justify-center leading-none">
+                  {cartCount > 99 ? '99+' : cartCount}
+                </span>
+              )}
+            </button>
             {isAuthenticated && user && (
               <button
                 onClick={() => handleTabClick('account')}
@@ -243,23 +241,21 @@ export const Navbar: React.FC<NavbarProps> = ({ activeTab, setActiveTab }) => {
               <span>Account</span>
             </button>
 
-            {isAuthenticated && user && (
-              <button
-                onClick={() => handleTabClick('cart')}
-                className={`w-full flex items-center space-x-2.5 px-3 py-2 rounded-lg text-xs font-medium transition ${activeTab === 'cart'
-                  ? 'bg-olive text-white font-semibold'
-                  : 'text-midnight-900 hover:bg-bone-100'
-                  }`}
-              >
-                <ShoppingCart className="w-3.5 h-3.5" />
-                <span>My Cart</span>
-                {cartCount > 0 && (
-                  <span className="ml-auto min-w-[18px] h-[18px] px-1 rounded-full bg-terracotta text-white text-[9px] font-bold flex items-center justify-center leading-none">
-                    {cartCount > 99 ? '99+' : cartCount}
-                  </span>
-                )}
-              </button>
-            )}
+            <button
+              onClick={() => handleTabClick('cart')}
+              className={`w-full flex items-center space-x-2.5 px-3 py-2 rounded-lg text-xs font-medium transition ${activeTab === 'cart'
+                ? 'bg-olive text-white font-semibold'
+                : 'text-midnight-900 hover:bg-bone-100'
+                }`}
+            >
+              <ShoppingCart className="w-3.5 h-3.5" />
+              <span>My Cart</span>
+              {cartCount > 0 && (
+                <span className="ml-auto min-w-[18px] h-[18px] px-1 rounded-full bg-terracotta text-white text-[9px] font-bold flex items-center justify-center leading-none">
+                  {cartCount > 99 ? '99+' : cartCount}
+                </span>
+              )}
+            </button>
 
             {isAuthenticated && user && (
               <div className="mx-3 my-1.5 rounded-xl bg-bone-50 border border-sand-300 p-2.5">
