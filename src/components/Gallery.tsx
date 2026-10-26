@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import type { NavTab } from './Navbar';
 import type { GalleryCategory, GalleryProductCreate, GalleryStatus } from '../types/api';
 import { apiService, getStoredBaseUrl, parseApiError } from '../services/api';
+import { guestCartService } from '../services/guestCart';
 import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
 import {
@@ -51,7 +52,7 @@ interface GalleryProps {
 
 export const Gallery: React.FC<GalleryProps> = ({ onNavigate }) => {
   const { isAuthenticated, user } = useAuth();
-  const { refreshCartCount } = useCart();
+  const { refreshCartCount, refreshGuestCart } = useCart();
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [activeModalArtwork, setActiveModalArtwork] = useState<Artwork | null>(null);
   const [managedArtworks, setManagedArtworks] = useState<Artwork[]>([]);
@@ -278,15 +279,27 @@ export const Gallery: React.FC<GalleryProps> = ({ onNavigate }) => {
   };
 
   const handleAddToCart = async (art: Artwork) => {
-    if (!isAuthenticated) {
-      onNavigate('account');
-      return;
-    }
     try {
       setAddingToCartId(art.id);
       setCartMsg(null);
-      await apiService.addToCart({ gallery_product_id: Number(art.id), quantity: 1 });
-      refreshCartCount();
+
+      if (isAuthenticated) {
+        // Authenticated: post to server cart
+        await apiService.addToCart({ gallery_product_id: Number(art.id), quantity: 1 });
+        refreshCartCount();
+      } else {
+        // Guest: post to server guest cart (session cookie) + mirror locally for UI
+        await apiService.guestAddToCart({ gallery_product_id: Number(art.id), quantity: 1 });
+        guestCartService.addItem({
+          gallery_product_id: Number(art.id),
+          product_title: art.title,
+          product_price: art.price !== null && art.price !== undefined ? String(art.price) : '',
+          product_image_url: art.image_url ?? null,
+          product_status: art.status,
+        });
+        refreshGuestCart();
+      }
+
       setCartMsg({ type: 'success', text: `"${art.title}" added to cart.` });
       setTimeout(() => setCartMsg(null), 3000);
     } catch (err) {

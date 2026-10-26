@@ -9,8 +9,10 @@ import {
     Loader2,
     CheckCircle2,
     X,
+    LogIn,
 } from 'lucide-react';
 import { apiService, getStoredBaseUrl, parseApiError } from '../services/api';
+import { guestCartService } from '../services/guestCart';
 import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
 import type { CartResponse, CartItemResponse } from '../types/api';
@@ -22,7 +24,7 @@ interface CartProps {
 
 export const Cart: React.FC<CartProps> = ({ onNavigate }) => {
     const { isAuthenticated } = useAuth();
-    const { refreshCartCount } = useCart();
+    const { refreshCartCount, refreshGuestCart, guestCart } = useCart();
 
     const [cart, setCart] = useState<CartResponse | null>(null);
     const [loading, setLoading] = useState(true);
@@ -116,23 +118,155 @@ export const Cart: React.FC<CartProps> = ({ onNavigate }) => {
         }
     };
 
-    // ── Not logged in ──────────────────────────────────────────────────────────
+    // ── Guest cart view ────────────────────────────────────────────────────────
     if (!isAuthenticated) {
+        const formatPrice = (price: string | number | null | undefined) => {
+            const amount = Number(price);
+            if (!price || isNaN(amount)) return price ? String(price) : '—';
+            return `RWF ${new Intl.NumberFormat('en-US', { maximumFractionDigits: 0 }).format(amount)}`;
+        };
+        const resolveUrl = (url: string | null | undefined) => {
+            if (!url) return null;
+            if (/^(https?:|data:|blob:)/i.test(url)) return url;
+            return `${getStoredBaseUrl().replace(/\/$/, '')}${url.startsWith('/') ? url : `/${url}`}`;
+        };
+        const guestEmpty = guestCart.items.length === 0;
+        const guestTotal = guestCart.items.reduce((sum, i) => sum + Number(i.product_price) * i.quantity, 0);
+
         return (
-            <div className="flex flex-col items-center justify-center py-20 space-y-4 text-center animate-fadeIn">
-                <div className="w-14 h-14 rounded-2xl bg-bone-100 border border-sand-300 flex items-center justify-center shadow-sm">
-                    <ShoppingCart className="w-7 h-7 text-brown-400" />
+            <div className="space-y-6 pb-10 animate-fadeIn">
+                {/* Header */}
+                <section className="rounded-2xl border border-sand-200/90 bg-gradient-to-b from-bone-50 via-white to-bone-100/60 p-5 sm:p-7 shadow-sm">
+                    <div className="flex items-center justify-between flex-wrap gap-3">
+                        <div className="flex items-center gap-3">
+                            <div className="w-10 h-10 rounded-xl bg-olive-100 border border-olive-200 flex items-center justify-center shrink-0">
+                                <ShoppingCart className="w-5 h-5 text-olive" />
+                            </div>
+                            <div>
+                                <h1 className="text-xl font-serif font-bold text-midnight-900">My Cart</h1>
+                                <p className="text-[11px] text-brown-500">
+                                    {guestEmpty ? 'No items yet' : `${guestCart.items.reduce((s, i) => s + i.quantity, 0)} item(s) — guest session`}
+                                </p>
+                            </div>
+                        </div>
+                        {!guestEmpty && (
+                            <button
+                                onClick={() => { guestCartService.clear(); refreshGuestCart(); }}
+                                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-terracotta-200 bg-terracotta-50 text-terracotta text-xs font-semibold hover:bg-terracotta-100 transition"
+                            >
+                                <Trash2 className="w-3 h-3" />
+                                <span>Clear Cart</span>
+                            </button>
+                        )}
+                    </div>
+                </section>
+
+                {/* Sign-in banner */}
+                <div className="flex items-center gap-3 p-3 rounded-xl bg-olive-50 border border-olive-200 text-xs text-olive-800">
+                    <LogIn className="w-4 h-4 shrink-0" />
+                    <span>Sign in to save your cart and complete your purchase. Your items will be kept.</span>
+                    <button
+                        onClick={() => onNavigate('account')}
+                        className="ml-auto shrink-0 px-3 py-1.5 rounded-lg bg-olive hover:bg-olive-600 text-white font-semibold transition"
+                    >
+                        Sign In
+                    </button>
                 </div>
-                <h2 className="text-lg font-serif font-bold text-midnight-900">Sign in to view your cart</h2>
-                <p className="text-xs text-brown-500 max-w-xs">
-                    Create an account or log in to save artworks and manage your cart.
-                </p>
-                <button
-                    onClick={() => onNavigate('account')}
-                    className="mt-2 px-5 py-2.5 rounded-xl bg-terracotta hover:bg-terracotta-600 text-white text-xs font-semibold shadow-sm transition"
-                >
-                    Go to Account
-                </button>
+
+                {guestEmpty ? (
+                    <div className="flex flex-col items-center justify-center py-16 space-y-4 text-center">
+                        <div className="w-14 h-14 rounded-2xl bg-bone-100 border border-sand-300 flex items-center justify-center shadow-sm">
+                            <PackageOpen className="w-7 h-7 text-brown-400" />
+                        </div>
+                        <h2 className="text-base font-serif font-bold text-midnight-900">Your cart is empty</h2>
+                        <p className="text-xs text-brown-500 max-w-xs">Browse the gallery and add artworks you love.</p>
+                        <button
+                            onClick={() => onNavigate('gallery')}
+                            className="mt-2 px-5 py-2.5 rounded-xl bg-olive hover:bg-olive-600 text-white text-xs font-semibold shadow-sm transition"
+                        >
+                            Browse Gallery
+                        </button>
+                    </div>
+                ) : (
+                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
+                        <div className="lg:col-span-2 space-y-3">
+                            {guestCart.items.map((item) => {
+                                const imageUrl = resolveUrl(item.product_image_url);
+                                return (
+                                    <div key={item.gallery_product_id} className="flex gap-3 bg-white rounded-xl border border-sand-200/90 p-3 shadow-sm">
+                                        <div className="w-16 h-16 sm:w-20 sm:h-20 shrink-0 rounded-lg overflow-hidden bg-bone-100 border border-sand-300 flex items-center justify-center">
+                                            {imageUrl
+                                                ? <img src={imageUrl} alt={item.product_title} className="w-full h-full object-cover" />
+                                                : <ShoppingCart className="w-6 h-6 text-brown-300" />
+                                            }
+                                        </div>
+                                        <div className="flex-1 min-w-0 flex flex-col justify-between">
+                                            <div>
+                                                <h3 className="text-xs font-serif font-bold text-midnight-900 truncate">{item.product_title}</h3>
+                                                <span className="inline-block mt-0.5 text-[9px] font-semibold px-1.5 py-0.5 rounded-full uppercase tracking-wider bg-olive-100 text-olive-800 border border-olive-300">
+                                                    {item.product_status}
+                                                </span>
+                                            </div>
+                                            <div className="flex items-center justify-between mt-2 flex-wrap gap-2">
+                                                <div className="flex items-center gap-1">
+                                                    <button
+                                                        onClick={() => { guestCartService.updateQuantity(item.gallery_product_id, item.quantity - 1); refreshGuestCart(); }}
+                                                        disabled={item.quantity <= 1}
+                                                        className="w-6 h-6 rounded-md border border-sand-300 flex items-center justify-center hover:bg-bone-100 disabled:opacity-40 transition"
+                                                    >
+                                                        <Minus className="w-3 h-3" />
+                                                    </button>
+                                                    <span className="min-w-[24px] text-center text-xs font-bold text-midnight-900">{item.quantity}</span>
+                                                    <button
+                                                        onClick={() => { guestCartService.updateQuantity(item.gallery_product_id, item.quantity + 1); refreshGuestCart(); }}
+                                                        className="w-6 h-6 rounded-md border border-sand-300 flex items-center justify-center hover:bg-bone-100 transition"
+                                                    >
+                                                        <Plus className="w-3 h-3" />
+                                                    </button>
+                                                </div>
+                                                <span className="text-xs font-bold text-midnight-900">{formatPrice(item.product_price)}</span>
+                                                <button
+                                                    onClick={() => { guestCartService.removeItem(item.gallery_product_id); refreshGuestCart(); }}
+                                                    className="inline-flex items-center gap-1 px-2 py-1 rounded-md border border-terracotta-200 bg-terracotta-50 text-terracotta text-[11px] font-semibold hover:bg-terracotta-100 transition"
+                                                >
+                                                    <Trash2 className="w-3 h-3" />
+                                                    <span>Remove</span>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                );
+                            })}
+                        </div>
+                        <div className="lg:col-span-1">
+                            <div className="sticky top-20 bg-white rounded-xl border border-sand-200/90 p-4 shadow-sm space-y-4">
+                                <h2 className="text-sm font-serif font-bold text-midnight-900">Order Summary</h2>
+                                <div className="space-y-2 text-xs text-brown-700">
+                                    <div className="flex justify-between">
+                                        <span>Items</span>
+                                        <span className="font-semibold text-midnight-900">{guestCart.items.reduce((s, i) => s + i.quantity, 0)}</span>
+                                    </div>
+                                    <div className="flex justify-between border-t border-sand-200 pt-2">
+                                        <span className="font-semibold">Total</span>
+                                        <span className="font-bold text-sm text-midnight-900">{formatPrice(guestTotal)}</span>
+                                    </div>
+                                </div>
+                                <button
+                                    onClick={() => onNavigate('account')}
+                                    className="w-full py-2.5 rounded-xl bg-olive hover:bg-olive-600 text-white text-xs font-semibold shadow-sm transition"
+                                >
+                                    Sign In to Purchase
+                                </button>
+                                <button
+                                    onClick={() => onNavigate('gallery')}
+                                    className="w-full py-2 rounded-xl border border-sand-300 bg-bone-50 hover:bg-bone-100 text-brown-700 text-xs font-medium transition"
+                                >
+                                    Continue Browsing
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                )}
             </div>
         );
     }

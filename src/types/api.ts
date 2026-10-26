@@ -88,6 +88,12 @@ export interface CartItemUpdate {
   quantity: number;
 }
 
+export interface CartMergeResponse {
+  message: string;
+  items_merged: number;
+  cart: CartResponse;
+}
+
 // ── Gallery ──────────────────────────────────────────────────────────────────
 
 export type GalleryCategory = 'children' | 'abstract' | 'figurative' | 'heritage';

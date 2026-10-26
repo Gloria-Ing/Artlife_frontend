@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import type { NavTab } from './Navbar';
 import type { GalleryProductResponse } from '../types/api';
 import { apiService, getStoredBaseUrl, parseApiError } from '../services/api';
+import { guestCartService } from '../services/guestCart';
 import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
 import {
@@ -28,7 +29,7 @@ interface HomeProps {
 
 export const Home: React.FC<HomeProps> = ({ onNavigate }) => {
   const { isAuthenticated } = useAuth();
-  const { refreshCartCount } = useCart();
+  const { refreshCartCount, refreshGuestCart } = useCart();
   const [featuredWorks, setFeaturedWorks] = useState<GalleryProductResponse[]>([]);
   const [brokenFeaturedIds, setBrokenFeaturedIds] = useState<Record<string | number, boolean>>({});
   const [addingToCartId, setAddingToCartId] = useState<string | number | null>(null);
@@ -58,15 +59,25 @@ export const Home: React.FC<HomeProps> = ({ onNavigate }) => {
   };
 
   const handleAddToCart = async (work: GalleryProductResponse) => {
-    if (!isAuthenticated) {
-      onNavigate('account');
-      return;
-    }
     try {
       setAddingToCartId(work.id);
       setCartMsg(null);
-      await apiService.addToCart({ gallery_product_id: Number(work.id), quantity: 1 });
-      refreshCartCount();
+
+      if (isAuthenticated) {
+        await apiService.addToCart({ gallery_product_id: Number(work.id), quantity: 1 });
+        refreshCartCount();
+      } else {
+        await apiService.guestAddToCart({ gallery_product_id: Number(work.id), quantity: 1 });
+        guestCartService.addItem({
+          gallery_product_id: Number(work.id),
+          product_title: work.title,
+          product_price: work.price !== null && work.price !== undefined ? String(work.price) : '',
+          product_image_url: work.image_url ?? null,
+          product_status: work.status,
+        });
+        refreshGuestCart();
+      }
+
       setCartMsg({ type: 'success', text: `"${work.title}" added to cart.` });
       setTimeout(() => setCartMsg(null), 3000);
     } catch (err) {

@@ -11,6 +11,7 @@ import type {
   CartResponse,
   CartItemAdd,
   CartItemUpdate,
+  CartMergeResponse,
 } from '../types/api';
 
 const DEFAULT_BASE_URL = 'https://gogo.mababa.app';
@@ -44,6 +45,7 @@ export const apiClient = axios.create({
     'Content-Type': 'application/json',
   },
   timeout: 15000,
+  withCredentials: true, // send artlife_session_id cookie on every request
 });
 
 // Attach Bearer token to outgoing requests
@@ -200,9 +202,28 @@ export const apiService = {
     return response.data;
   },
 
-  // POST /cart/items — add a product to the cart
+  // POST /cart/items — add a product to the cart (authenticated)
   async addToCart(data: CartItemAdd): Promise<CartResponse> {
     const response = await apiClient.post<CartResponse>('/cart/items', data);
+    return response.data;
+  },
+
+  // POST /cart/items — add a product as a guest (no Bearer token, uses session cookie)
+  async guestAddToCart(data: CartItemAdd): Promise<CartResponse> {
+    const response = await apiClient.post<CartResponse>('/cart/items', data, {
+      headers: { Authorization: undefined },
+      withCredentials: true,
+    });
+    return response.data;
+  },
+
+  // POST /cart/merge — fold guest session cart into authenticated user cart
+  async mergeCart(): Promise<CartMergeResponse> {
+    const response = await apiClient.post<CartMergeResponse>(
+      '/cart/merge',
+      {},
+      { withCredentials: true }
+    );
     return response.data;
   },
 
