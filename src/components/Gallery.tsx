@@ -14,8 +14,6 @@ import {
   Info,
   Plus,
   Save,
-  AlertCircle,
-  CheckCircle2,
   Pencil,
   Trash2,
   ShoppingCart,
