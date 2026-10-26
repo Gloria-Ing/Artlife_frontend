@@ -738,22 +738,22 @@ export const Gallery: React.FC<GalleryProps> = ({ onNavigate }) => {
                     </button>
                   </div>
 
-                  {/* Text Info */}
-                  <div className="p-3.5 space-y-1.5">
-                    <div className="space-y-0.5">
-                      <span className="text-[9px] uppercase font-bold text-terracotta tracking-wider">
-                        {art.series}
-                      </span>
-                      <h3 className="text-sm font-serif font-bold text-midnight-900">{art.title}</h3>
-                      {formatPrice(art.price) && (
-                        <p className="text-xs font-bold text-olive">{formatPrice(art.price)}</p>
-                      )}
+                  {/* Text Info — compact single block */}
+                  <div className="px-3 py-2.5 flex flex-col gap-1">
+                    <div className="flex items-start justify-between gap-2">
+                      <div className="min-w-0">
+                        <p className="text-[9px] uppercase font-bold text-terracotta tracking-wider leading-none">{art.series}</p>
+                        <h3 className="text-xs font-serif font-bold text-midnight-900 truncate mt-0.5">{art.title}</h3>
+                      </div>
+                      <span className="shrink-0 text-xs font-bold text-olive whitespace-nowrap">{formatPrice(art.price) ?? ''}</span>
                     </div>
-
-                    <div className="flex items-center justify-between text-[10px] text-brown-600 font-medium">
-                      <span className="font-mono text-olive font-bold">{art.year}</span>
+                    <div className="flex items-center gap-2 text-[10px] text-brown-500">
+                      <span className="font-mono font-bold text-olive-700">{art.year}</span>
+                      <span>·</span>
+                      <span className="capitalize">{art.category}</span>
+                      <span>·</span>
+                      <span className="truncate italic">{art.story}</span>
                     </div>
-                    <p className="text-[11px] text-brown-700 leading-relaxed line-clamp-2">{art.story}</p>
                   </div>
                 </div>
 
