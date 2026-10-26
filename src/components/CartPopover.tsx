@@ -218,8 +218,8 @@ export const CartPopover: React.FC<CartPopoverProps> = ({ open, onClose, onNavig
                                                 <p className="text-xs font-serif font-bold text-midnight-900 truncate leading-tight">{item.title}</p>
                                                 <span
                                                     className={`inline-block mt-0.5 text-[8px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded-full ${item.status === 'Available'
-                                                            ? 'bg-olive-100 text-olive-800 border border-olive-200'
-                                                            : 'bg-sand-200 text-brown-700 border border-sand-200'
+                                                        ? 'bg-olive-100 text-olive-800 border border-olive-200'
+                                                        : 'bg-sand-200 text-brown-700 border border-sand-200'
                                                         }`}
                                                 >
                                                     {item.status}
@@ -278,16 +278,9 @@ export const CartPopover: React.FC<CartPopoverProps> = ({ open, onClose, onNavig
                         <div className="flex gap-2">
                             <button
                                 onClick={() => go('contact')}
-                                className="flex-1 py-2 rounded-xl bg-terracotta hover:bg-terracotta-600 text-white text-xs font-bold shadow-sm transition"
+                                className="w-full py-2 rounded-xl bg-terracotta hover:bg-terracotta-600 text-white text-xs font-bold shadow-sm transition"
                             >
                                 Inquire to Purchase
-                            </button>
-                            <button
-                                onClick={() => go('cart')}
-                                className="flex-1 py-2 rounded-xl border border-sand-300 bg-white hover:bg-bone-100 text-midnight-900 text-xs font-semibold flex items-center justify-center gap-1.5 transition"
-                            >
-                                <span>View Cart</span>
-                                <ArrowRight className="w-3 h-3" />
                             </button>
                         </div>
 
