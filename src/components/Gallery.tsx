@@ -62,6 +62,7 @@ export const Gallery: React.FC<GalleryProps> = ({ onNavigate }) => {
   const [editingProductId, setEditingProductId] = useState<string | number | null>(null);
   const [editingProductTitle, setEditingProductTitle] = useState('');
   const [deletingProductId, setDeletingProductId] = useState<string | number | null>(null);
+  const [confirmDeleteArtwork, setConfirmDeleteArtwork] = useState<Artwork | null>(null);
   const [createLoading, setCreateLoading] = useState(false);
   const [createError, setCreateError] = useState<string | null>(null);
   const [createSuccess, setCreateSuccess] = useState<string | null>(null);
@@ -242,8 +243,13 @@ export const Gallery: React.FC<GalleryProps> = ({ onNavigate }) => {
   };
 
   const handleDeleteProduct = async (art: Artwork) => {
-    const confirmed = window.confirm(`Delete "${art.title}" from the gallery?`);
-    if (!confirmed) return;
+    setConfirmDeleteArtwork(art);
+  };
+
+  const confirmAndDelete = async () => {
+    if (!confirmDeleteArtwork) return;
+    const art = confirmDeleteArtwork;
+    setConfirmDeleteArtwork(null);
 
     setCreateError(null);
     setCreateSuccess(null);
@@ -1047,6 +1053,66 @@ export const Gallery: React.FC<GalleryProps> = ({ onNavigate }) => {
                 className="px-3.5 py-1.5 rounded-lg text-xs font-semibold bg-terracotta hover:bg-terracotta-600 text-white shadow-sm transition"
               >
                 Inquire About Piece
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ================= DELETE CONFIRM DIALOG ================= */}
+      {confirmDeleteArtwork && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-midnight-900/60 backdrop-blur-sm animate-fadeIn">
+          <div className="bg-white rounded-2xl border border-sand-200/90 w-full max-w-sm p-6 shadow-2xl space-y-5">
+            {/* Icon + heading */}
+            <div className="flex flex-col items-center text-center space-y-3">
+              <div className="w-12 h-12 rounded-2xl bg-terracotta-50 border border-terracotta-200 flex items-center justify-center">
+                <Trash2 className="w-5 h-5 text-terracotta" />
+              </div>
+              <div>
+                <h2 className="text-base font-serif font-bold text-midnight-900">Delete Artwork?</h2>
+                <p className="text-xs text-brown-600 mt-1 leading-relaxed">
+                  You're about to permanently delete{' '}
+                  <span className="font-semibold text-midnight-900">"{confirmDeleteArtwork.title}"</span>.
+                  This action cannot be undone.
+                </p>
+              </div>
+            </div>
+
+            {/* Artwork preview strip */}
+            <div className="flex items-center gap-3 p-3 rounded-xl bg-bone-50 border border-sand-200">
+              <div className="w-12 h-12 shrink-0 rounded-lg overflow-hidden bg-bone-100 border border-sand-300">
+                {confirmDeleteArtwork.image_url && !brokenImageIds[confirmDeleteArtwork.id] ? (
+                  <img
+                    src={confirmDeleteArtwork.image_url}
+                    alt={confirmDeleteArtwork.title}
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center">
+                    <Palette className="w-5 h-5 text-terracotta" />
+                  </div>
+                )}
+              </div>
+              <div className="min-w-0">
+                <p className="text-xs font-serif font-bold text-midnight-900 truncate">{confirmDeleteArtwork.title}</p>
+                <p className="text-[10px] text-terracotta font-semibold uppercase tracking-wider truncate">{confirmDeleteArtwork.series}</p>
+                <p className="text-[10px] text-brown-500">{confirmDeleteArtwork.year} · {confirmDeleteArtwork.category}</p>
+              </div>
+            </div>
+
+            {/* Actions */}
+            <div className="flex gap-2.5">
+              <button
+                onClick={() => setConfirmDeleteArtwork(null)}
+                className="flex-1 py-2.5 rounded-xl border border-sand-300 bg-white hover:bg-bone-100 text-midnight-900 text-xs font-semibold transition"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={confirmAndDelete}
+                className="flex-1 py-2.5 rounded-xl bg-terracotta hover:bg-terracotta-600 text-white text-xs font-bold shadow-sm transition"
+              >
+                Yes, Delete
               </button>
             </div>
           </div>
