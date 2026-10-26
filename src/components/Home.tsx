@@ -111,7 +111,7 @@ export const Home: React.FC<HomeProps> = ({ onNavigate }) => {
           <div className="lg:col-span-7 space-y-4 text-center lg:text-left">
             <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-olive-100/80 text-olive-800 border border-olive-200 text-[11px] font-semibold tracking-wide">
               <Sparkles className="w-3 h-3 text-terracotta" />
-              <span>Artlife Fusion • Kigali, Rwanda</span>
+              <span>Artlife • Kigali, Rwanda</span>
             </div>
 
             <h1 className="text-2xl sm:text-3xl lg:text-4xl font-serif font-bold text-midnight-900 tracking-tight leading-tight">
