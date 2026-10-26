@@ -18,7 +18,7 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-white text-midnight-900 font-sans selection:bg-terracotta selection:text-white">
+    <div className="min-h-screen flex flex-col text-midnight-900 font-sans selection:bg-terracotta selection:text-white" style={{ backgroundColor: '#D8C8B4' }}>
       <Navbar activeTab={activeTab} setActiveTab={handleNavigate} />
 
       <main className="flex-1 max-w-6xl w-full mx-auto px-4 sm:px-6 py-6 sm:py-8">
