@@ -5,6 +5,7 @@ import { apiService, getStoredBaseUrl, parseApiError } from '../services/api';
 import { guestCartService } from '../services/guestCart';
 import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
+import { useToast } from '../context/ToastContext';
 import {
   Sparkles,
   ArrowRight,
@@ -20,7 +21,6 @@ import {
   UserPlus,
   ShoppingCart,
   Loader2,
-  AlertCircle,
 } from 'lucide-react';
 
 interface HomeProps {
@@ -30,10 +30,10 @@ interface HomeProps {
 export const Home: React.FC<HomeProps> = ({ onNavigate }) => {
   const { isAuthenticated } = useAuth();
   const { refreshCartCount, refreshGuestCart } = useCart();
+  const toast = useToast();
   const [featuredWorks, setFeaturedWorks] = useState<GalleryProductResponse[]>([]);
   const [brokenFeaturedIds, setBrokenFeaturedIds] = useState<Record<string | number, boolean>>({});
   const [addingToCartId, setAddingToCartId] = useState<string | number | null>(null);
-  const [cartMsg, setCartMsg] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
 
   const resolveImageUrl = (imageUrl: string | null | undefined) => {
     if (!imageUrl) return imageUrl;
@@ -61,8 +61,6 @@ export const Home: React.FC<HomeProps> = ({ onNavigate }) => {
   const handleAddToCart = async (work: GalleryProductResponse) => {
     try {
       setAddingToCartId(work.id);
-      setCartMsg(null);
-
       if (isAuthenticated) {
         await apiService.addToCart({ gallery_product_id: Number(work.id), quantity: 1 });
         refreshCartCount();
@@ -77,12 +75,9 @@ export const Home: React.FC<HomeProps> = ({ onNavigate }) => {
         });
         refreshGuestCart();
       }
-
-      setCartMsg({ type: 'success', text: `"${work.title}" added to cart.` });
-      setTimeout(() => setCartMsg(null), 3000);
+      toast(`"${work.title}" added to cart.`, 'success');
     } catch (err) {
-      setCartMsg({ type: 'error', text: parseApiError(err) });
-      setTimeout(() => setCartMsg(null), 4000);
+      toast(parseApiError(err), 'error');
     } finally {
       setAddingToCartId(null);
     }
@@ -345,31 +340,6 @@ export const Home: React.FC<HomeProps> = ({ onNavigate }) => {
 
         {featuredWorks.length > 0 ? (
           <>
-            {/* Cart feedback toast */}
-            {cartMsg && (
-              <div
-                className={`flex items-start gap-2.5 p-3 rounded-xl border text-xs animate-fadeIn ${cartMsg.type === 'success'
-                  ? 'bg-olive-50 border-olive-200 text-olive-800'
-                  : 'bg-terracotta-50 border-terracotta-200 text-terracotta-800'
-                  }`}
-              >
-                {cartMsg.type === 'success' ? (
-                  <CheckCircle2 className="w-4 h-4 shrink-0 mt-0.5" />
-                ) : (
-                  <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" />
-                )}
-                <span>{cartMsg.text}</span>
-                {cartMsg.type === 'success' && (
-                  <button
-                    onClick={() => onNavigate('cart')}
-                    className="ml-auto shrink-0 underline font-semibold whitespace-nowrap"
-                  >
-                    View Cart →
-                  </button>
-                )}
-              </div>
-            )}
-
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5">
               {featuredWorks.map((work) => (
                 <div

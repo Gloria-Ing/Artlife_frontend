@@ -5,16 +5,14 @@ import {
     Minus,
     Plus,
     PackageOpen,
-    AlertCircle,
     Loader2,
-    CheckCircle2,
-    X,
     LogIn,
 } from 'lucide-react';
 import { apiService, getStoredBaseUrl, parseApiError } from '../services/api';
 import { guestCartService } from '../services/guestCart';
 import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
+import { useToast } from '../context/ToastContext';
 import type { CartResponse, CartItemResponse } from '../types/api';
 import type { NavTab } from './Navbar';
 
@@ -25,11 +23,10 @@ interface CartProps {
 export const Cart: React.FC<CartProps> = ({ onNavigate }) => {
     const { isAuthenticated } = useAuth();
     const { refreshCartCount, refreshGuestCart, guestCart } = useCart();
+    const toast = useToast();
 
     const [cart, setCart] = useState<CartResponse | null>(null);
     const [loading, setLoading] = useState(true);
-    const [error, setError] = useState<string | null>(null);
-    const [successMsg, setSuccessMsg] = useState<string | null>(null);
     const [updatingItemId, setUpdatingItemId] = useState<number | null>(null);
     const [removingItemId, setRemovingItemId] = useState<number | null>(null);
     const [clearingCart, setClearingCart] = useState(false);
@@ -47,25 +44,19 @@ export const Cart: React.FC<CartProps> = ({ onNavigate }) => {
         return `RWF ${new Intl.NumberFormat('en-US', { maximumFractionDigits: 0 }).format(amount)}`;
     };
 
-    const showSuccess = (msg: string) => {
-        setSuccessMsg(msg);
-        setTimeout(() => setSuccessMsg(null), 3000);
-    };
-
     const fetchCart = useCallback(async () => {
         if (!isAuthenticated) return;
         try {
             setLoading(true);
-            setError(null);
             const data = await apiService.getCart();
             setCart(data);
             refreshCartCount();
         } catch (err) {
-            setError(parseApiError(err));
+            toast(parseApiError(err), 'error');
         } finally {
             setLoading(false);
         }
-    }, [isAuthenticated, refreshCartCount]);
+    }, [isAuthenticated, refreshCartCount, toast]);
 
     useEffect(() => {
         fetchCart();
@@ -76,12 +67,11 @@ export const Cart: React.FC<CartProps> = ({ onNavigate }) => {
         if (newQty < 1) return;
         try {
             setUpdatingItemId(item.id);
-            setError(null);
             const updated = await apiService.updateCartItem(item.id, { quantity: newQty });
             setCart(updated);
             refreshCartCount();
         } catch (err) {
-            setError(parseApiError(err));
+            toast(parseApiError(err), 'error');
         } finally {
             setUpdatingItemId(null);
         }
@@ -90,13 +80,12 @@ export const Cart: React.FC<CartProps> = ({ onNavigate }) => {
     const handleRemoveItem = async (item: CartItemResponse) => {
         try {
             setRemovingItemId(item.id);
-            setError(null);
             const updated = await apiService.removeCartItem(item.id);
             setCart(updated);
             refreshCartCount();
-            showSuccess(`"${item.product_title}" removed from cart.`);
+            toast(`"${item.product_title}" removed from cart.`, 'success');
         } catch (err) {
-            setError(parseApiError(err));
+            toast(parseApiError(err), 'error');
         } finally {
             setRemovingItemId(null);
         }
@@ -106,13 +95,12 @@ export const Cart: React.FC<CartProps> = ({ onNavigate }) => {
         if (!window.confirm('Remove all items from your cart?')) return;
         try {
             setClearingCart(true);
-            setError(null);
             await apiService.clearCart();
             setCart(null);
             refreshCartCount();
-            showSuccess('Cart cleared.');
+            toast('Cart cleared.', 'success');
         } catch (err) {
-            setError(parseApiError(err));
+            toast(parseApiError(err), 'error');
         } finally {
             setClearingCart(false);
         }
@@ -313,24 +301,6 @@ export const Cart: React.FC<CartProps> = ({ onNavigate }) => {
                     )}
                 </div>
             </section>
-
-            {/* Alerts */}
-            {error && (
-                <div className="flex items-start gap-2.5 p-3 rounded-xl bg-terracotta-50 border border-terracotta-200 text-terracotta-800 text-xs">
-                    <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" />
-                    <span>{error}</span>
-                    <button onClick={() => setError(null)} className="ml-auto shrink-0">
-                        <X className="w-3.5 h-3.5" />
-                    </button>
-                </div>
-            )}
-
-            {successMsg && (
-                <div className="flex items-start gap-2.5 p-3 rounded-xl bg-olive-50 border border-olive-200 text-olive-800 text-xs">
-                    <CheckCircle2 className="w-4 h-4 shrink-0 mt-0.5" />
-                    <span>{successMsg}</span>
-                </div>
-            )}
 
             {/* Empty state */}
             {isEmpty ? (

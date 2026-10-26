@@ -5,6 +5,7 @@ import { apiService, getStoredBaseUrl, parseApiError } from '../services/api';
 import { guestCartService } from '../services/guestCart';
 import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
+import { useToast } from '../context/ToastContext';
 import {
   Palette,
   ArrowRight,
@@ -53,6 +54,7 @@ interface GalleryProps {
 export const Gallery: React.FC<GalleryProps> = ({ onNavigate }) => {
   const { isAuthenticated, user } = useAuth();
   const { refreshCartCount, refreshGuestCart } = useCart();
+  const toast = useToast();
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [activeModalArtwork, setActiveModalArtwork] = useState<Artwork | null>(null);
   const [managedArtworks, setManagedArtworks] = useState<Artwork[]>([]);
@@ -64,13 +66,10 @@ export const Gallery: React.FC<GalleryProps> = ({ onNavigate }) => {
   const [deletingProductId, setDeletingProductId] = useState<string | number | null>(null);
   const [confirmDeleteArtwork, setConfirmDeleteArtwork] = useState<Artwork | null>(null);
   const [createLoading, setCreateLoading] = useState(false);
-  const [createError, setCreateError] = useState<string | null>(null);
-  const [createSuccess, setCreateSuccess] = useState<string | null>(null);
   const [brokenImageIds, setBrokenImageIds] = useState<Record<string | number, boolean>>({});
   const [newImagePreview, setNewImagePreview] = useState<string | null>(null);
   const [editImagePreview, setEditImagePreview] = useState<string | null>(null);
   const [addingToCartId, setAddingToCartId] = useState<string | number | null>(null);
-  const [cartMsg, setCartMsg] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
 
   const markImageBroken = (id: string | number) => {
     setBrokenImageIds((current) => ({ ...current, [id]: true }));
@@ -174,35 +173,28 @@ export const Gallery: React.FC<GalleryProps> = ({ onNavigate }) => {
 
   const handleCreateProduct = async (event: React.FormEvent) => {
     event.preventDefault();
-    setCreateError(null);
-    setCreateSuccess(null);
 
     if (!newProduct.image_file) {
-      setCreateError('Please choose an image from your computer.');
+      toast('Please choose an image from your computer.', 'error');
       return;
     }
 
     try {
       setCreateLoading(true);
-      const saved = await apiService.createGalleryProduct({
-        ...newProduct,
-      });
-
+      const saved = await apiService.createGalleryProduct({ ...newProduct });
       const savedArtwork = mapGalleryProduct(saved);
       setManagedArtworks((current) => [savedArtwork, ...current]);
-      setCreateSuccess(`${saved.title} was added to the gallery.`);
+      toast(`"${saved.title}" was added to the gallery.`, 'success');
       resetProductForm();
       setIsProductFormOpen(false);
     } catch (err) {
-      setCreateError(parseApiError(err));
+      toast(parseApiError(err), 'error');
     } finally {
       setCreateLoading(false);
     }
   };
 
   const handleEditProduct = (art: Artwork) => {
-    setCreateError(null);
-    setCreateSuccess(null);
     setEditingProductId(art.id);
     setEditingProductTitle(art.title);
     setEditProduct({
@@ -222,9 +214,6 @@ export const Gallery: React.FC<GalleryProps> = ({ onNavigate }) => {
     event.preventDefault();
     if (!editingProductId) return;
 
-    setCreateError(null);
-    setCreateSuccess(null);
-
     try {
       setCreateLoading(true);
       const saved = await apiService.updateGalleryProduct(editingProductId, editProduct);
@@ -233,10 +222,10 @@ export const Gallery: React.FC<GalleryProps> = ({ onNavigate }) => {
       setManagedArtworks((current) =>
         current.map((art) => (art.id === savedArtwork.id ? savedArtwork : art))
       );
-      setCreateSuccess(`${saved.title} was updated.`);
+      toast(`"${saved.title}" was updated.`, 'success');
       closeEditModal();
     } catch (err) {
-      setCreateError(parseApiError(err));
+      toast(parseApiError(err), 'error');
     } finally {
       setCreateLoading(false);
     }
@@ -251,19 +240,14 @@ export const Gallery: React.FC<GalleryProps> = ({ onNavigate }) => {
     const art = confirmDeleteArtwork;
     setConfirmDeleteArtwork(null);
 
-    setCreateError(null);
-    setCreateSuccess(null);
-
     try {
       setDeletingProductId(art.id);
       await apiService.deleteGalleryProduct(art.id);
       setManagedArtworks((current) => current.filter((item) => item.id !== art.id));
-      setCreateSuccess(`${art.title} was deleted.`);
-      if (editingProductId === art.id) {
-        closeEditModal();
-      }
+      toast(`"${art.title}" was deleted.`, 'success');
+      if (editingProductId === art.id) closeEditModal();
     } catch (err) {
-      setCreateError(parseApiError(err));
+      toast(parseApiError(err), 'error');
     } finally {
       setDeletingProductId(null);
     }
@@ -287,14 +271,10 @@ export const Gallery: React.FC<GalleryProps> = ({ onNavigate }) => {
   const handleAddToCart = async (art: Artwork) => {
     try {
       setAddingToCartId(art.id);
-      setCartMsg(null);
-
       if (isAuthenticated) {
-        // Authenticated: post to server cart
         await apiService.addToCart({ gallery_product_id: Number(art.id), quantity: 1 });
         refreshCartCount();
       } else {
-        // Guest: post to server guest cart (session cookie) + mirror locally for UI
         await apiService.guestAddToCart({ gallery_product_id: Number(art.id), quantity: 1 });
         guestCartService.addItem({
           gallery_product_id: Number(art.id),
@@ -305,12 +285,9 @@ export const Gallery: React.FC<GalleryProps> = ({ onNavigate }) => {
         });
         refreshGuestCart();
       }
-
-      setCartMsg({ type: 'success', text: `"${art.title}" added to cart.` });
-      setTimeout(() => setCartMsg(null), 3000);
+      toast(`"${art.title}" added to cart.`, 'success');
     } catch (err) {
-      setCartMsg({ type: 'error', text: parseApiError(err) });
-      setTimeout(() => setCartMsg(null), 4000);
+      toast(parseApiError(err), 'error');
     } finally {
       setAddingToCartId(null);
     }
@@ -338,31 +315,6 @@ export const Gallery: React.FC<GalleryProps> = ({ onNavigate }) => {
       </section>
 
       {/* ================= CATEGORY FILTER TABS ================= */}
-
-      {/* Cart feedback toast */}
-      {cartMsg && (
-        <div
-          className={`flex items-start gap-2.5 p-3 rounded-xl border text-xs animate-fadeIn ${cartMsg.type === 'success'
-            ? 'bg-olive-50 border-olive-200 text-olive-800'
-            : 'bg-terracotta-50 border-terracotta-200 text-terracotta-800'
-            }`}
-        >
-          {cartMsg.type === 'success' ? (
-            <CheckCircle2 className="w-4 h-4 shrink-0 mt-0.5" />
-          ) : (
-            <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" />
-          )}
-          <span>{cartMsg.text}</span>
-          {cartMsg.type === 'success' && (
-            <button
-              onClick={() => onNavigate('cart')}
-              className="ml-auto shrink-0 underline font-semibold whitespace-nowrap"
-            >
-              View Cart →
-            </button>
-          )}
-        </div>
-      )}
 
       {isAdmin && (
         <section className="bg-white rounded-2xl border border-sand-200/90 p-4 sm:p-5 shadow-sm space-y-4">
@@ -393,20 +345,6 @@ export const Gallery: React.FC<GalleryProps> = ({ onNavigate }) => {
               <span>{isProductFormOpen ? 'Close Form' : 'Add New Product'}</span>
             </button>
           </div>
-
-          {createError && (
-            <div className="flex items-start gap-2.5 p-3 rounded-xl bg-terracotta-50 border border-terracotta-200 text-terracotta-800 text-xs">
-              <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" />
-              <span>{createError}</span>
-            </div>
-          )}
-
-          {createSuccess && (
-            <div className="flex items-start gap-2.5 p-3 rounded-xl bg-olive-50 border border-olive-200 text-olive-800 text-xs">
-              <CheckCircle2 className="w-4 h-4 shrink-0 mt-0.5" />
-              <span>{createSuccess}</span>
-            </div>
-          )}
 
           {isProductFormOpen && (
             <form onSubmit={handleCreateProduct} className="grid grid-cols-1 lg:grid-cols-12 gap-4">

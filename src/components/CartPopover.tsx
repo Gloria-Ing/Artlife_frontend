@@ -11,6 +11,7 @@ import {
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
+import { useToast } from '../context/ToastContext';
 import { guestCartService } from '../services/guestCart';
 import { apiService, getStoredBaseUrl, parseApiError } from '../services/api';
 import type { NavTab } from './Navbar';
@@ -24,6 +25,7 @@ interface CartPopoverProps {
 export const CartPopover: React.FC<CartPopoverProps> = ({ open, onClose, onNavigate }) => {
     const { isAuthenticated } = useAuth();
     const { guestCart, serverCart, refreshCartCount, refreshGuestCart } = useCart();
+    const toast = useToast();
     const ref = useRef<HTMLDivElement>(null);
 
     // Close on outside click
@@ -112,8 +114,9 @@ export const CartPopover: React.FC<CartPopoverProps> = ({ open, onClose, onNavig
                 guestCartService.removeItem(item.productId);
                 refreshGuestCart();
             }
+            toast(`"${item.title}" removed.`, 'success');
         } catch (err) {
-            console.error(parseApiError(err));
+            toast(parseApiError(err), 'error');
         }
     };
 
@@ -129,7 +132,7 @@ export const CartPopover: React.FC<CartPopoverProps> = ({ open, onClose, onNavig
                 refreshGuestCart();
             }
         } catch (err) {
-            console.error(parseApiError(err));
+            toast(parseApiError(err), 'error');
         }
     };
 
@@ -288,12 +291,17 @@ export const CartPopover: React.FC<CartPopoverProps> = ({ open, onClose, onNavig
                         <button
                             onClick={async () => {
                                 if (!window.confirm('Clear all items from your cart?')) return;
-                                if (isAuthenticated) {
-                                    await apiService.clearCart();
-                                    await refreshCartCount();
-                                } else {
-                                    guestCartService.clear();
-                                    refreshGuestCart();
+                                try {
+                                    if (isAuthenticated) {
+                                        await apiService.clearCart();
+                                        await refreshCartCount();
+                                    } else {
+                                        guestCartService.clear();
+                                        refreshGuestCart();
+                                    }
+                                    toast('Cart cleared.', 'success');
+                                } catch (err) {
+                                    toast(parseApiError(err), 'error');
                                 }
                             }}
                             className="w-full flex items-center justify-center gap-1.5 text-[11px] text-brown-400 hover:text-terracotta transition py-1"
