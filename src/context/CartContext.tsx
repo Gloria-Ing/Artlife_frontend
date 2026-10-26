@@ -2,10 +2,12 @@ import React, { createContext, useContext, useState, useCallback, useEffect, use
 import { apiService } from '../services/api';
 import { guestCartService, type GuestCart } from '../services/guestCart';
 import { useAuth } from './AuthContext';
+import type { CartResponse } from '../types/api';
 
 interface CartContextType {
     cartCount: number;
     guestCart: GuestCart;
+    serverCart: CartResponse | null;
     refreshCartCount: () => Promise<void>;
     refreshGuestCart: () => void;
     setCartCount: (n: number) => void;
@@ -18,6 +20,7 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const { isAuthenticated } = useAuth();
     const [cartCount, setCartCount] = useState(0);
     const [guestCart, setGuestCart] = useState<GuestCart>(() => guestCartService.get());
+    const [serverCart, setServerCart] = useState<CartResponse | null>(null);
     const prevAuthRef = useRef(isAuthenticated);
 
     const refreshGuestCart = useCallback(() => {
@@ -31,29 +34,28 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const refreshCartCount = useCallback(async () => {
         if (!isAuthenticated) {
             setCartCount(guestCartService.totalItems());
+            setServerCart(null);
             return;
         }
         try {
             const cart = await apiService.getCart();
+            setServerCart(cart);
             setCartCount(cart.total_items);
         } catch {
             setCartCount(0);
+            setServerCart(null);
         }
     }, [isAuthenticated]);
 
-    // After login: call POST /cart/merge so server folds the cookie-keyed
-    // guest session cart into the user's account cart, then clear local mirror.
     const mergeGuestCartOnLogin = useCallback(async () => {
         const guest = guestCartService.get();
         try {
             const result = await apiService.mergeCart();
-            // Server merged successfully — clear local mirror and update count
             guestCartService.clear();
             setGuestCart({ items: [] });
+            setServerCart(result.cart);
             setCartCount(result.cart.total_items);
         } catch {
-            // Merge failed (no guest session or server error) — still clear local
-            // mirror so stale UI data doesn't persist, then refresh from server.
             if (guest.items.length > 0) {
                 guestCartService.clear();
                 setGuestCart({ items: [] });
@@ -61,7 +63,6 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
         }
     }, []);
 
-    // When auth flips from guest → logged-in: merge, then refresh count
     useEffect(() => {
         const wasGuest = !prevAuthRef.current;
         const nowAuth = isAuthenticated;
@@ -79,6 +80,7 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
             value={{
                 cartCount,
                 guestCart,
+                serverCart,
                 refreshCartCount,
                 refreshGuestCart,
                 setCartCount,
